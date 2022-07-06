@@ -1,0 +1,66 @@
+<html>
+<body>
+<center>  
+    <h2 class="display-6 mt-4 mb-2">User Data</h2>
+</center>
+<table class="table table-sm table-hover">
+    <thead>
+      <tr>
+        <th scope="col">Id</th>
+        <th scope="col">Name</th>
+        <th scope="col">E-mail</th>
+        <th scope="col">Phone</th>
+        <th scope="col">Designation</th>
+        <th scope="col">Locality</th>
+        <th scope="col">Action</th>
+      </tr>
+    </thead>
+    <tbody>
+    {foreach from=$data item=row}
+    <tr>
+    <th scope="row">{$row.id}</th>
+    <td>{$row.firstName}</td>
+    <td>{$row.email}</td>
+    <td>{$row.phone}</td>
+    <td>{$row.designation}</td>
+    <td>{$row.city}</td>
+    <td>
+        <a href="http://local.ems.com/admin/users/update?id={$row.id}"><button class="btn btn-outline-info btn-sm">Edit</button></a>
+        <button class="btn btn-outline-danger btn-sm delete" id="{$row.id}">Delete</button></a>
+    </td>
+    </tr>
+    {/foreach}
+    <tr class="text-center">
+        <td colspan="7"><a href="/admin/users/add"><button class="btn btn-sm btn-success mb-2">Add User</button></a></td>
+    </tr>
+    </tbody>
+</table>
+</body>
+</html>
+{literal}
+<script>
+        $(".delete").click(function()
+        {
+          if(confirm('Are you sure?'))
+          {
+          var id = $(this).attr('id');
+            $.ajax({
+                url: "/admin/users/delete",
+                type: "POST",
+                dataType: "json",
+                data: {id:id},
+                success: function (result) {
+                  if(result.status == 1)
+                  {
+                    location.reload();
+                  }
+                  else
+                  {
+                    console.log(result);
+                  }
+                }
+            });
+          }
+        });
+</script>
+{/literal}

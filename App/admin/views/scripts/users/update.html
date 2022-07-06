@@ -1,0 +1,101 @@
+         <!-- Horizontal Form -->
+         <div class="card-header col-sm-4 offset-sm-4 mt-3 rounded" style="background-color:#343a40;">
+            <h3 class="card-titleS" style="color: white;">Edit User</h3>
+          </div>
+          <!-- /.card-header -->
+          <!-- form start -->
+          <form method="post" id="updateUser">
+            <div class="card-body">
+              <input type="hidden" value="{$userRow.id}" name="id" id="id">
+              <div class="form-group row">
+                  <div class="col-sm-2 offset-sm-4">
+                  <input type="text" class="form-control form-control-sm" value="{$userRow.firstName}" name="firstName" id="firstName" placeholder="First Name">
+                </div>
+                <div class="col-sm-2">
+                  <input type="text" class="form-control form-control-sm" value="{$userRow.lastName}" name="lastName" id="lastName" placeholder="Last Name">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-2 offset-sm-4">
+                  <input type="text" class="form-control form-control-sm" value="{$userRow.city}" name="city" id="city" placeholder="City">
+                </div>
+                <div class="col-sm-2">
+                  <input type="text" class="form-control form-control-sm" value="{$userRow.state}" name="state" id="state" placeholder="State">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-4 offset-sm-4">
+                  <textarea class="form-control form-control-sm" id="address" name="address" rows="3" placeholder="Address...">{$userRow.address}</textarea>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-2 offset-sm-4">
+                  <input class="form-control form-control-sm" type="text" name="designation" value="{$userRow.designation}" id="designation" placeholder="Designation">
+                </div>
+                <div class="col-sm-2">
+                  <select class="form-control form-control-sm" name="role" id="role">
+                    <option value="user">User</option>
+                    <option value="admin">Admin</option>
+                  </select>
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-2 offset-sm-4">
+                  <input type="email" class="form-control form-control-sm" value="{$userRow.email}" name="email" id="email" placeholder="E-mail">
+                </div>
+                <div class="col-sm-2">
+                  <input type="tel" class="form-control form-control-sm" value="{$userRow.phone}" name="phone" id="phone" placeholder="Phone">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-2 offset-sm-4">
+                  <input type="password" class="form-control form-control-sm" name="password" id="password" placeholder="Password">
+                </div>
+                <div class="col-sm-2">
+                  <input type="password" class="form-control form-control-sm" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+                </div>
+              </div>
+              <div class="form-group row">
+                <div class="col-sm-2 offset-sm-4">
+                  <label for="joinDate"><b>Date of Joining</b></label>
+                <input type="date" class="form-control form-control-sm" name="joinDate" id="joinDate" value="{$userRow.joinDate}">
+              </div>
+              </div>
+              <div class="card-footer col-sm-4 offset-sm-4">
+                <button type="button" class="btn btn-dark submit">Edit User</button>
+              </div>
+              
+              </div>
+                </div>
+              </div>
+            </div>
+            <!-- /.card-body -->
+            <!-- /.card-footer -->
+          </form>
+{literal}
+<script>
+    $(document).ready(function()
+    {
+        $(".submit").click(function()
+        {
+            var userdata = $("form#updateUser").serializeArray();
+            $.ajax({
+                url: "/admin/users/update/",
+                type: "POST",
+                dataType: "json",
+                data: userdata, 
+                success: function (result) {
+                  if(result.status == 1)
+                  {
+                    window.location.href = "/admin/users";
+                  }
+                  else
+                  {
+                    console.log(result.errors);
+                  }
+                }
+            });
+        });
+    });
+</script>
+{/literal}
