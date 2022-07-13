@@ -1,0 +1,87 @@
+<div class="container">
+  <div class="content">
+      <div class="row">
+        <div class="col-lg-6 offset-sm-3 mt-3">
+          <div class="card">
+            <div class="card-header">
+              <h2>Edit Leave Status
+              </h2>
+            </div>
+            <div class="card-body offset-sm-3">
+        <form method="post" id="editStatus">
+          <input type="hidden" name="id" value="{$dataRow.id}">
+          <div class="row">
+          <label class="col-md-4"><b>Leave Type</b></label>:
+          <span class="col-md-4">{if $dataRow.type eq 0}Sick{elseif $dataRow.type eq 1}Paid{elseif $dataRow.type eq 2}Unpaid{/if}</span>
+        </div>
+
+        <div class="row mt-4">
+          <label class="col-md-4"><b>From</b></label>:
+          <span class="col-md-4">{$dataRow.startDate|date_format:'%Y-%m-%d'}</span>
+        </div>
+
+        <div class="row mt-4">
+          <label class="col-md-4"><b>To</b></label>:
+          <span class="col-md-4">{$dataRow.endDate|date_format:'%Y-%m-%d'}</span>
+        </div>
+
+        <div class="row mt-4">
+          <label class="col-md-4"><b>Half Leave</b></label>:
+          <span class="col-md-4">{if $dataRow.isHalf eq 0}No{else}Yes{/if}</span>
+        </div>
+
+        <div class="row mt-4">
+          <label class="col-md-4"><b>Comment</b></label>:
+          <span class="col-md-4">{$dataRow.comment}</span>
+        </div>
+
+        <div class="row mt-4">
+          <label class="col-md-4"><b>Status</b></label>:
+          <select name="status" class="form-control form-control-sm col-md-4 mb-3 ml-3">
+            <option value="0">Pending</option>
+            <option value="1">Approved</option>
+            <option value="2">Rejected</option>
+          </select>
+        </div>
+        </div>
+        <div class="card-footer d-flex justify-content-center">
+        <button type="button" class="btn btn-primary submit">Update Status</button>
+        </div>
+      </div>
+        </form>
+      </div>
+    </div>
+  </div>
+  <!-- /.col-md-6 -->
+  <!-- /.col-md-6 -->
+</div>
+<!-- /.row -->
+</div><!-- /.container-fluid -->
+</div>
+        {literal}
+<script>
+    $(document).ready(function()
+    {
+        $(".submit").click(function()
+        {
+            var data = $("form#editStatus").serializeArray();
+            $.ajax({
+                url: "/admin/leaves/update/",
+                type: "POST",
+                dataType: "json",
+                data: data, 
+                success: function (result) {
+                  if(result.status == 1)
+                  {
+                    window.location.href = "/admin/leaves";
+                  }
+                  else
+                  {
+                    console.log(result.errors);
+                  }
+                }
+            });
+        });
+    });
+</script>
+{/literal}

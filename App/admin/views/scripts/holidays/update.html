@@ -1,34 +1,42 @@
-         <!-- Horizontal Form -->
-         <div class="card-header col-sm-4 offset-sm-4 mt-3 rounded" style="background-color:#343a40;">
-            <h3 class="card-titleS" style="color: white;">Edit Holiday</h3>
-          </div>
-          <!-- /.card-header -->
-          <!-- form start -->
+<div class="container">
+  <div class="content">
+      <div class="row">
+        <div class="col-lg-6 offset-sm-3 mt-3">
+          <div class="card">
+            <div class="card-header">
+              <h2>Edit Holiday</h2>
+            </div>
+            <div class="card-body offset-sm-3">
           <form method="post" id="editHoliday">
-          <div class="modal-body text-left">
             <input type="hidden" name="id" value="{$dataRow.id}">
             <div class="row">
-            <label class="col-md-1 offset-md-4"><b>Name</b></label>
-            <input type="text" name="name" value="{$dataRow.name}" class="form-control form-control-sm col-md-3">
+            <label class="col-md-4"><b>Name</b></label>
+            <input type="text" name="name" value="{$dataRow.name}" class="form-control form-control-sm col-md-4">
           </div>
 
           <div class="row mt-4">
-            <label class="col-md-1 offset-md-4"><b>Date</b></label>
-            <input type="date" name="date" value="{$dataRow.date}" class="form-control form-control-sm col-md-3">
+            <label class="col-md-4"><b>Date</b></label>
+            <input type="date" name="date" value="{$dataRow.date}" class="form-control form-control-sm col-md-4">
           </div>
 
           <div class="row mt-4">
-            <label class="col-md-1 offset-md-4"><b>Description</b></label>
-            <textarea type="text" name="description" class="form-control form-control-sm col-md-3">{$dataRow.description}</textarea>
+            <label class="col-md-4"><b>Description</b></label>
+            <textarea type="text" name="description" class="form-control form-control-sm col-md-4">{$dataRow.description}</textarea>
           </div>
           </div>
-          <div class="card-footer col-sm-4 offset-sm-4">
-            <button type="button" class="btn btn-dark submit">Edit Holiday</button>
-          </div>
-        </div>
-            <!-- /.card-body -->
-            <!-- /.card-footer -->
+          <div class="card-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-primary submit">Edit Holiday</button>
+          </div>      
           </form>
+        </div>
+      </div>
+    </div>
+    <!-- /.col-md-6 -->
+    <!-- /.col-md-6 -->
+  </div>
+  <!-- /.row -->
+</div><!-- /.container-fluid -->
+</div>
 {literal}
 <script>
     $(document).ready(function()

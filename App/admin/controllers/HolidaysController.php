@@ -3,10 +3,13 @@ class Admin_HolidaysController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
-		$this->disableFooter();
+        if($this->isPost())
+        {
+        $this->setNoRenderer(true);
 		$holidays = new Models_Holiday();
 		$data = $holidays->showData();
-		$this->setViewVar('data',$data);   
+        echo json_encode(array('data' => $data));
+        }
 	}
 
 	public function deleteAction()
@@ -125,6 +128,25 @@ class Admin_HolidaysController extends TinyPHP_Controller {
             $this->setViewVar('dataRow',$holidayData);
         }
            
+    }
+
+    public function holidaylistAction()
+    {
+        $this->setNoRenderer(true);
+
+        global $db;
+        $dt = new TinyPHP_DataTable();
+	    $dt->setDBAdapter($db);
+        $dt->setTable('holidays AS h');
+        $dt->setIdColumn('h.id');
+
+        $dt->addColumns(array(
+            'id' => 'h.id',
+            'name' => 'h.name',
+            'description' => 'h.description',
+            'date' => 'h.date'
+        ));
+        $dt->getData();
     }
 
 

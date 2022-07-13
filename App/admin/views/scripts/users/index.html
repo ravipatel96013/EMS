@@ -1,66 +1,102 @@
-<html>
-<body>
-<center>  
-    <h2 class="display-6 mt-4 mb-2">User Data</h2>
-</center>
-<table class="table table-sm table-hover">
-    <thead>
-      <tr>
-        <th scope="col">Id</th>
-        <th scope="col">Name</th>
-        <th scope="col">E-mail</th>
-        <th scope="col">Phone</th>
-        <th scope="col">Designation</th>
-        <th scope="col">Locality</th>
-        <th scope="col">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-    {foreach from=$data item=row}
-    <tr>
-    <th scope="row">{$row.id}</th>
-    <td>{$row.firstName}</td>
-    <td>{$row.email}</td>
-    <td>{$row.phone}</td>
-    <td>{$row.designation}</td>
-    <td>{$row.city}</td>
-    <td>
-        <a href="http://local.ems.com/admin/users/update?id={$row.id}"><button class="btn btn-outline-info btn-sm">Edit</button></a>
-        <button class="btn btn-outline-danger btn-sm delete" id="{$row.id}">Delete</button></a>
-    </td>
-    </tr>
-    {/foreach}
-    <tr class="text-center">
-        <td colspan="7"><a href="/admin/users/add"><button class="btn btn-sm btn-success mb-2">Add User</button></a></td>
-    </tr>
-    </tbody>
-</table>
-</body>
-</html>
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 mt-3">Users</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <div class="float-sm-right">
+          <a href="/admin/users/add"><button class="btn btn-primary btn-sm mt-3">Add User</button></a>
+           </div>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm table-hover" id="usersTable">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Date of Joining</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Phone</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Locality</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
 {literal}
 <script>
-        $(".delete").click(function()
-        {
-          if(confirm('Are you sure?'))
-          {
+  $('div').on('click', 'button.delete', function () {
           var id = $(this).attr('id');
-            $.ajax({
-                url: "/admin/users/delete",
-                type: "POST",
-                dataType: "json",
-                data: {id:id},
-                success: function (result) {
-                  if(result.status == 1)
-                  {
-                    location.reload();
+          $.ajax({
+              url: "/admin/users/delete/",
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                  id: id
+              },
+              success: function (data) {
+                  if (data.status == 1) {
+                      window.location.href = "/admin/users/";
+                  } else {
+                      console.log(data.errors);
                   }
-                  else
-                  {
-                    console.log(result);
-                  }
+              }
+          });
+  });
+
+</script>
+
+<script>
+  $(document).ready(function () {
+      $('#usersTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/admin/users/userlist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'firstName',name: 'firstName'},
+              { data: 'joinDate',name: 'joinDate'},
+              { data: 'email',name: 'email'},
+              { data: 'phone', name: 'phone'},
+              { data: 'role', name: 'role'},
+              { data: 'designation', name: 'designation'},
+              { data: 'address', name: 'address'},
+              { data: 'id',name: 'id'}
+          ],
+          "aoColumnDefs": [
+           {
+                "aTargets": [8],
+                "mData": "id",
+                "mRender": function (data, type, full) {
+                    return '<a href="http://local.ems.com/admin/users/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
                 }
-            });
-          }
-        });
+            }
+         ]
+      });
+  });
 </script>
 {/literal}

@@ -30,7 +30,7 @@ class Models_Holiday extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            $time = date('dmY');
+            $time = time();
 
             $this->createdOn = $time;
             $this->updatedOn = $time;
@@ -50,7 +50,7 @@ class Models_Holiday extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            $time = date('dmY');
+            $time = time();
             $this->updatedOn = $time;
             $this->updatedBy = getLoggedInAdminId();
             return true;

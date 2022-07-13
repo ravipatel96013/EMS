@@ -4,12 +4,6 @@ class Admin_UsersController extends TinyPHP_Controller {
 	public function indexAction()
     {
 
-        $user = new Models_User();
-
-
-        $data = $user->fetchUsers();
-        $this->setViewVar('data',$data);
-
     }
 
 
@@ -132,6 +126,29 @@ class Admin_UsersController extends TinyPHP_Controller {
             $this->setViewVar('userRow',$userData);
         }
            
+    }
+
+    public function userlistAction()
+    {
+        $this->setNoRenderer(true);
+
+        global $db;
+        $dt = new TinyPHP_DataTable();
+	    $dt->setDBAdapter($db);
+        $dt->setTable('users AS u');
+        $dt->setIdColumn('u.id');
+
+        $dt->addColumns(array(
+            'id' => 'u.id',
+            'firstName' => 'u.firstName',
+            'joinDate' => 'u.joinDate',
+            'email' => 'u.email',
+            'phone' => 'u.phone',
+            'role' => 'u.role',
+            'designation' => 'u.designation',
+            'address' => 'u.address',
+        ));
+        $dt->getData();
     }
 
 }

@@ -148,12 +148,11 @@ class TinyPHP_DataTable
 	private function getDtColumns()
 	{
 		$this->dtColumns = $this->getVar('columns');
-
 		return $this->dtColumns;
 	}
 
 	private function getDtColumnsName()
-	{
+	{	
 
 		foreach($this->getDtColumns() as $key => $value)
 		{
@@ -161,7 +160,6 @@ class TinyPHP_DataTable
 			{
 				trigger_error('Please set \'name\' property of the column ('. $key .') in your javascript column definition of this column. Or set \'searchable\' false for this column', E_USER_ERROR);
 			}
-				
 			{
 				array_push($this->dtColumnsName, $value['name']);
 			}
@@ -182,7 +180,7 @@ class TinyPHP_DataTable
 
 	public function getData()
 	{
-
+		
 		$aColumns = $this->columns; // server side cols
 		$dataTableKeys = $this->getDtColumnsName();
 		$dtColumns = $this->getDtColumns() ; // client side's col
@@ -392,12 +390,12 @@ class TinyPHP_DataTable
 		}
 
 		$sQuery = "SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $fields)) ." FROM $sTable $sJoin $sWhere $sGroupBy $sHavingClause $sOrder $sLimit";
-
+	
 		//echo $sQuery;die;
 		$this->lastSQL = $sQuery;
 
 		//$result = $db->getAll($sQuery,DB_FETCHMODE_ASSOC);
-		$result = $db->fetchAll($sQuery,Zend_DB::FETCH_ASSOC);
+		$result = $db->fetchAll($sQuery,[],Zend_DB::FETCH_ASSOC);
 
 		$sQuery = "SELECT FOUND_ROWS()";
 		$this->totalFilteredRecords = $db->fetchOne($sQuery);
@@ -559,7 +557,8 @@ class TinyPHP_DataTable
 		$this->lastSQL = $sQuery;
 
 		$db =  $this->getDBAdapter();
-		$result = $db->fetchAll($sQuery,Zend_DB::FETCH_ASSOC);
+
+		$result = $db->fetchAll($sQuery, [], Zend_DB::FETCH_ASSOC);
 
 
 		$sQuery = "SELECT FOUND_ROWS()";

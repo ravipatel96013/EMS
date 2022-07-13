@@ -118,7 +118,6 @@ abstract class TinyPHP_ActiveRecord {
 
 	}
 
-
 	public function __get($property) 
 	{
 	    $value = null;
@@ -289,7 +288,6 @@ abstract class TinyPHP_ActiveRecord {
 	}
 
 	public function fetchByProperty($property, $property_value, $field_list = "*", $use_cache=true) {
-
 		$this->__currentAction = "init";
 
 		$where_clause = "";

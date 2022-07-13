@@ -29,7 +29,7 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            $time = date('dmY');
+            $time = time();
 
             $this->createdOn = $time;
             $this->actionTakenBy = getLoggedInAdminId();
@@ -47,7 +47,7 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            // $time = date('dmY');
+            // $time = time();
             // $this->updatedOn = $time;
             // $this->updatedBy = getLoggedInAdminId();
             // return true;
@@ -83,7 +83,7 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
        {
         $this->addError("Amount is Empty");
        }
-
+       
        if($this->type == "")
        {
         $this->addError("Type is Empty");
@@ -104,13 +104,16 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
         }
     }
 
-    public function fetchHoliday($id)
+    public function leaveTransaction($where='')
     {
         global $db;
 
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE id = '$id'";
-        $result = $db->fetchRow($sql);
-        return $result;
+        $sql = "SELECT * FROM `users`,`user_leave_balancesheet` WHERE users.id=user_leave_balancesheet.userId $where;";
+        $result = $db->fetchAll($sql);
+        if(!$result == '')
+        {
+            return $result;
+        }
     }
 
 }

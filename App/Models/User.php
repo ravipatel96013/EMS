@@ -251,5 +251,6 @@ class Models_User extends TinyPHP_ActiveRecord
         $result = $db->fetchRow($sql);
         return $result;
     }
+
 }
 ?>

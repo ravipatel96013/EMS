@@ -1,37 +1,45 @@
-<div class="w-50 col col-md-6 offset-md-3 mt-3 text-center">
-    <span class="display-6"> Holiday List</span>
-    <div>
-<table class="table table-sm mt-3">
-    <thead>
-      <tr>
-        <th scope="col">Holiday Name</th>
-        <th scope="col">Description</th>
-        <th scope="col">Date</th>
-        <th colspan="2" scope="col">Action</th>
-      </tr>
-    </thead>
-    <tbody>
-        {foreach from=$data item=row}
-      <tr>
-        <th scope="row">{$row.name}</th>
-        <td>{$row.description}</td>
-        <td>{$row.date}</td>
-        <td>
-          <a href="http://local.ems.com/admin/holidays/update?id={$row.id}"><button class="btn btn-outline-info btn-sm" >Edit</button></a>
-        <button class="btn btn-outline-danger btn-sm delete" id="{$row.id}">Delete</button>
-        </td>
-      </tr>
-      {/foreach}
-    </tbody>
-</table>
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 mt-3">Holiday List</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <div class="float-sm-right">
+          <button type="button" class="btn btn-primary btn-sm mt-3" data-toggle="modal" data-target="#addModal">Add Holiday</button>
+           </div>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
 </div>
-<!-- Button trigger modal -->  
-<div class="container">
-  <button type="button" class="btn btn-primary btn-sm" data-toggle="modal" data-target="#addModal">
-    Add Holidays
-  </button>  
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm mt-3" id="holidayTable">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Holiday Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>          
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
 </div>
-  <!--  Button trigger modal End -->
       <!--Model-->
       <form method="post" id="addHoliday">
       <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -45,9 +53,9 @@
               <div class="row">
               <label class="col-md-3 offset-md-1"><b>Name</b></label>
               <input type="text" name="name" class="form-control form-control-sm col-md-6">
-            </div>
+          </div>
 
-            <div class="row mt-4">
+            <div class="row mt-3">
               <label class="col-md-3 offset-md-1"><b>Date</b></label>
               <input type="date" name="date" class="form-control form-control-sm col-md-6">
             </div>
@@ -72,26 +80,55 @@
 </div>
 {literal}
 <script>
-        $(".delete").click(function()
-        {
-          var id = $(this).attr('id');
-            $.ajax({
-                url: "/admin/holidays/delete",
-                type: "POST",
-                dataType: "json",
-                data: {id:id},
-                success: function (result) {
-                  if(result.status == 1)
-                  {
-                    location.reload();
-                  }
-                  else
-                  {
-                    console.log(result);
-                  }
+  $(document).ready(function () {
+      $('#holidayTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/admin/holidays/holidaylist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'name',name: 'name'},
+              { data: 'description',name: 'description'},
+              { data: 'date',name: 'date'},
+              { data: 'id', name: 'id'}
+          ],
+          "aoColumnDefs": [
+           {
+                "aTargets": [4],
+                "mData": "id",
+                "mRender": function (data, type, full) {
+                    return '<a href="http://local.ems.com/admin/holidays/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
                 }
-            });
-        });
+            }
+         ]
+      });
+  });
+</script>
+<script>
+
+  $('div').on('click', 'button.delete', function () {
+          var id = $(this).attr('id');
+          $.ajax({
+              url: "/admin/holidays/delete/",
+              type: 'POST',
+              dataType: 'json',
+              data: {
+                  id: id
+              },
+              success: function (data) {
+                  if (data.status == 1) {
+
+                      window.location.href = "/admin/holidays/";
+                  } else {
+                      console.log(data.errors);
+                  }
+              }
+          });
+  });
+
 </script>
 
 <script>
@@ -116,4 +153,5 @@
       });
   });
 </script>
+
 {/literal}
