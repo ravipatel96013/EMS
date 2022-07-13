@@ -70,20 +70,46 @@ class App_IndexController extends TinyPHP_Controller {
         $errors = [];
 
 		$attd = new Models_Attendance();
+		$break = new Models_BreakLog();
 		$row = $attd->getRow();
-		$CheckedIn = $row['checkInDateTime'];
-		$CheckedOut = $row['checkOutDateTime'];
-		if($CheckedIn && $CheckedOut)
+		$breakRow = $break->getRow($row['id']);
+	
+		if(!$breakRow == NULL)
 		{
-			$status = 1; // Disable both button
+			if(!$row['checkOutDateTime'] == NULL)
+			{
+				$status = 1;
+			}
+			else{
+				if(!$row['checkInDateTime'] == NULL)
+				{
+					if($breakRow['endTime'] == NULL)
+					{
+						$status = 3;
+					}
+					else{
+						$status = 4;
+					}
+				}
+				else{
+					$status = 2;
+				}
+			}
 		}
-		elseif($CheckedIn == NULL)
-		{
-			$status = 2; // Show check-in button 
-		}
-		else
-		{
-			$status = 3; // Show check-out button
+		else {
+			if(!$row['checkOutDateTime'] == NULL)
+			{
+				$status = 1;
+			}
+			else{
+				if(!$row['checkInDateTime'] == NULL)
+				{
+					$status = 4;
+				}
+				else{
+					$status = 2;
+				}
+			}
 		}
 		$response = ["status" => $status, "errors" => $errors];
 		echo json_encode($response);
@@ -95,14 +121,50 @@ class App_IndexController extends TinyPHP_Controller {
 		$status = 0;
         $errors = [];
 
-		$attd = new Models_Attendance()
-		$rowId = $attd->getRowId();
-		if(!$isCheckedIn)
+		$attd = new Models_Attendance();
+		$row = $attd->getRow();
+		if(!$row['checkInDateTime'] == NULL)
 		{
-			$attendance = new Models_Attendance($rowId['id']);
-			$attendance->checkInDateTime = date('Y-m-d H:i:s');
-			$attendance->status = 'P';
-			$isUpdated = $attendance->update(array('checkInDateTime','updatedOn','status'));
+			$bl = new Models_BreakLog;
+			$bl->attendanceId = $row['id'];
+			$bl->startTime = date('Y-m-d H:i:s');
+			$isCreated = $bl->create();
+
+			if($isCreated)
+			{
+				$status = 1;
+			}
+			else
+			{
+				$bl->getErrors();
+			}
+			$response = ["status" => $status, "errors" => $errors];
+            echo json_encode($response);
+            die; 
+		}
+
+    }
+
+	public function endbreakAction()
+    {
+		$status = 0;
+        $errors = [];
+
+		$attd = new Models_Attendance();
+		$row = $attd->getRow();
+		$attendanceId = $row['id'];
+		$break = new Models_BreakLog();
+		$breakRow = $break->getRow($attendanceId);
+		$updateId = $breakRow['id'];
+		if($breakRow['endTime'] == NULL)
+		{
+			$bl = new Models_BreakLog($updateId);
+			$bl->endTime = date('Y-m-d H:i:s');
+			$to_time = strtotime($breakRow['startTime']);
+			$from_time = strtotime(date('Y-m-d H:i:s'));
+			$totalMinutes = round(abs($to_time - $from_time) / 60,2);
+			$bl->totalMinutes = $totalMinutes;
+			$isUpdated = $bl->update(array('endTime','totalMinutes'));
 
 			if($isUpdated)
 			{
@@ -110,7 +172,7 @@ class App_IndexController extends TinyPHP_Controller {
 			}
 			else
 			{
-				$attendance->getErrors();
+				$bl->getErrors();
 			}
 			$response = ["status" => $status, "errors" => $errors];
             echo json_encode($response);

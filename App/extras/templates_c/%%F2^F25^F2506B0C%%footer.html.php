@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.31, created on 2022-07-13 10:04:26
+<?php /* Smarty version 2.6.31, created on 2022-07-13 16:59:30
          compiled from ../views/partials/footer.html */ ?>
 <!-- Footer -->
 <footer class="text-center text-lg-start bg-light text-muted">

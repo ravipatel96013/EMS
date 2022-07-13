@@ -36,7 +36,8 @@ if ($_SERVER['HTTP_HOST'] ==  'local.ems.com') {
     // Errors / ENV Configuration
     define('ENV', "development");
     ini_set('display_errors', "On");
-    error_reporting(E_ERROR | E_WARNING | E_PARSE);
+   error_reporting(E_ERROR | E_WARNING | E_PARSE);
+ 
 } else {
     /**
      * production/live env block!! 

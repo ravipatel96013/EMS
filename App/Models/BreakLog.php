@@ -27,6 +27,8 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
+            $this->endTime = NULL;
+			$this->totalMinutes = NULL;
             return true;
         }
         else
@@ -78,15 +80,21 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
         }
     }
 
-    // public function getRow()
-    // {
-    //     global $db;
-    //     $today = date("Y-m-d");
-    //     $loggedInUserId = getLoggedInUserId();
+    public function getRow($attendanceId)
+    {
+        global $db;
 
-    //     $sql = "SELECT * FROM ". $this->tableName ." WHERE userId = $loggedInUserId AND date = '$today'";
-    //     $result = $db->fetchRow($sql);   
-    //     return $result;
-    // }
+        $sql = "SELECT * FROM ". $this->tableName ." WHERE attendanceId = $attendanceId ORDER BY id DESC";
+        $result = $db->fetchRow($sql);
+        if($result)
+        {
+            return $result;
+        }
+        else
+        {
+            $this->addError("Does not exist");
+        }
+    }
+
 }
 ?>

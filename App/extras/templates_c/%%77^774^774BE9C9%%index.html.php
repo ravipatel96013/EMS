@@ -1,4 +1,4 @@
-<?php /* Smarty version 2.6.31, created on 2022-07-13 10:04:26
+<?php /* Smarty version 2.6.31, created on 2022-07-13 16:59:30
          compiled from index.html */ ?>
 <div class="container">
   <div class="d-flex justify-content-center">
@@ -26,6 +26,11 @@
           document.getElementById("button").innerHTML =
             "<button type=\'button\' class=\'col-sm-3 btn btn-block bg-gradient-success btn-lg\' onclick=\'doCheckIn()\' id=\'checkin\'>Check-in</button>";
         } else if (response.status == 3) {
+          document.getElementById("breakButton").innerHTML = 
+          "<button type=\'button\' onclick=\'endBreak()\' class=\'col-sm-2 btn btn-block btn-danger\'>End Break</button>";
+        }
+        else if(response.status == 4)
+        {
           document.getElementById("button").innerHTML =
             "<button type=\'button\' class=\'col-sm-3 btn btn-block bg-gradient-danger btn-lg\' onclick=\'doCheckOut()\' id=\'checkout\'>Check-out</button>";
           document.getElementById("breakButton").innerHTML = 
@@ -80,7 +85,25 @@
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedOut Successfully");
+          alert("You Break Started");
+          location.reload();
+        } else {
+          consol.log(response.errors);
+        }
+      },
+    });
+  }
+</script>
+
+<script>
+  function endBreak() {
+    $.ajax({
+      url: "/app/index/endbreak",
+      type: "POST",
+      dataType: "json",
+      success: function (response) {
+        if (response.status == 1) {
+          alert("Break Ended");
           location.reload();
         } else {
           consol.log(response.errors);
