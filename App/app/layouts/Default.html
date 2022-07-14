@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <title>
-      {if $page_title eq ""}TinyPHP{else}TinyPHP | {$page_title} {/if}
+      {if isset($page_title) && $page_title neq ""}TinyPHP | {$page_title}{else}TinyPHP{/if}
     </title>
     <meta name="description" content="" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -19,7 +19,6 @@
       rel="stylesheet"
       href="/assets/css/fontawesome-free-6.1.1-web/css/all.min.css"
     />
-
     <link rel="stylesheet" href="/assets/css/adminlte.min.css" />
     <link rel="stylesheet" href="/assets/css/icheck-bootstrap.min.css" />
     <link

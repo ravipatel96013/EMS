@@ -42,9 +42,9 @@ abstract class TinyPHP_Controller
 		$this->_view->setViewVar($this->pageTitleKey, $_title);
 	}
 	
-	final public function setBreadcrumb(array $bradcrumb)
+	final public function setBreadcrumb(array $breadcrumbs)
 	{
-	    $this->_view->setViewVar('breadcrumb', $bradcrumb);
+	    $this->_view->setViewVar('breadcrumbs', $breadcrumbs);
 	}
 	
 	final public function setPageHeading($heading)
@@ -62,9 +62,28 @@ abstract class TinyPHP_Controller
 		$this->_view->setViewVar($this->metaDescKey, $_description);
 	}
 	
+	final public function setBodyClasses($classes)
+	{
+	    $_classes = $classes;
+	    if( is_array($classes) && count($classes) > 0 )
+	    {
+	        $_classes = implode(" ", $classes);
+	    }
+	    
+	    if( $_classes ) {
+	        $this->_view->setViewVar('bodyClasses', $_classes);
+	    }
+	    
+	}
+	
 	final public function setNoRenderer($_noRenderer)
 	{
 		TinyPHP_Front::getInstance()->setNoRenderer($_noRenderer);
+	}
+	
+	final public function hideBreadcrumb()
+	{
+	    $this->_view->setViewVar('hideBreadcrumbs', true);
 	}
 
 	final public function disableHeader()
@@ -208,9 +227,12 @@ abstract class TinyPHP_Controller
 		
 	}
 	
-	
-
-
+	final public function setJsonResponse($response)
+	{
+	    header('Content-type: application/json');
+	    echo json_encode($response);
+	    exit;
+	}
 
 }
 ?>

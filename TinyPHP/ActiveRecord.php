@@ -118,6 +118,7 @@ abstract class TinyPHP_ActiveRecord {
 
 	}
 
+
 	public function __get($property) 
 	{
 	    $value = null;
@@ -222,21 +223,36 @@ abstract class TinyPHP_ActiveRecord {
 
 
 
-		if (count($fields) == 0) {
+		if (count($fields) == 0) 
+		{
 			$objectVars = get_object_vars($this);
-			foreach ($objectVars as $key => $val) {
-				if (!in_array($key, $this->ignoreFieldList)) {
-
-					if (!is_null($this->{$key})) {
-						$field_values[$key] = stripslashes($this->{$key});
+			foreach ($objectVars as $key => $val) 
+			{
+				if (!in_array($key, $this->ignoreFieldList)) 
+				{
+					if (is_null($this->{$key})) 
+					{
+					    $field_values[$key] = $this->{$key};
+					}
+					else
+					{
+					    $field_values[$key] = stripslashes($this->{$key});
 					}
 				}
 			}
 		} else {
 			if(is_array($fields))
 			{
-				foreach ($fields as $val) {
-					$field_values[$val] = stripslashes($this->{$val});
+				foreach ($fields as $val) 
+				{
+				    if (is_null($this->{$val}))
+				    {
+				        $field_values[$val] = $this->{$val};
+				    }
+				    else
+				    {
+				        $field_values[$val] = stripslashes($this->{$val});
+				    }
 				}
 			}
 		}
@@ -288,6 +304,7 @@ abstract class TinyPHP_ActiveRecord {
 	}
 
 	public function fetchByProperty($property, $property_value, $field_list = "*", $use_cache=true) {
+
 		$this->__currentAction = "init";
 
 		$where_clause = "";

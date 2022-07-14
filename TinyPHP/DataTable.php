@@ -24,7 +24,6 @@ class TinyPHP_DataTable
 	private $dtColumnsName = array();
 	private $dtColumnsCount;
 
-        private $overriddenOrderByFields = array();
 
 	/*
 	 * For server side data (Which we are using in controllers file to set the data)
@@ -121,10 +120,10 @@ class TinyPHP_DataTable
 		}
 	}
 
-        /* This method is use to set order by when datatable default ordering is false*/
-	public function overrideOrderByField($colName, $order='ASC')
+
+	public function overrideOrderByField($colIndex,$field)
 	{
-		$this->overriddenOrderByFields[$colName] = $order;
+		$this->overriddenOrderByFields[$colIndex] = $field;
 	}
 
 	public function registerRowProcessor($_callable)
@@ -148,11 +147,12 @@ class TinyPHP_DataTable
 	private function getDtColumns()
 	{
 		$this->dtColumns = $this->getVar('columns');
+
 		return $this->dtColumns;
 	}
 
 	private function getDtColumnsName()
-	{	
+	{
 
 		foreach($this->getDtColumns() as $key => $value)
 		{
@@ -160,6 +160,7 @@ class TinyPHP_DataTable
 			{
 				trigger_error('Please set \'name\' property of the column ('. $key .') in your javascript column definition of this column. Or set \'searchable\' false for this column', E_USER_ERROR);
 			}
+				
 			{
 				array_push($this->dtColumnsName, $value['name']);
 			}
@@ -180,7 +181,7 @@ class TinyPHP_DataTable
 
 	public function getData()
 	{
-		
+
 		$aColumns = $this->columns; // server side cols
 		$dataTableKeys = $this->getDtColumnsName();
 		$dtColumns = $this->getDtColumns() ; // client side's col
@@ -198,14 +199,17 @@ class TinyPHP_DataTable
 
 		//ordering
 		$sOrder = "";
-		$order = $this->getVar('order');     
-                
-               
+
+		$order = $this->getVar('order');
 		if(!empty($order))
 		{
 			$sOrder = "ORDER BY  ";
-			
-			foreach ($order as $key => $value)
+			$iSortingCols = $this->getVar('order');
+
+			$iSortingCols = (empty($iSortingCols))?0:$iSortingCols;
+				
+
+			foreach ($iSortingCols as $key => $value)
 			{
 				if ($dtColumns[$value['column']]['orderable'] == "true" )
 				{
@@ -226,24 +230,6 @@ class TinyPHP_DataTable
 				$sOrder = "";
 			}
 		}
-                elseif(!empty($this->overriddenOrderByFields)){
-                    
-                    $sOrder = "ORDER BY  ";
-			
-                    foreach ($this->overriddenOrderByFields as $key => $value)
-                    {
-                        if(isset($aColumns[$key]))
-                        {
-                            $sOrder .= $aColumns[$key]." ". $value .", ";
-                        }
-                    }
-
-                    $sOrder = rtrim( $sOrder, ", ");
-                    if ( $sOrder == "ORDER BY" )
-                    {
-                            $sOrder = "";
-                    }
-                }
 
 
 		//filtering
@@ -390,12 +376,12 @@ class TinyPHP_DataTable
 		}
 
 		$sQuery = "SELECT SQL_CALC_FOUND_ROWS ".str_replace(" , ", " ", implode(", ", $fields)) ." FROM $sTable $sJoin $sWhere $sGroupBy $sHavingClause $sOrder $sLimit";
-	
+
 		//echo $sQuery;die;
 		$this->lastSQL = $sQuery;
 
 		//$result = $db->getAll($sQuery,DB_FETCHMODE_ASSOC);
-		$result = $db->fetchAll($sQuery,[],Zend_DB::FETCH_ASSOC);
+		$result = $db->fetchAll($sQuery, [], Zend_DB::FETCH_ASSOC);
 
 		$sQuery = "SELECT FOUND_ROWS()";
 		$this->totalFilteredRecords = $db->fetchOne($sQuery);
@@ -557,7 +543,6 @@ class TinyPHP_DataTable
 		$this->lastSQL = $sQuery;
 
 		$db =  $this->getDBAdapter();
-
 		$result = $db->fetchAll($sQuery, [], Zend_DB::FETCH_ASSOC);
 
 

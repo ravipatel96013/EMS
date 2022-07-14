@@ -41,6 +41,7 @@
     {
         $id = getLoggedInAdminId();
         $obj = new Models_User($id);
+
         return $obj; 
     }
 

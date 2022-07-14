@@ -152,7 +152,7 @@ class TinyPHP_Front {
 		
 		self::$_requestObj->setupRequest(array_keys($this->directories), $_extraParams, $this->reroute);
 
-	
+		
 		/* module name */
 		$moduleName = (empty($_moduleName)) ? self::$_requestObj->getModuleName() : $_moduleName;
 		
@@ -204,7 +204,7 @@ class TinyPHP_Front {
 
 		try {
 			
-			if($this->dbConnectAttempt === 0 && DB_HOST !='' && DB_UNAME != '' )
+			if($this->dbConnectAttempt === 0 && DB_HOST !='' && DB_UNAME != '' && DB_PWD != '')
             {		
             
                 $this->dbConnectAttempt =  1;					
@@ -332,9 +332,8 @@ class TinyPHP_Front {
 						}
 						else
 						{
-                                                    $this->reroute = true;
-                                                    $this->dispatch("Default", "error", "pagenotfound", array());
-						 	//trigger_error("Required Action ($actionName) not found in controller class $controllerClassName", E_USER_ERROR);
+							$this->reroute = true;
+                            $this->dispatch("{$moduleName}", "pagenotfound", "index", array());
 						}
 					}
 					
@@ -354,11 +353,8 @@ class TinyPHP_Front {
 				}
 				else
 				{
-				    
 				    $this->reroute = true;
-				    $this->dispatch("Default", "error", "pagenotfound", array());
-				    
-					//trigger_error("Required Controller1 ($bareControllerClassName) not found at {$this->currentControllerDir}", E_USER_ERROR);
+				    $this->dispatch("{$moduleName}", "pagenotfound", "index", array());
 				}
 
 			}

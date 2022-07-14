@@ -358,66 +358,77 @@ class TinyPHP_Request
 			$pathParts = explode("/", $path);
 			$this->uriParts = $pathParts;
 		}
-
-
-
-		//get module dir
-		$step = 0;
-		$this->moduleName = (isset($pathParts[$step])) ? $pathParts[$step] : "";
-		if (in_array($this->moduleName, $modules)) {
-			$this->moduleName = $pathParts[$step++];
-		} else {
-			$this->moduleName = "Default";
-		}
-
-		//get controller dir
-		$this->controllerName = (isset($pathParts[$step])) ? $pathParts[$step++] : "index";
-
-		//get action
-		$this->actionName = (isset($pathParts[$step])) ? $pathParts[$step++] : "index";
-
-		//params
-		$params = array_slice($pathParts, $step);
-		$paramVars = array();
-
-		if (!empty($params)) {
-			$i = 0;
-			while ($i < count($params)) {
-				if ($params[$i] != "") {
-					$paramVars[$params[$i]] = (isset($params[$i + 1])) ? $params[++$i] : "";
-				}
-				$i++;
-			}
-		}
-                
-                //headers
-                $this->headers = getallheaders();
-
-		//extra parameters that may be supplied by forward action
-		if(is_array($_extraParams))
+        
+		
+		$route = false;
+		if( $this->uriParts )
 		{
-			foreach($_extraParams as $key=>$val)
-			{
-				$paramVars[$key] = $val;
-			}
+		    // Give first priority to overwritten urls
+		    $router = TinyPHP_Router::getInstance();
+		    $route = $router->matchRoute($this->uriParts);
 		}
-		$this->setParams($paramVars);
-
-		//routing
-		if($_routing)
+		
+		
+		if( $route !== FALSE || $_routing )
 		{
-			$router = TinyPHP_Router::getInstance();
-			$route = $router->matchRoute($this->uriParts);
-			if ($route !== FALSE) {
-				$router->convertRoute($route, $this);
-			}
+		    // routing
+		    if ( $route !== FALSE ) {
+                $router->convertRoute($route, $this);
+		    }
+	        
+	        $paramVars = $this->getParams();
+	        if (!empty($paramVars)) {
+	            array_walk_recursive($paramVars, array($this, 'doSanitization'));
+	        }
+            
+	        $this->setParams($paramVars);
+		}
+		else
+		{
+		    //get module dir
+		    $step = 0;
+		    $this->moduleName = (isset($pathParts[$step])) ? $pathParts[$step] : "";
+		    if (in_array($this->moduleName, $modules)) {
+		        $this->moduleName = $pathParts[$step++];
+		    } else {
+		        $this->moduleName = "Default";
+		    }
+		    
+		    //get controller dir
+		    $this->controllerName = (isset($pathParts[$step])) ? $pathParts[$step++] : "index";
+		    
+		    //get action
+		    $this->actionName = (isset($pathParts[$step])) ? $pathParts[$step++] : "index";
+		    
+		    //params
+		    $params = array_slice($pathParts, $step);
+		    $paramVars = array();
+		    
+		    if (!empty($params)) {
+		        $i = 0;
+		        while ($i < count($params)) {
+		            if ($params[$i] != "") {
+		                $paramVars[$params[$i]] = (isset($params[$i + 1])) ? $params[++$i] : "";
+		            }
+		            $i++;
+		        }
+		    }
+		    
+		    //extra parameters that may be supplied by forward action
+		    if(is_array($_extraParams))
+		    {
+		        foreach($_extraParams as $key=>$val)
+		        {
+		            $paramVars[$key] = $val;
+		        }
+		    }
+		    $this->setParams($paramVars);
+		    
+		}
+		
+        // headers
+        $this->headers = getallheaders();
 
-			$paramVars = $this->getParams();
-			if (!empty($paramVars))
-				array_walk_recursive($paramVars, array($this, 'doSanitization'));
-			$this->setParams($paramVars);
-			
-		}	//end routing
 	}
 
 	public function sanitizeRequest() {
