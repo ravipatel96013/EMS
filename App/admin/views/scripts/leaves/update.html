@@ -17,12 +17,12 @@
 
         <div class="row mt-4">
           <label class="col-md-4"><b>From</b></label>:
-          <span class="col-md-4">{$dataRow.startDate|date_format:'%Y-%m-%d'}</span>
+          <span class="col-md-4">{$dataRow.startDate|date_format:'Y-m-d'}</span>
         </div>
 
         <div class="row mt-4">
           <label class="col-md-4"><b>To</b></label>:
-          <span class="col-md-4">{$dataRow.endDate|date_format:'%Y-%m-%d'}</span>
+          <span class="col-md-4">{$dataRow.endDate|date_format:'Y-m-d'}</span>
         </div>
 
         <div class="row mt-4">
@@ -37,7 +37,7 @@
 
         <div class="row mt-4">
           <label class="col-md-4"><b>Status</b></label>:
-          <select name="status" class="form-control form-control-sm col-md-4 mb-3 ml-3">
+          <select name="status" class="form-control form-control-sm col-md-4 mb-3 ml-2">
             <option value="0">Pending</option>
             <option value="1">Approved</option>
             <option value="2">Rejected</option>

@@ -22,7 +22,7 @@ class App_LeaveBalancesheetController extends TinyPHP_Controller {
             'type' => 'l.type',
             'description' => 'l.description',
             'actionby' => 'l.actionTakenBy',
-            'date' => 'DATE_FORMAT(FROM_UNIXTIME(l.createdOn), "%m-%d-%Y")'
+            'date' => 'DATE_FORMAT(FROM_UNIXTIME(l.createdOn), "%m-%d-%Y %h:%i")'
         ));
 
 		$loggedInUserId = getLoggedInUserId();

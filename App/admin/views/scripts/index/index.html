@@ -1,2 +1,451 @@
-<center>
-<h1 class="display-6 mb-4">Admin Dashboard</h1>
+<div class="container">
+    <div id="dashboard">
+
+        <div class="content-header">
+            <div class="container">
+              <div class="row mb-2">
+                <div class="col-sm-6">
+                  <h1 class="m-0">Dashboard</small></h1>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="row" id="top_blocks">
+            <div class="col-sm-4">
+              <div class="card">
+              <div class="card-header">
+                <h3 id="currentTime"></h3>
+              </div>
+                <div class="card-body d-flex justify-content-center">
+                  <div class="row row-cols-1">
+                    <div class="col">
+                      {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-lg">CheckOut</button>{/if}
+                        {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-lg">CheckIn</button>{/if}
+                          {if $completed eq true}<h4>Done For the day</h4>{/if}
+                      </div>
+                  </div>
+                </div>
+            </div>
+            </div>
+          
+            <div class="col-sm-4">
+              <div class="card">
+              <div class="card-header">
+                <h3>Break</h3>
+              </div>
+                <div class="card-body d-flex justify-content-center">
+                  <div class="row row-cols-1">
+                    <div class="col">
+                      {if $startBreakButton eq true}<button type="button" onclick="startBreak()" class="btn btn-block bg-gradient-success btn-lg">Start Break</button>{/if}
+                      {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-lg">End Break</button>{/if}
+                    </div>
+                    <div class="col d-flex justify-content-center mt-2">
+                    <h4 id="hours">{$breakHours}:</h4>
+                    <h4 id="mins">{$breakMinutes}:</h4>
+                    <h4 id="seconds">00</h4>
+                  </div>
+                  </div>
+                </div>
+            </div>
+            </div>
+          
+            <div class="col-sm-4">
+              <div class="card">
+                <div class="card-header"><h3>Working Days</h3></div>
+                <div class="card-body">
+                  <ul class="list-group list-group-flush">
+                    <li class="list-group-item"><h6><b>Present Days : </b>{$presentDays}</h6></li>
+                    <li class="list-group-item"><h6><b>Leave Balance : </b>1</h6></li>
+                  </ul>
+                  <div class="card-header"><h3>Upcoming Holidays</h3></div>
+                  <ul class="list-group list-group-flush">
+                  {foreach from=$upComingHolidays item=row}
+                  <li class="list-group-item"><h6><b>{$row.name}</b></h6><div>{$row.date}</div></li>
+                  {/foreach}
+                </ul>
+                  </div>
+                </div>
+            </div>
+            </div>
+
+            <div class="card">
+              <div class="card-body" id="filters">
+                <div class="row">
+                <div class="col-sm-1">
+                   <label>User</label>
+                   </div>
+                   <div class="col-sm-2">
+                   <select name="user" class="form-control" id="user">
+                     {foreach from=$users item=user}
+                     <option value="{$user->id}" {if $selectedUser eq $user->id}selected{/if}>{$user->firstName}&nbsp;{$user->lastName}</option>
+                     {/foreach}
+                   </select>
+                 </div>
+                 <div class="col-sm-1">
+                   <label>Month</label>
+                   </div>
+                   <div class="col-sm-1">
+                   <select name="month" class="form-control" id="month">
+                     {foreach item=i from=1|@range:12} 
+                     <option value="{$i}" {if $selectedMonth eq $i}selected{/if}>{$i}</option>
+                     {/foreach}
+                    </select>
+                  </div>
+                  <div class="col-sm-1">
+                    <label>Year</label>
+                  </div>
+                  <div class="col-sm-1">
+                    <select name="month" class="form-control" id="year">
+                      {foreach item=i from=2022|@range:$currentYear+1}
+                      <option value="{$i}" {if $selectedYear eq $i}selected{/if}>{$i}</option>
+                      {/foreach}
+                    </select>
+                  </div>
+                </div>
+                </div>
+            </div>
+            
+
+            <div class="row" id="attendanceTable">
+                <div class="col-sm-12">
+                    <div class="card">
+                        <div class="card-header">
+                            <h3>Attendance Table</h3>
+                        </div>
+                        <div class="card-body">
+                            <div class="row">
+                                <table class="table table-hover" id="attendance">
+                                  <thead>
+                                    <tr>
+                                      <th scope="col">Id</th>
+                                      <th scope="col">Date</th>
+                                      <th scope="col">Check-in</th>
+                                      <th scope="col">Check-out</th>
+                                      <th scope="col">Break Time(Minutes)</th>
+                                      <th scope="col">Status</th>
+                                    </tr>
+                                  </thead>
+                                  <tbody>
+                      
+                                  </tbody>
+                                </table>
+                              </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+    </div>
+</div>
+      <!--Model-->
+      <div class="modal fade" id="editAttendance" tabindex="-1" role="dialog" aria-hidden="true">
+          <form method="post" id="editAttendance">
+          <div class="modal-dialog" role="document">
+            <div class="modal-content">
+              <div class="modal-header text-white" style="background-color: #007bff;">
+                <h5 class="modal-title">Edit Attendance</h5>
+              </div>
+              <div class="modal-body text-left">
+  
+                <div class="row">
+                  <input type="hidden" id="id" name="id">
+                <label class="col-md-3 offset-md-1"><b>Date</b></label>
+                <input type="text" id="date" name="date" class="form-control form-control-sm col-md-6" disabled>
+            </div>
+  
+              <div class="row mt-3">
+                <label class="col-md-3 offset-md-1"><b>Check-in</b></label>
+                <input type="text" id="checkIn" name="checkIn" class="form-control form-control-sm col-md-6">
+              </div>
+  
+              <div class="row mt-3">
+                <label class="col-md-3 offset-md-1"><b>Check-out</b></label>
+                <input type="text" id="checkOut" name="checkOut" class="form-control form-control-sm col-md-6">
+              </div>
+
+              <div class="row mt-3">
+                <label class="col-md-3 offset-md-1"><b>Break Time(Min.)</b></label>
+                <input type="number" id="breakTime" name="breakTime" class="form-control form-control-sm col-md-6" disabled>
+              </div>
+
+              <div class="row mt-3">
+                <label class="col-md-3 offset-md-1"><b>Productive Hours</b></label>
+                <input type="number" id="productiveHours" name="productiveHours" class="form-control form-control-sm col-md-6" disabled>
+              </div>
+
+              <div class="row mt-3">
+                <label class="col-md-3 offset-md-1"><b>Status</b></label>
+                <select name="status" id="status" class="form-control form-control-sm col-md-6">
+                  <option>P</option>
+                  <option>PL</option>
+                  <option>UL</option>
+                  <option>HPL</option>
+                  <option>HUL</option>
+                  </select>
+              </div>
+
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary edit">Save</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </form>
+        <!-- Model End -->
+{literal}
+<script>
+       $(".edit").click(function()
+        {
+            var data = $("form#editAttendance").serializeArray();
+            $.ajax({
+                url: "/admin/index/update/",
+                type: "POST",
+                dataType: "json",
+                data: data, 
+                success: function (result) {
+                  if(result.status == 1)
+                  {
+                    window.location.href = "/admin";
+                  }
+                  else
+                  {
+                    console.log(result.errors);
+                  }
+                }
+            });
+        });
+</script>
+
+<script>
+  function doCheckIn() {
+    $.ajax({
+      url: "/admin/index/checkin",
+      type: "POST",
+      dataType: "json",
+      success: function (response) {
+        if (response.status == 1) {
+          alert("You CheckedIn Successfully");
+          location.reload();
+        } else {
+          consol.log(response.errors);
+        }
+      },
+    });
+  }
+</script>
+
+<script>
+  function doCheckOut() {
+    $.ajax({
+      url: "/admin/index/checkout",
+      type: "POST",
+      dataType: "json",
+      success: function (response) {
+        if (response.status == 1) {
+          alert("You CheckedOut Successfully");
+          location.reload();
+        } else {
+          consol.log(response.errors);
+        }
+      },
+    });
+  }
+</script>
+
+<script>
+  function startBreak() {
+    $.ajax({
+      url: "/admin/index/startbreak",
+      type: "POST",
+      dataType: "json",
+      success: function (response) {
+        if (response.status == 1) {
+          alert("You Break Started");
+          location.reload();
+          startTimer();
+        } else {
+          consol.log(response.errors);
+        }
+      },
+    });
+  }
+</script>
+
+<script>
+  function endBreak() {
+    $.ajax({
+      url: "/admin/index/endbreak",
+      type: "POST",
+      dataType: "json",
+      success: function (response) {
+        if (response.status == 1) {
+          alert("Break Ended");
+          location.reload();
+        } else {
+          consol.log(response.errors);
+        }
+      },
+    });
+  }
+</script>
+
+<script>
+    jQuery(document).ready(function (){
+      clock();
+    function clock() {
+      var now = new Date();
+      var TwentyFourHour = now.getHours();
+      var hour = now.getHours();
+      var min = now.getMinutes();
+      var sec = now.getSeconds();
+      var mid = "pm";
+      if (min < 10) {
+        min = "0" + min;
+      }
+      if (hour > 12) {
+        hour = hour - 12;
+      }
+      if (hour == 0) {
+        hour = 12;
+      }
+      if (TwentyFourHour < 12) {
+        mid = "am";
+      }
+      document.getElementById("currentTime").innerHTML =
+        hour + ":" + min + ":" + sec + " " + mid;
+      setTimeout(clock, 1000);
+    }
+
+    attendanceTable = $('#attendance').DataTable({
+          serverSide: true,
+          pageLength: 31,
+          "ajax": {
+              url: '/admin/index/getattendance',
+              type: "GET",
+              dataType: "json",
+              data : function(data){
+                data.month = $("#month").val();
+                data.year = $("#year").val();
+                data.user = $("#user").val();
+              }
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'date',name: 'date'},
+              { data: 'checkInDateTime',
+                name: 'checkInDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+              { data: 'checkOutDateTime',
+                name: 'checkOutDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+              { data: 'totalMinutes',
+                name: 'totalMinutes',
+                defaultContent: "<i>00</i>"
+              },
+              { 
+                data: 'status',
+                name: 'status',
+                "render": function(data, type, row, meta){
+                  
+                  console.log(row);
+
+                  if(type === 'display'){
+                    data = '<a class="editLink" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
+                  }
+                  return data;
+                }
+              }
+            ]
+        });
+    });
+</script>
+
+<script>
+$("#editAttendance").on('show.bs.modal', function(event){
+    var button = $(event.relatedTarget);           
+    var id = button.data('id');
+    $.ajax({
+      url: "/admin/index/getinfo",
+      type: "POST",
+      dataType: "json",
+      data:{id:id},
+      success: function (data) {
+      // var checkInTime = data.checkInDateTime;
+      // var checkOutTime = data.checkOutDateTime;
+      var productiveTime = data.productiveTime;
+      var productiveHours = (productiveTime/60).toFixed(2);
+      
+      //alert(productiveHours);
+      $('#id').val(data.id);
+      $('#date').val(data.date);
+      $('#checkIn').val(data.checkInDateTime);
+      $('#checkOut').val(data.checkOutDateTime);
+      $('#breakTime').val(data.breakTime);
+      $('#productiveHours').val(productiveHours);
+      $('#status').val(data.status);
+
+      },
+    });
+            });
+</script>
+
+<script>
+    $('select#month').change(function() {
+      window.location.href = 'http://local.ems.com/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
+      });
+    $('select#year').change(function() {
+      window.location.href = 'http://local.ems.com/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
+    });
+    $('select#user').change(function() {
+      window.location.href = 'http://local.ems.com/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
+    });
+</script>
+
+<script>
+
+  hours = {/literal}{$breakHours}{literal};
+  mins = {/literal}{$breakMinutes}{literal};
+  seconds = 0;
+
+
+$("#hours").text(hours+':');
+$("#mins").text(mins+':');
+$("#seconds").text(seconds);
+
+
+function startTimer(){
+  timex = setInterval(function(){
+      seconds++;
+    if(seconds >59){seconds=0;mins++;
+       if(mins>59) {
+       mins=0;hours++;
+         if(hours <10) {$("#hours").text('0'+hours+':')} else $("#hours").text(hours+':');
+        }          
+    if(mins<10){                     
+      $("#mins").text('0'+mins+':');}       
+       else $("#mins").text(mins+':');
+                   }    
+    if(seconds <10) {
+      $("#seconds").text('0'+seconds);} else {
+      $("#seconds").text(seconds);
+      }
+  },1000);
+}
+
+jQuery(document).ready(function(){
+  var flag = {/literal}{$endBreakButton}{literal}
+  if(flag == true)
+  {
+  startTimer();
+  }
+});
+ 
+</script>
+
+{/literal}

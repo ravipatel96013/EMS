@@ -112,5 +112,16 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         return $result;
     }
 
+    public function getUpComingHolidays()
+    {
+        global $db;
+        $today = date('Y-m-d');
+        $lastDay = date("Y-m-t",strtotime($today));
+
+        $sql = "SELECT name,date FROM ". $this->tableName ." WHERE date BETWEEN'".$today."' AND '".$lastDay."'";
+        $result = $db->fetchAll($sql);
+        return $result;
+    }
+
 }
 ?>

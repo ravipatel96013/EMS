@@ -32,7 +32,6 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
             $time = time();
 
             $this->createdOn = $time;
-            $this->actionTakenBy = getLoggedInAdminId();
 
             return true;
         }
@@ -47,10 +46,8 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            // $time = time();
-            // $this->updatedOn = $time;
-            // $this->updatedBy = getLoggedInAdminId();
-            // return true;
+
+             return true;
         }
         else
         {

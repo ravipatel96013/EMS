@@ -5,8 +5,8 @@ class Models_Attendance extends TinyPHP_ActiveRecord
     public $id = "";
     public $userId = "";
     public $date = "";
-    public $checkInDateTime = "";
-    public $checkOutDateTime = "";
+    public $checkInDateTime = NULL;
+    public $checkOutDateTime = NULL;
     public $status = "";
     public $createdOn = "";
     public $updatedOn = "";
@@ -28,8 +28,6 @@ class Models_Attendance extends TinyPHP_ActiveRecord
 
     protected function doBeforeCreate()
     {
-        if($this->validate())
-        {
             $time = time();
 
             $this->checkInDateTime = NULL; 
@@ -38,76 +36,45 @@ class Models_Attendance extends TinyPHP_ActiveRecord
             $this->createdOn = $time;
             $this->updatedOn = $time;
             return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
 
     protected function doBeforeUpdate()
     {
-        if($this->validate())
-        {   
             $this->updatedOn = time();
             return true;
-        }
-        else
-        {
-            return false;
-        }
-    }
-
-    public function validate()
-    {
-        $this->validateAttendanceInfo();
-
-        return !$this->hasErrors();
     }
 
 
-
-    public function validateAttendanceInfo()
-    {  
-        // Validation Area
-
-
-        return !$this->hasErrors();
-    }
-
-    public function showData()
+    public function getPresentMonthAttendance($id)
     {
         global $db;
+        $currentYear = date("Y");
+		$currentMonth = date("m");
 
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
+        $sql = "SELECT COUNT(status) FROM ". $this->tableName. " WHERE userId = $id AND MONTH(date) = $currentMonth AND YEAR(date) = $currentYear AND status = 'P'";
+        $result = $db->fetchRow($sql);
         if(!$result == '')
         {
             return $result;
         }
     }
 
-    public function checkEntries($month)
+    public function getActiveAttendance($id)
     {
         global $db;
-        $sql = "SELECT * FROM `$this->tableName` WHERE MONTH(date) = $month AND YEAR(date) = 2022";
+
+        $sql = "SELECT * FROM ". $this->tableName ." WHERE userId = $id AND checkInDateTime IS NOT NULL AND checkOutDateTime IS NULL";
         $result = $db->fetchRow($sql);
 
-        if(!$result == '')
-        {
-            return $result;
-        }
+        return $result;
     }
 
-
-    public function getRow()
+    public function getInfo()
     {
         global $db;
-        $today = date("Y-m-d");
-        $loggedInUserId = getLoggedInUserId();
 
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE userId = $loggedInUserId AND date = '$today'";
+        $sql = "SELECT a.id,a.date,a.checkInDateTime,a.checkOutDateTime,SUM(b.totalMinutes) AS breakTime,a.status,TIMESTAMPDIFF(minute,checkInDateTime,checkOutDateTime) AS productiveTime FROM `user_attendance` AS a LEFT JOIN break_logs AS b ON a.id=b.attendanceId WHERE a.id=$this->id GROUP BY a.id";
         $result = $db->fetchRow($sql);
         return $result;
     }

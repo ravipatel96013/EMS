@@ -58,8 +58,8 @@
               <div class="row">
               <label class="col-md-3 offset-md-1"><b>User Id</b></label>
               <select name="userId" class="form-control form-control-sm col-md-6">
-                {foreach from=$userData item=user}
-                <option value="{$user.id}">{$user.firstName} {$user.lastName} - ID {$user.id}</option>
+                {foreach from=$data item=user}
+                <option value="{$user->id}">{$user->firstName} {$user->lastName} - ID {$user->id}</option>
                 {/foreach}
               </select>
             </div>

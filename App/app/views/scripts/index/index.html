@@ -1,44 +1,134 @@
 <div class="container">
-  <div class="d-flex justify-content-center">
-    <h1 class="display-5" id="currentTime"></h1>
-  </div>
-  <div class="row">
-    <div id="button" class="d-flex justify-content-center"></div>
-  </div>
-  <div id="breakButton" class="d-flex justify-content-center mt-2">
-  </div>
-</div>
-{literal}
-<script>
-  $(document).ready(function () {
-    $.ajax({
-      url: "/app/index/checkstatus",
-      type: "GET",
-      dataType: "json",
-      success: function (response) {
-        if (response.status == 1) {
-          document.getElementById("button").innerHTML =
-            "<h1 class='display-5'>Done for the day</h1>";
-        } else if (response.status == 2) {
-          $("#checkout").prop("disabled", true);
-          document.getElementById("button").innerHTML =
-            "<button type='button' class='col-sm-3 btn btn-block bg-gradient-success btn-lg' onclick='doCheckIn()' id='checkin'>Check-in</button>";
-        } else if (response.status == 3) {
-          document.getElementById("breakButton").innerHTML = 
-          "<button type='button' onclick='endBreak()' class='col-sm-2 btn btn-block btn-danger'>End Break</button>";
-        }
-        else if(response.status == 4)
-        {
-          document.getElementById("button").innerHTML =
-            "<button type='button' class='col-sm-3 btn btn-block bg-gradient-danger btn-lg' onclick='doCheckOut()' id='checkout'>Check-out</button>";
-          document.getElementById("breakButton").innerHTML = 
-          "<button type='button' onclick='startBreak()' class='col-sm-2 btn btn-block btn-success'>Start Break</button>";
-        }
-      },
-    });
-  });
-</script>
 
+<div id="dashboard">
+  <div class="content-header">
+    <div class="container">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Dashboard</small></h1>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="row" id="top_blocks">
+  <div class="col-sm-4">
+    <div class="card">
+    <div class="card-header">
+      <h3 id="currentTime"></h3>
+    </div>
+      <div class="card-body d-flex justify-content-center">
+        <div class="row row-cols-1">
+          <div class="col">
+            {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-lg">CheckOut</button>{/if}
+              {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-lg">CheckIn</button>{/if}
+                {if $completed eq true}<h4>Done For the day</h4>{/if}
+            </div>
+        </div>
+      </div>
+  </div>
+  </div>
+
+  <div class="col-sm-4">
+    <div class="card">
+    <div class="card-header">
+      <h3>Break</h3>
+    </div>
+      <div class="card-body d-flex justify-content-center">
+        <div class="row row-cols-1">
+          <div class="col">
+            {if $startBreakButton eq true}<button type="button" onclick="startBreak()" class="btn btn-block bg-gradient-success btn-lg">Start Break</button>{/if}
+            {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-lg">End Break</button>{/if}
+          </div>
+          <div class="col d-flex justify-content-center mt-2">
+          <h4 id="hours">{$breakHours}:</h4>
+          <h4 id="mins">{$breakMinutes}:</h4>
+          <h4 id="seconds">00</h4>
+        </div>
+        </div>
+      </div>
+  </div>
+  </div>
+
+  <div class="col-sm-4">
+    <div class="card">
+      <div class="card-header"><h3>Working Days</h3></div>
+      <div class="card-body">
+        <ul class="list-group list-group-flush">
+          <li class="list-group-item"><h6><b>Present Days : </b>{$presentDays}</h6></li>
+          <li class="list-group-item"><h6><b>Leave Balance : </b>1</h6></li>
+        </ul>
+        <div class="card-header"><h3>Upcoming Holidays</h3></div>
+        <ul class="list-group list-group-flush">
+        {foreach from=$upComingHolidays item=row}
+        <li class="list-group-item"><h6><b>{$row.name}</b></h6><div>{$row.date}</div></li>
+        {/foreach}
+      </ul>
+        </div>
+      </div>
+  </div>
+  </div>
+
+    <div class="card">
+    <div class="card-body">
+      <div class="row">
+      <div class="col-sm-1">
+          <label>Month</label>
+      </div>
+      <div class="col-sm-1">
+          <select name="month" class="form-control" id="month">
+            {foreach item=i from=1|@range:12} 
+            <option value="{$i}" {if $selectedMonth eq $i}selected{/if}>{$i}</option>
+            {/foreach}
+          </select>
+        </div>
+
+      <div class="col-sm-1">
+          <label>Year</label>
+          </div>
+          <div class="col-sm-1">
+          <select name="month" class="form-control" id="year">
+            {foreach item=i from=2022|@range:$currentYear+1}
+            <option value="{$i}" {if $selectedYear eq $i}selected{/if}>{$i}</option>
+            {/foreach}
+          </select>
+      </div>
+    </div>
+  </div>
+    </div>
+
+  <div class="row" id="attendanceTable">
+    <div class="col-sm-12">
+      <div class="card">
+      <div class="card-header">
+        <h3>Attendance Table</h3>
+      </div>
+        <div class="card-body">
+        <div class="row">
+          <table class="table table-hover" id="attendance">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Check-in</th>
+                <th scope="col">Check-out</th>
+                <th scope="col">Break Time(Minutes)</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+{literal}
 <script>
   function doCheckIn() {
     $.ajax({
@@ -85,6 +175,7 @@
         if (response.status == 1) {
           alert("You Break Started");
           location.reload();
+          startTimer();
         } else {
           consol.log(response.errors);
         }
@@ -111,8 +202,17 @@
   }
 </script>
 
+  <script>
+  $('select#month').change(function() {
+    window.location.href = 'http://local.ems.com/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+    });
+  $('select#year').change(function() {
+    window.location.href = 'http://local.ems.com/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+  });
+  </script>
+
 <script>
-  window.onload = function () {
+  jQuery(document).ready(function (){
     clock();
     function clock() {
       var now = new Date();
@@ -137,7 +237,76 @@
         hour + ":" + min + ":" + sec + " " + mid;
       setTimeout(clock, 1000);
     }
-  };
-</script>
 
+    attendanceTable = $('#attendance').DataTable({
+          serverSide: true,
+          pageLength: 31,
+          "ajax": {
+              url: '/app/index/getattendance',
+              type: "GET",
+              dataType: "json",
+              data : function(data){
+                data.month = $("#month").val();
+                data.year = $("#year").val();
+              }
+          },
+          "columns": [
+              { data: 'date',name: 'date'},
+              { data: 'checkInDateTime',
+                name: 'checkInDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+              { data: 'checkOutDateTime',
+                name: 'checkOutDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+                { data: 'totalMinutes',
+                name: 'totalMinutes',
+                defaultContent: "<i>00</i>"
+              },
+              { data: 'status', name: 'status'}
+          ]
+      });
+  });
+</script>
+<script>
+
+  hours = {/literal}{$breakHours}{literal};
+  mins = {/literal}{$breakMinutes}{literal};
+  seconds = 0;
+
+
+$("#hours").text(hours+':');
+$("#mins").text(mins+':');
+$("#seconds").text(seconds);
+
+
+function startTimer(){
+  timex = setInterval(function(){
+      seconds++;
+    if(seconds >59){seconds=0;mins++;
+       if(mins>59) {
+       mins=0;hours++;
+         if(hours <10) {$("#hours").text('0'+hours+':')} else $("#hours").text(hours+':');
+        }          
+    if(mins<10){                     
+      $("#mins").text('0'+mins+':');}       
+       else $("#mins").text(mins+':');
+                   }    
+    if(seconds <10) {
+      $("#seconds").text('0'+seconds);} else {
+      $("#seconds").text(seconds);
+      }
+  },1000);
+}
+
+jQuery(document).ready(function(){
+  var flag = {/literal}{$endBreakButton}{literal};
+  if(flag == true)
+  {
+  startTimer();
+  }
+});
+ 
+</script>
 {/literal}

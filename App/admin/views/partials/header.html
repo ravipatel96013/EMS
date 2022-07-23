@@ -7,8 +7,12 @@
     <div class="collapse navbar-collapse order-3" id="navbarCollapse">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
-        <li class="nav-item">
-          <a href="http://local.ems.com/admin/users" class="nav-link">Users</a>
+        <li class="nav-item dropdown">
+          <a id="dropdownSubMenu1" href="#" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" class="nav-link dropdown-toggle">Users</a>
+          <ul aria-labelledby="dropdownSubMenu1" class="dropdown-menu border-0 shadow">
+            <li><a href="http://local.ems.com/admin/users" class="dropdown-item">All Users</a></li>
+            <li><a href="http://local.ems.com/admin/userattendance" class="dropdown-item">User Attendance</a></li>
+          </ul>
         </li>
         <li class="nav-item">
           <a href="http://local.ems.com/admin/holidays" class="nav-link">Holidays</a>

@@ -10,7 +10,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
     public $isHalf = "";
     public $comment = "";
     public $status = "";
-    public $approvedBy = "";
+    public $actionBy = "";
     public $createdOn = "";
 
     public $dbIgnoreFields = array('id');
@@ -49,15 +49,32 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
     protected function doBeforeUpdate()
     {
-        if($this->validate())
-        {
-           $this->approvedBy = TinyPHP_Session::get('adminId');
+           $this->actionBy = TinyPHP_Session::get('adminId');
+
+           $data = $this->attendanceToUpdate();
+           foreach($data as $row)
+           {
+               $attendance = new Models_Attendance($row['id']);
+                if($this->status == 1)
+                {
+                    if($this->isHalf == 1)
+                    {
+                        $attendance->status = 'HPL';
+                        $attendance->update(['status','updatedOn']);
+                    }
+                    else{
+                        $attendance->status = 'PL';
+                        $attendance->update(['status','updatedOn']);
+                    }
+                }
+                elseif($this->status == 0 || $this->status == 2)
+                {
+                    $attendance->status = 'UL';
+                    $attendance->update(['status','updatedOn']);
+                }
+           }
+           
            return true;
-        }
-        else
-        {
-            return false;
-        }
     }
 
     public function validate()
@@ -119,6 +136,26 @@ class Models_Leave extends TinyPHP_ActiveRecord
         {
             return $result;
         }
+    }
+    
+    public function getLeaves()
+    {
+        global $db;
+        $date = date('Y-m-d');
+
+        $sql = "SELECT l.*,a.id AS attendanceId FROM users AS u INNER JOIN user_attendance AS a ON u.id=a.userId LEFT JOIN leaves as l ON l.userId=u.id WHERE U.isActive=1 AND a.date='$date' AND a.status='NA' AND DATE_FORMAT(FROM_UNIXTIME(l.startDate),\"%Y-%m-%d\") = '$date' AND l.status=1;";
+        $result = $db->fetchAll($sql);
+        return $result;
+
+    }
+
+    public function attendanceToUpdate()
+    {
+        global $db;
+
+        $sql = "SELECT a.* FROM user_attendance as a LEFT JOIN leaves as l ON a.userId=l.userId WHERE  l.id=$this->id AND a.date BETWEEN DATE_FORMAT(FROM_UNIXTIME(l.startDate),\"%Y-%m-%d\") AND DATE_FORMAT(FROM_UNIXTIME(l.endDate),\"%Y-%m-%d\");";
+        $result = $db->fetchAll($sql);
+        return $result;
     }
 
 }

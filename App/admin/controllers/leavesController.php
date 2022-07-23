@@ -60,7 +60,7 @@ class Admin_LeavesController extends TinyPHP_Controller {
             
             $leave->status = $this->getRequest()->getPostVar('status');
         
-                $isUpdated = $leave->update();
+                $isUpdated = $leave->update(['status']);
                 if($isUpdated)
                 {
 
