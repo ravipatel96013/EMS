@@ -58,30 +58,30 @@ public function userattendancestatusAction()
 
     $leave = new Models_Leave();
     $data = $leave->getLeaves();
-    if(!empty($data))
-    {
-         foreach($data as $leave)
-        {
-            $attendace = new Models_Attendance($leave['attendanceId']);
-            if($leave['status'] == 1)
-            {
-                if($leave['isHalf'] == 1)
-                {
-                $attendace->status = 'HPL';
-                $attendace->update(['status','updatedOn']); 
-                }
-                else{
-                $attendace->status = 'PL';
-                $attendace->update(['status','updatedOn']);
-                }
-            }
-            elseif($leave['status'] == 0 || $leave['status'] == 2)
-            {
-                $attendace->status = 'UL';
-                $attendace->update(['status','updatedOn']);
-            }
-        }
-    }
+    // echo "<pre>";
+    // print_r($data);
+    // die;
+        foreach($data as $leave)
+       {
+           $attendace = new Models_Attendance($leave['attendanceId']);
+           if($leave['leaveStatus'] == APPROVED)
+           {
+               if($leave['isHalf'] == 1)
+               {
+               $attendace->status = 'HPL';
+               $attendace->update(['status','updatedOn']); 
+               }
+               else{
+               $attendace->status = 'PL';
+               $attendace->update(['status','updatedOn']);
+               }
+           }
+           elseif($leave['leaveStatus'] == PENDING || $leave['leaveStatus'] == DECLINED)
+           {
+               $attendace->status = 'UL';
+               $attendace->update(['status','updatedOn']);
+           }
+       }
  }
 
  public function leaveAction()
@@ -99,13 +99,12 @@ public function userattendancestatusAction()
     
         foreach($userIds as $user)
         {
-            $leave = new Models_LeaveBalancesheet();
-            $leave->userId = $user->id;
-            $leave->amount = 1;
-            $leave->type = 'credit';
-            $leave->description = 'Monthly Free Paid Leave';
-            $leave->actionTakenBy = 'SYSTEM';
-            $leave->create();
+            $leave = new Service_LeaveBalancesheet();
+            $userId = $user->id;
+            $amount = 1;
+            $description = 'Monthly Free Paid Leave';
+            $actionTakenBy = 'SYSTEM';
+            $leave->doCredit($userId,$amount,$description,$actionTakenBy);
         }
     }
     else {

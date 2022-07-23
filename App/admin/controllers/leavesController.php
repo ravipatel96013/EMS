@@ -59,8 +59,9 @@ class Admin_LeavesController extends TinyPHP_Controller {
             $leave = new Models_Leave($leaveId);
             
             $leave->status = $this->getRequest()->getPostVar('status');
+            $leave->oldStatus = $this->getRequest()->getPostVar('oldStatus');
         
-                $isUpdated = $leave->update(['status']);
+                $isUpdated = $leave->update(['status','actionBy']);
                 if($isUpdated)
                 {
 
@@ -103,12 +104,13 @@ class Admin_LeavesController extends TinyPHP_Controller {
             'id' => 'l.id',
             'userName' => 'b.firstName',
             'type' => 'l.type',
-            'startDate' => 'DATE_FORMAT(FROM_UNIXTIME(l.startDate), "%m-%d-%Y")',
-            'endDate' => 'DATE_FORMAT(FROM_UNIXTIME(l.endDate), "%m-%d-%Y")',
+            'startDate' => 'l.startDate',
+            'endDate' => 'l.endDate',
             'comment' => 'l.comment',
             'status' => 'l.status'
         ));
         $dt->getData();
     }
+
 
 }

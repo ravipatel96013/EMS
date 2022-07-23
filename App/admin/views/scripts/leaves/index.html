@@ -43,6 +43,7 @@
   $(document).ready(function () {
       $('#leaveTable').DataTable({
           serverSide: true,
+          processing: true,
           "ajax": {
               url: '/admin/leaves/leavelist',
               type: "GET",
@@ -51,11 +52,34 @@
           "columns": [
               { data: 'id',name: 'id'},
               { data: 'userName',name: 'userName'},
-              { data: 'type',name: 'type'},
+              { data: 'type',
+                name: 'type',
+                render: function(data,type,row)
+                {
+                  if (row.type == 0) {
+                            return '<h6 class="mb-0"><span>Sick</span></h6>';
+                        } else if (row.type == 1) {
+                            return '<h6 class="mb-0"><span>Paid</span></h6>';
+                        } else if (row.type == 2) {
+                            return '<h6 class="mb-0"><span>Unpaid</span></h6>';
+                        }
+                }},
               { data: 'startDate',name: 'startDate'},
               { data: 'endDate', name: 'endDate'},
               { data: 'comment',name: 'comment'},
-              { data: 'status',name: 'status'},
+              {
+                    data: 'status',
+                    name: 'status',
+                    render: function (data, type, row) {
+                        if (row.status == 1) {
+                            return ' <h6 class="mb-0"><span  class="badge bg-success">Approved</span></h6>';
+                        } else if (row.status == 2) {
+                            return ' <h6 class="mb-0"><span class="badge bg-danger">Declined</span></h6>';
+                        } else if (row.status == 0) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning">Pending</span></h6>';
+                        }
+                    }
+                },
               { data: 'id',name: 'id'}
           ],
           "aoColumnDefs": [

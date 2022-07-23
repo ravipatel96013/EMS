@@ -113,5 +113,17 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
         }
     }
 
+    public function getLeaveBalance($userId)
+    {
+        global $db;
+
+        $sql = "SELECT SUM(CASE WHEN type ='credit' THEN amount else 0 end) - SUM(CASE WHEN type ='debit' THEN amount else 0 end) AS balance FROM user_leave_balancesheet WHERE userId=$userId;";
+        $result = $db->fetchRow($sql);
+        if(!$result == '')
+        {
+            return $result;
+        }
+    }
+
 }
 ?>

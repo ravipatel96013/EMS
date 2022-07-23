@@ -69,156 +69,9 @@
             </div>
             </div>
 
-            <div class="card">
-              <div class="card-body" id="filters">
-                <div class="row">
-                <div class="col-sm-1">
-                   <label>User</label>
-                   </div>
-                   <div class="col-sm-2">
-                   <select name="user" class="form-control" id="user">
-                     {foreach from=$users item=user}
-                     <option value="{$user->id}" {if $selectedUser eq $user->id}selected{/if}>{$user->firstName}&nbsp;{$user->lastName}</option>
-                     {/foreach}
-                   </select>
-                 </div>
-                 <div class="col-sm-1">
-                   <label>Month</label>
-                   </div>
-                   <div class="col-sm-1">
-                   <select name="month" class="form-control" id="month">
-                     {foreach item=i from=1|@range:12} 
-                     <option value="{$i}" {if $selectedMonth eq $i}selected{/if}>{$i}</option>
-                     {/foreach}
-                    </select>
-                  </div>
-                  <div class="col-sm-1">
-                    <label>Year</label>
-                  </div>
-                  <div class="col-sm-1">
-                    <select name="month" class="form-control" id="year">
-                      {foreach item=i from=2022|@range:$currentYear+1}
-                      <option value="{$i}" {if $selectedYear eq $i}selected{/if}>{$i}</option>
-                      {/foreach}
-                    </select>
-                  </div>
-                </div>
-                </div>
-            </div>
-            
-
-            <div class="row" id="attendanceTable">
-                <div class="col-sm-12">
-                    <div class="card">
-                        <div class="card-header">
-                            <h3>Attendance Table</h3>
-                        </div>
-                        <div class="card-body">
-                            <div class="row">
-                                <table class="table table-hover" id="attendance">
-                                  <thead>
-                                    <tr>
-                                      <th scope="col">Id</th>
-                                      <th scope="col">Date</th>
-                                      <th scope="col">Check-in</th>
-                                      <th scope="col">Check-out</th>
-                                      <th scope="col">Break Time(Minutes)</th>
-                                      <th scope="col">Status</th>
-                                    </tr>
-                                  </thead>
-                                  <tbody>
-                      
-                                  </tbody>
-                                </table>
-                              </div>
-
-                        </div>
-                    </div>
-                </div>
-            </div>
-
     </div>
 </div>
-      <!--Model-->
-      <div class="modal fade" id="editAttendance" tabindex="-1" role="dialog" aria-hidden="true">
-          <form method="post" id="editAttendance">
-          <div class="modal-dialog" role="document">
-            <div class="modal-content">
-              <div class="modal-header text-white" style="background-color: #007bff;">
-                <h5 class="modal-title">Edit Attendance</h5>
-              </div>
-              <div class="modal-body text-left">
-  
-                <div class="row">
-                  <input type="hidden" id="id" name="id">
-                <label class="col-md-3 offset-md-1"><b>Date</b></label>
-                <input type="text" id="date" name="date" class="form-control form-control-sm col-md-6" disabled>
-            </div>
-  
-              <div class="row mt-3">
-                <label class="col-md-3 offset-md-1"><b>Check-in</b></label>
-                <input type="text" id="checkIn" name="checkIn" class="form-control form-control-sm col-md-6">
-              </div>
-  
-              <div class="row mt-3">
-                <label class="col-md-3 offset-md-1"><b>Check-out</b></label>
-                <input type="text" id="checkOut" name="checkOut" class="form-control form-control-sm col-md-6">
-              </div>
-
-              <div class="row mt-3">
-                <label class="col-md-3 offset-md-1"><b>Break Time(Min.)</b></label>
-                <input type="number" id="breakTime" name="breakTime" class="form-control form-control-sm col-md-6" disabled>
-              </div>
-
-              <div class="row mt-3">
-                <label class="col-md-3 offset-md-1"><b>Productive Hours</b></label>
-                <input type="number" id="productiveHours" name="productiveHours" class="form-control form-control-sm col-md-6" disabled>
-              </div>
-
-              <div class="row mt-3">
-                <label class="col-md-3 offset-md-1"><b>Status</b></label>
-                <select name="status" id="status" class="form-control form-control-sm col-md-6">
-                  <option>P</option>
-                  <option>PL</option>
-                  <option>UL</option>
-                  <option>HPL</option>
-                  <option>HUL</option>
-                  </select>
-              </div>
-
-              </div>
-              <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-primary edit">Save</button>
-              </div>
-            </div>
-          </div>
-        </div>
-      </form>
-        <!-- Model End -->
 {literal}
-<script>
-       $(".edit").click(function()
-        {
-            var data = $("form#editAttendance").serializeArray();
-            $.ajax({
-                url: "/admin/index/update/",
-                type: "POST",
-                dataType: "json",
-                data: data, 
-                success: function (result) {
-                  if(result.status == 1)
-                  {
-                    window.location.href = "/admin";
-                  }
-                  else
-                  {
-                    console.log(result.errors);
-                  }
-                }
-            });
-        });
-</script>
 
 <script>
   function doCheckIn() {
@@ -319,92 +172,7 @@
         hour + ":" + min + ":" + sec + " " + mid;
       setTimeout(clock, 1000);
     }
-
-    attendanceTable = $('#attendance').DataTable({
-          serverSide: true,
-          pageLength: 31,
-          "ajax": {
-              url: '/admin/index/getattendance',
-              type: "GET",
-              dataType: "json",
-              data : function(data){
-                data.month = $("#month").val();
-                data.year = $("#year").val();
-                data.user = $("#user").val();
-              }
-          },
-          "columns": [
-              { data: 'id',name: 'id'},
-              { data: 'date',name: 'date'},
-              { data: 'checkInDateTime',
-                name: 'checkInDateTime',
-                defaultContent: "<i>NA</i>"
-              },
-              { data: 'checkOutDateTime',
-                name: 'checkOutDateTime',
-                defaultContent: "<i>NA</i>"
-              },
-              { data: 'totalMinutes',
-                name: 'totalMinutes',
-                defaultContent: "<i>00</i>"
-              },
-              { 
-                data: 'status',
-                name: 'status',
-                "render": function(data, type, row, meta){
-                  
-                  console.log(row);
-
-                  if(type === 'display'){
-                    data = '<a class="editLink" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
-                  }
-                  return data;
-                }
-              }
-            ]
-        });
-    });
-</script>
-
-<script>
-$("#editAttendance").on('show.bs.modal', function(event){
-    var button = $(event.relatedTarget);           
-    var id = button.data('id');
-    $.ajax({
-      url: "/admin/index/getinfo",
-      type: "POST",
-      dataType: "json",
-      data:{id:id},
-      success: function (data) {
-      // var checkInTime = data.checkInDateTime;
-      // var checkOutTime = data.checkOutDateTime;
-      var productiveTime = data.productiveTime;
-      var productiveHours = (productiveTime/60).toFixed(2);
-      
-      //alert(productiveHours);
-      $('#id').val(data.id);
-      $('#date').val(data.date);
-      $('#checkIn').val(data.checkInDateTime);
-      $('#checkOut').val(data.checkOutDateTime);
-      $('#breakTime').val(data.breakTime);
-      $('#productiveHours').val(productiveHours);
-      $('#status').val(data.status);
-
-      },
-    });
-            });
-</script>
-
-<script>
-    $('select#month').change(function() {
-      window.location.href = 'http://local.ems.com/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
-      });
-    $('select#year').change(function() {
-      window.location.href = 'http://local.ems.com/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
-    });
-    $('select#user').change(function() {
-      window.location.href = 'http://local.ems.com/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
-    });
+  });
 </script>
 
 <script>
@@ -439,7 +207,7 @@ function startTimer(){
 }
 
 jQuery(document).ready(function(){
-  var flag = {/literal}{$endBreakButton}{literal}
+  var flag = {/literal}{if $endBreakButton eq true}true;{else}{/if}false;{literal}
   if(flag == true)
   {
   startTimer();

@@ -3,6 +3,10 @@
 define('PHP_TIMEZONE_STRING', 'Asia/Kolkata');    //set the timezone string as per your app timezone requirements. Make sure it matches with DB time zone below.
 define('DB_TIMEZONE_STRING', '+05:30');
 
+define('APPROVED',1);
+define('PENDING',0);
+define('DECLINED',2);
+
 define('SITE_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define('SITE_URL', $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 
@@ -47,6 +51,7 @@ if ($_SERVER['HTTP_HOST'] ==  'local.ems.com') {
     define('DB_UNAME', '');
     define('DB_PWD', '');
     define('DB_NAME', '');
+
 
     define('DEBUG_EMAIL', 'debug@domain.com');
 

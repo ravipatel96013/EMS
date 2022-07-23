@@ -1,85 +1,205 @@
 <div class="container">
-  <div class="content">
-      <div class="row">
-        <div class="col-lg-6 offset-sm-3 mt-3">
-          <div class="card">
-            <div class="card-header">
-              <h2>Add User</h2>
+
+  <div id="userForm">
+    <div class="content-header">
+      <div class="container">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Add User</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+
+    <form class="form-horizontal" id="addUser">
+
+    <div class="row" id="top_blocks">
+      <div class="col-sm-6">
+        <div class="card">
+        <div class="card-header">
+          <div class="card-title"><h4>Personal information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" name="firstName" id="firstName" placeholder="First Name" required>
             </div>
-            <div class="card-body">
-              <form class="form-horizontal" method="post" id="addUser">
-                <div class="form-group row">
-                    <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-sm" name="firstName" id="firstName" placeholder="First Name">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-sm" name="lastName" id="lastName" placeholder="Last Name">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-sm" name="city" id="city" placeholder="City">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="text" class="form-control form-control-sm" name="state" id="state" placeholder="State">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-12">
-                    <textarea class="form-control form-control-sm" id="address" name="address" rows="3" placeholder="Address..."></textarea>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-6">
-                    <input class="form-control form-control-sm" type="text" name="designation" id="designation" placeholder="Designation">
-                  </div>
-                  <div class="col-sm-6">
-                    <select class="form-control form-control-sm" name="role" id="role">
-                      <option value="user">User</option>
-                      <option value="admin">Admin</option>
-                    </select>
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-6">
-                    <input type="email" class="form-control form-control-sm" name="email" id="email" placeholder="E-mail">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="tel" class="form-control form-control-sm" name="phone" id="phone" placeholder="Phone">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-6">
-                    <input type="password" class="form-control form-control-sm" name="password" id="password" placeholder="Password">
-                  </div>
-                  <div class="col-sm-6">
-                    <input type="password" class="form-control form-control-sm" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
-                  </div>
-                </div>
-                <div class="form-group row">
-                  <div class="col-sm-6">
-                    <label for="joinDate"><b>Date of Joining</b></label>
-                  <input type="date" class="form-control form-control-sm" name="joinDate" id="joinDate" >
-                </div>
-                </div>
-                <div class="card-footer col-sm-6">
-                  <button type="button" class="btn btn-primary submit">Add User</button>
-                </div>
-                
-                </div>
-                  </div>
-                </div>
-              </form> 
+            <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" name="lastName" id="lastName" placeholder="Last Name" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <select class="form-control form-control-sm" name="gender" id="gender" required>
+                <option selected disabled>Gender</option>
+                <option value="male">Male</option>
+                <option value="female">Female</option>
+                <option value="female">Other</option>
+              </select>
+          </div>
+          <div class="col-sm-6">
+            <select class="form-control form-control-sm" name="maritialStatus" id="maritialStatus">
+              <option selected disabled>Maritial Status</option>
+              <option value="single">Single</option>
+              <option value="married">Married</option>
+              <option value="divorced">Divorced</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="dateOfBirth">Date of Birth</label>
+          <input type="date" class="form-control form-control-sm" name="dateOfBirth" id="dateOfBirth" >
+        </div>
+        <div class="col-sm-6">
+          <label for="dateOfBirth">Blood Group</label>
+          <select class="form-control form-control-sm" name="bloodGroup" id="bloodGroup">
+            <!-- <option selected disabled>Blood Group</option> -->
+            <option value="A+">A+</option>
+            <option value="A-">A-</option>
+            <option value="B+">B+</option>
+            <option value="B-">B-</option>
+            <option value="AB+">AB+</option>
+            <option value="AB-">AB-</option>
+            <option value="O+">O+</option>
+            <option value="O-">O-</option>
+          </select>
+      </div>
+        </div>
+          </div>          
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><h4>Additional information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="aadharId" id="aadharId" placeholder="Aadhar ID">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="voterId" id="voterId" placeholder="Voter Id">
+              </div>
+            </div>  
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="panId" id="panId" placeholder="PAN">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="licenseNumber" id="licenseNumber" placeholder="License Number">
+              </div>
+            </div> 
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="designation" id="designation" placeholder="Designation">
+              </div>
+              <div class="col-sm-6">
+                <select class="form-control form-control-sm" name="role" id="role">
+                  <option selected disabled>Role</option>
+                  <option value="user">User</option>
+                  <option value="admin">Admin</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="password" class="form-control form-control-sm" name="password" id="password" placeholder="Password">
+              </div>
+              <div class="col-sm-6">
+                <input type="password" class="form-control form-control-sm" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <label for="joinDate"><b>Date of Joining</b></label>
+              <input type="date" class="form-control form-control-sm" name="joinDate" id="joinDate" >
+            </div>
             </div>
           </div>
         </div>
-        <!-- /.col-md-6 -->
-        <!-- /.col-md-6 -->
       </div>
-      <!-- /.row -->
-    </div><!-- /.container-fluid -->
+
+      <div class="col-sm-6">
+        <div class="card">
+        <div class="card-header">
+          <div class="card-title"><h4>Contact information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="email" class="form-control form-control-sm" name="email" id="email" placeholder="E-mail">
+              </div>
+              <div class="col-sm-6">
+                <input type="email" class="form-control form-control-sm" name="personalEmail" id="personalEmail" placeholder="Personal E-mail">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="tel" class="form-control form-control-sm" name="mobile" id="mobile" placeholder="Mobile">
+              </div>
+              <div class="col-sm-6">
+                <input type="tel" class="form-control form-control-sm" name="phone" id="phone" placeholder="Phone">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="tel" class="form-control form-control-sm" name="emgContactNo" id="emgContactNo" placeholder="Emergencey Contact">
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control form-control-sm" name="emgContactName" id="emgContactName" placeholder="Emergencey Contact Name">
+              </div>
+            </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" name="state" id="state" placeholder="State">
+            </div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" name="city" id="city" placeholder="City">
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <textarea class="form-control form-control-sm" id="address" name="address" rows="3" placeholder="Address..."></textarea>
+            </div>
+          </div>
+          </div>
+      </div>
+
+      <div class="card" style="height: 265px;">
+        <div class="card-header">
+          <div class="card-title"><h4>Bank information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="bank" id="bank" placeholder="Bank Name">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="namePerBank" id="namePerBank" placeholder="Name As Per Bank Account">
+              </div>
+            </div>  
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="bankAcNumber" id="bankAcNumber" placeholder="Bank Account Number">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" type="text" name="bankIFSC" id="bankIFSC" placeholder="Bank IFSC Code">
+              </div>
+            </div> 
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <button type="button" class="btn btn-primary submit">Add User</button>
+    </div>
+  </form>
+    </div>
   </div>
-          
+  </div>
 {literal}
 <script>
     $(document).ready(function()
@@ -99,7 +219,7 @@
                   }
                   else
                   {
-                    console.log(result.errors);
+                    alert(result.errors);
                   }
                 }
             });

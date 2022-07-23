@@ -8,6 +8,7 @@ class Models_User extends TinyPHP_ActiveRecord
     public $firstName = "";
     public $lastName = "";
     public $phone = "";
+    public $mobile= "";
     public $designation = "";
     public $joinDate = "";
     public $address = "";
@@ -16,14 +17,27 @@ class Models_User extends TinyPHP_ActiveRecord
     public $profileImage = "";
     public $isActive = 1;
     public $role = '';
+    public $gender = '';
+    public $dateOfBirth = '';
+    public $emgContactNo = '';
+    public $emgContactName = '';
+    public $voterId = '';
+    public $panId = '';
+    public $aadharId = '';
+    public $licenseNumber = '';
+    public $bloodGroup = '';
+    public $personalEmail = '';
+    public $maritialStatus = '';
+    public $bank = '';
+    public $namePerBank = '';
+    public $bankAcNumber = '';
+    public $bankIFSC = '';
     public $confirmPassword = "";
     public $createdOn = "";
     public $updatedOn = "";
-    public $updatePassword = true;
 
-    private $oldPassword =  false;
 
-    public $dbIgnoreFields = array('id','confirmPassword','oldPassword','createdOn','updatedOn','profileImage','updatePassword');
+    public $dbIgnoreFields = array('id','confirmPassword','profileImage');
 
     public function init()
     {
@@ -31,11 +45,11 @@ class Models_User extends TinyPHP_ActiveRecord
         if($this->id>0)
         {
             $this->confirmPassword = $this->password;
-            $this->oldPassword = $this->password;
         }
 
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
+        $this->addListener('afterCreate', array($this,'doAfterCreate'));
     }
 
 
@@ -43,6 +57,9 @@ class Models_User extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
+            $this->createdOn = time();
+            $this->updatedOn = time();
+
             if($this->password != "")
             {
                 $this->password = md5($this->password);
@@ -55,15 +72,42 @@ class Models_User extends TinyPHP_ActiveRecord
         }
     }
 
+    protected function doAfterCreate()
+    {
+        $attendance = new Models_Attendance();
+        $where = 'userId='.$this->id;
+        $data = $attendance->getAll(['id'],$where);
+        if(empty($data))
+        {
+        $currentMonth = date('m');    
+        $currentYear = date('Y');
+        $nextMonth = 0;
+        if($currentMonth == 12)
+        {
+            $nextMonth = 1;
+        }
+        else
+        {
+            $nextMonth = $currentMonth+1;
+        }
+
+        $daysInMonth = cal_days_in_month(CAL_GREGORIAN,$nextMonth,$currentYear);
+        for($i=1;$i<=$daysInMonth;$i++)
+        {
+            $attd = new Models_Attendance();
+            $attd->userId = $this->id;
+            $attd->date = $currentYear."-".$nextMonth."-".$i;
+            $attd->create();
+        }
+        }
+    }
+
 
     protected function doBeforeUpdate()
     {
         if($this->validate())
         {
-            if($this->updatePassword == true)
-            {
-                $this->password = md5($this->password);
-            }
+            $this->updatedOn = time();
             return true;
         }
         else
@@ -79,40 +123,6 @@ class Models_User extends TinyPHP_ActiveRecord
 
         //$this->validateLoginInfo();
 
-        return !$this->hasErrors();
-    }
-
-    public function validateLoginInfo()
-    {
-        if($this->username == "")
-        {
-            $this->addError("Username is required");
-        }
-        else
-        {
-            if(!$this->isUniqueUsername($this->username,$this->id))
-            {
-                $this->addError("Username '". $this->username ."' is already in use");
-            }
-        }
-
-        if( $this->role == "" ) 
-        {
-            $this->addError("User role is required");
-        }
-
-        if($this->_getCurrentAction() == "create")
-        {
-            $this->validatePassword();
-        }
-        elseif($this->_getCurrentAction() == "update")
-        {
-            if($this->password!="")
-            {
-                $this->validatePassword();
-            }
-        }
-        
         return !$this->hasErrors();
     }
 
@@ -161,6 +171,29 @@ class Models_User extends TinyPHP_ActiveRecord
             }
 
         }
+        if($this->mobile == "")
+        {
+            $this->addError("Mobile number is blank");
+        }
+        else{
+            if(!preg_match('/^[0-9]{10}+$/', $this->mobile))
+            {
+                $this->addError("Enter Valid Phone Number");
+            }
+
+        }
+
+        if($this->emgContactNo == "")
+        {
+            $this->addError("Emergency Contact number is blank");
+        }
+        else{
+            if(!preg_match('/^[0-9]{10}+$/', $this->emgContactNo))
+            {
+                $this->addError("Enter Valid Emergency Contact Number");
+            }
+
+        }
 
         if($this->address == "")
         {
@@ -196,6 +229,48 @@ class Models_User extends TinyPHP_ActiveRecord
         if($this->joinDate == "")
         {
             $this->addError("Join Date is Empty");
+        }
+
+        if($this->gender == "")
+        {
+            $this->addError("Gender is Empty");
+        }
+
+        if($this->dateOfBirth == "")
+        {
+            $this->addError("Date of Birth is Empty");
+        }
+
+        if($this->emgContactName == "")
+        {
+            $this->addError("Emergency Contact Name is Empty");
+        }
+
+        if($this->aadharId == "")
+        {
+            $this->addError("Aadhar Number is Empty ");
+        }
+        else{
+            if(!preg_match('/^[0-9]{12}+$/', $this->aadharId))
+            {
+                $this->addError("Invalid Aadhar Number");
+            }
+        }
+        
+        if($this->bloodGroup == "")
+        {
+            $this->addError("Blood Group is Empty");
+        }
+
+        if($this->personalEmail == "")
+        {
+            $this->addError("Personal Email is Blank");
+        }
+        else{
+            if(!filter_var($this->personalEmail, FILTER_VALIDATE_EMAIL))
+            {
+                $this->addError("Enter Valid Personal Email");
+            }
         }
 
         return !$this->hasErrors();

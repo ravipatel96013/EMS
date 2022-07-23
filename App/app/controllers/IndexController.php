@@ -16,11 +16,12 @@ class App_IndexController extends TinyPHP_Controller {
 		$date = date('Y-m-d');
 		$currentYear = date('Y');
 
-		$holidays = new Models_Holiday();
-		$upComingHolidays = $holidays->getUpComingHolidays();
-		// echo "<pre>";
-		// print_r($upComingHolidays);
-		// die;
+		$holiday = new Models_Holiday();
+		$upComingHolidays = $holiday->getUpComingHolidays();
+
+		$leave = new Models_LeaveBalancesheet();
+		$leaveBalance = $leave->getLeaveBalance($loggedInUserId);
+	
 		$break = new Models_BreakLog();
 		$totalBreakTime = $break->getTotalBreakTime($loggedInUserId);
 		$totalBreakMinutes = $totalBreakTime['SUM(b.totalMinutes)'];
@@ -84,6 +85,7 @@ class App_IndexController extends TinyPHP_Controller {
 		$this->setViewVar('breakHours',$breakHours);
 		$this->setViewVar('breakMinutes',$breakMinutes);
 		$this->setViewVar('upComingHolidays',$upComingHolidays);
+		$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 	}
 
 	public function getattendanceAction()
@@ -118,8 +120,6 @@ class App_IndexController extends TinyPHP_Controller {
 		$dt->setDefaultFilters($defaultFilters);
 
 		$dt->getData();
-		echo "called";
-		die;
 	}
 
 	public function checkinAction()

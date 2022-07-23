@@ -5,7 +5,7 @@ class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
 	{
         $user = new Models_User();
         $users = $user->getAll(['id','firstName','lastName']);
-        // $this->setViewVar('data',$users);
+        $this->setViewVar('data',$users);
 	}
 
 	public function addAction()
@@ -15,13 +15,21 @@ class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
             $this->setNoRenderer(true);
             $status = 0;
             $errors = [];
-
-
-        $leaves = new Models_LeaveBalancesheet();
 	
-        $leaves->getPostData();
-        $leaves->actionTakenBy = TinyPHP_Session::get('adminName');
-        $isCreated = $leaves->create();
+        $userId = $this->getRequest()->getPostVar('userId');
+        $amount = $this->getRequest()->getPostVar('amount');
+        $type = $this->getRequest()->getPostVar('type');
+        $description = $this->getRequest()->getPostVar('description');
+        $actionTakenBy = TinyPHP_Session::get('adminName');
+        $service = new Service_LeaveBalancesheet();
+        if($type = 'credit')
+        {
+            $isCreated = $service->doCredit($userId,$amount,$description,$actionTakenBy);
+        }
+        else{
+            $isCreated = $service->doDebit($userId,$amount,$description,$actionTakenBy);
+        }    
+
 
         if( $isCreated == true )
         {
@@ -29,7 +37,7 @@ class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
         }
         else
         {
-            $errors = $leaves->getErrors();
+            $errors = $service->getErrors();
         }
             
             $response = ["status" => $status, "errors" => $errors];

@@ -3,7 +3,7 @@ class Admin_UsersController extends TinyPHP_Controller {
 	
 	public function indexAction()
     {
-
+        
     }
 
 
@@ -55,6 +55,7 @@ class Admin_UsersController extends TinyPHP_Controller {
 
                 $user = new Models_User();
                 $user->getPostData();
+                
                 $user->confirmPassword = $this->getRequest()->getPostVar('confirmPassword');
                 $isCreated = $user->create();
 
@@ -87,7 +88,7 @@ class Admin_UsersController extends TinyPHP_Controller {
             $status = 0;
             $errors = [];
             
-
+            
             $userId = $this->getRequest()->getPostVar('id');
             $user = new Models_User($userId);
 

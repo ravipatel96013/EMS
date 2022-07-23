@@ -39,7 +39,23 @@ public function checkout($id,$checkOutDateTime)
     else
     {
         $attendance->checkOutDateTime = $checkOutDateTime;
-        $attendance->status = 'P';
+        
+        $leaveItem = new Models_LeaveItem();
+        $isLeave = $leaveItem->todayLeave($id);
+        // echo '<pre>';
+        // print_r($isLeave);
+        // die;
+        if(!empty($isLeave))
+        {
+            $balanceSheet = new Service_LeaveBalancesheet();
+            $balanceSheet->doCredit($isLeave['userId'],1,'Leave Revert','SYSTEM');
+            $leaveItem = new Models_LeaveItem($isLeave['leaveItemId']);
+            $leaveItem->isLeaveBalanceDeducted = 0;
+            $leaveItem->update(['isLeaveBalanceDeducted']);
+
+        }
+
+        
         $isUpdated = $attendance->update(array('checkOutDateTime','updatedOn'));
         if($isUpdated)
         {
