@@ -21,6 +21,7 @@ class App_IndexController extends TinyPHP_Controller {
 
 		$leave = new Models_LeaveBalancesheet();
 		$leaveBalance = $leave->getLeaveBalance($loggedInUserId);
+
 	
 		$break = new Models_BreakLog();
 		$totalBreakTime = $break->getTotalBreakTime($loggedInUserId);

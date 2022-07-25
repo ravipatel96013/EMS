@@ -17,6 +17,9 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$holidays = new Models_Holiday();
 	$upComingHolidays = $holidays->getUpComingHolidays();
 
+	$leave = new Models_LeaveBalancesheet();
+	$leaveBalance = $leave->getLeaveBalance($loggedInAdminId);
+
 	$break = new Models_BreakLog();
 	$totalBreakTime = $break->getTotalBreakTime($loggedInAdminId);
 	$totalBreakMinutes = $totalBreakTime['SUM(b.totalMinutes)'];
@@ -76,6 +79,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$this->setViewVar('presentDays',$presentDay['COUNT(status)']);
 	$this->setViewVar('breakHours',$breakHours);
 	$this->setViewVar('breakMinutes',$breakMinutes);
+	$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 	$this->setViewVar('upComingHolidays',$upComingHolidays);
 	}
 	public function checkinAction()

@@ -81,22 +81,13 @@ class Models_User extends TinyPHP_ActiveRecord
         {
         $currentMonth = date('m');    
         $currentYear = date('Y');
-        $nextMonth = 0;
-        if($currentMonth == 12)
-        {
-            $nextMonth = 1;
-        }
-        else
-        {
-            $nextMonth = $currentMonth+1;
-        }
+        $daysInMonth = date('t');
 
-        $daysInMonth = cal_days_in_month(CAL_GREGORIAN,$nextMonth,$currentYear);
         for($i=1;$i<=$daysInMonth;$i++)
         {
             $attd = new Models_Attendance();
             $attd->userId = $this->id;
-            $attd->date = $currentYear."-".$nextMonth."-".$i;
+            $attd->date = $currentYear."-".$currentMonth."-".$i;
             $attd->create();
         }
         }

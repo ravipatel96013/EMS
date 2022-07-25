@@ -17,7 +17,6 @@ class Admin_LeavesController extends TinyPHP_Controller {
 
         $leaves = new Models_Leave();
 	
-        $leaves->type = $this->getRequest()->getPostVar('type');
         $startDate = $this->getRequest()->getPostVar('startDate');
         $endDate = $this->getRequest()->getPostVar('endDate');
         $stdt = new DateTime($startDate);
@@ -103,7 +102,6 @@ class Admin_LeavesController extends TinyPHP_Controller {
         $dt->addColumns(array(
             'id' => 'l.id',
             'userName' => 'b.firstName',
-            'type' => 'l.type',
             'startDate' => 'l.startDate',
             'endDate' => 'l.endDate',
             'comment' => 'l.comment',

@@ -18,7 +18,6 @@ class App_LeavesController extends TinyPHP_Controller {
         $leaves = new Models_Leave();
 
         $leaves->userId = getLoggedInUserId();
-        $leaves->type = $this->getRequest()->getPostVar('type');
         $leaves->startDate = date("Y-m-d",strtotime($this->getRequest()->getPostVar('startDate')));
         $leaves->endDate = date("Y-m-d",strtotime($this->getRequest()->getPostVar('endDate')));
         $leaves->isHalf = $this->getRequest()->getPostVar('isHalf');
@@ -53,7 +52,6 @@ class App_LeavesController extends TinyPHP_Controller {
 
         $dt->addColumns(array(
             'id' => 'l.id',
-            'type' => 'l.type',
             'startDate' => 'l.startDate',
             'endDate' => 'l.endDate',
             'comment' => 'l.comment',

@@ -55,34 +55,67 @@ class Scripts_UserAttendanceController extends TinyPHP_Controller
 public function userattendancestatusAction()
 {
     $this->setNoRenderer(true);
-
+    $date = date('Y-m-d');
+    $today = date('D');
+    $holiday = new Models_Holiday();
+    $holiday->fetchByProperty(['date'],[$date]);
+    $where = "date='$date' AND status='NA'";
+    $attendace = new Models_Attendance();
+    $data = $attendace->getAll(['id','date','userId','status'],$where);
     $leave = new Models_Leave();
-    $data = $leave->getLeaves();
-    // echo "<pre>";
+    $leaves = $leave->getLeaves();
+    // echo '<pre>';
     // print_r($data);
+    // print_r($leaves);
     // die;
-        foreach($data as $leave)
-       {
-           $attendace = new Models_Attendance($leave['attendanceId']);
-           if($leave['leaveStatus'] == APPROVED)
+    foreach($data as $attendace)
+    {
+        $attd = new Models_Attendance($attendace->id);
+        foreach($leaves as $leave)
+        {
+           if($attendace->userId == $leave['userId'])
            {
-               if($leave['isHalf'] == 1)
+               if($leave['status'] == APPROVED)
                {
-               $attendace->status = 'HPL';
-               $attendace->update(['status','updatedOn']); 
-               }
-               else{
-               $attendace->status = 'PL';
-               $attendace->update(['status','updatedOn']);
-               }
-           }
-           elseif($leave['leaveStatus'] == PENDING || $leave['leaveStatus'] == DECLINED)
-           {
-               $attendace->status = 'UL';
-               $attendace->update(['status','updatedOn']);
-           }
-       }
- }
+                   if($leave['isHalf'] == 1)
+                   {
+                        $attd->status = 'HPL';
+                        $attd->update(['status','updatedOn']);
+                    }
+                    else
+                    {
+                        $attd->status = 'PL';
+                        $attd->update(['status','updatedOn']);
+                    }
+                }
+                elseif($leave['status'] == PENDING || $leave['status'] == DECLINED)
+                {
+                    $attd->status = 'UL';
+                    $attd->update(['status','updatedOn']);
+                }
+            }
+            else
+            {
+                if($today == 'Sun')
+                {
+                    $attd->status = 'WO';
+                    $attd->update(['status','updatedOn']);   
+                }
+                elseif(!$holiday->isEmpty)
+                {
+                    $attd->status = 'HO';
+                    $attd->update(['status','updatedOn']);
+                }
+                else
+                {
+                    $attd->status = 'UL';
+                    $attd->update(['status','updatedOn']);
+                }
+            }
+        }
+    }
+}
+
 
  public function leaveAction()
  {

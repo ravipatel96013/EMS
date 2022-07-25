@@ -11,12 +11,7 @@
         <form method="post" id="editStatus">
           <input type="hidden" name="id" value="{$dataRow.id}">
           <input type="hidden" name="oldStatus" value="{$dataRow.status}">
-          <div class="row">
-          <label class="col-md-4"><b>Leave Type</b></label>:
-          <span class="col-md-4">{if $dataRow.type eq 0}Sick{elseif $dataRow.type eq 1}Paid{elseif $dataRow.type eq 2}Unpaid{/if}</span>
-        </div>
-
-        <div class="row mt-4">
+        <div class="row">
           <label class="col-md-4"><b>From</b></label>:
           <span class="col-md-4">{$dataRow.startDate|date_format:'Y-m-d'}</span>
         </div>
@@ -39,7 +34,7 @@
         <div class="row mt-4">
           <label class="col-md-4"><b>Status</b></label>:
           <select name="status" class="form-control form-control-sm col-md-4 mb-3 ml-2">
-            <option value="" selected disabled>Pending</option>
+            <option selected disabled>Pending</option>
             <option value="1" {if $dataRow.status eq 1}selected{/if}>Approved</option>
             <option value="2" {if $dataRow.status eq 2}selected{/if}>Declined</option>
           </select>

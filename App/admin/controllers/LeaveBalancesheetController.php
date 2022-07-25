@@ -22,11 +22,11 @@ class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
         $description = $this->getRequest()->getPostVar('description');
         $actionTakenBy = TinyPHP_Session::get('adminName');
         $service = new Service_LeaveBalancesheet();
-        if($type = 'credit')
+        if($type == 'credit')
         {
             $isCreated = $service->doCredit($userId,$amount,$description,$actionTakenBy);
         }
-        else{
+        elseif($type == 'debit'){
             $isCreated = $service->doDebit($userId,$amount,$description,$actionTakenBy);
         }    
 

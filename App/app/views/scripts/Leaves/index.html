@@ -32,7 +32,6 @@
               <thead>
                 <tr>
                   <th scope="col">Leave Id</th>
-                  <th scope="col">Type</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>
                   <th scope="col">Comment</th>
@@ -68,16 +67,7 @@
           <h5 class="modal-title" id="exampleModalLabel">Leave Application</h5>
         </div>
         <div class="modal-body text-left">
-          <div class="row">
-            <label class="col-md-3 offset-md-1"><b>Type</b></label>
-            <select name="type" class="form-control form-control-sm col-md-6">
-              <option value="0">Sick</option>
-              <option value="1">Paid</option>
-              <option value="2">Unpaid</option>
-            </select>
-          </div>
-
-          <div class="row mt-4">
+          <div class="row mt-1">
             <label class="col-md-3 offset-md-1"><b>From</b></label>
             <input
               type="date"
@@ -157,18 +147,6 @@
           },
           "columns": [
               { data: 'id',name: 'id'},
-              { data: 'type',
-                name: 'type',
-                render: function(data,type,row)
-                {
-                  if (row.type == 0) {
-                            return '<h6 class="mb-0"><span>Sick</span></h6>';
-                        } else if (row.type == 1) {
-                            return '<h6 class="mb-0"><span>Paid</span></h6>';
-                        } else if (row.type == 2) {
-                            return '<h6 class="mb-0"><span>Unpaid</span></h6>';
-                        }
-                }},
               { data: 'startDate',name: 'startDate'},
               { data: 'endDate', name: 'endDate'},
               { data: 'comment',name: 'comment'},

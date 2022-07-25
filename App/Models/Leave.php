@@ -4,7 +4,6 @@ class Models_Leave extends TinyPHP_ActiveRecord
     public $tableName = "leaves";
     public $id = "";
     public $userId = "";
-    public $type = "";
     public $startDate = "";
     public $endDate = "";
     public $isHalf = "";
@@ -55,13 +54,21 @@ class Models_Leave extends TinyPHP_ActiveRecord
          $dateRange = $dates;
          foreach($dateRange as $date)
          {
+            $day =  date('D', strtotime($date));
+            $holiday = new Models_Holiday();
+            $holiday->fetchByProperty('date',$date);
+            if($day == 'Sun' || (!($holiday->isEmpty)))
+            {
+            }
+            else{
             $item = new Models_LeaveItem();
             $item->leaveId = $this->id;
             $item->date = $date;
             $item->isLeaveBalanceDeducted = 0;
             $item->create();
-         }
-         return true;
+            }
+        }
+        return true;
         // $name = TinyPHP_Session::get('usernName');
         // $mailer = new Helpers_Mailer();
         // $from = 'smitparmar.yrcoder@gmail.com';
@@ -86,65 +93,59 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
     protected function doAfterUpdate()
     {
-        $result = $this->attendanceToUpdate();
+        $result = $this->attendanceToUpdate();  
         foreach($result as $data)
         {
-         $balanceSheet = new Models_LeaveBalancesheet();
-         $leaveBalance = $balanceSheet->getLeaveBalance($this->userId);
-         if($leaveBalance > 0)
-         { 
-             if($data['holidayId'] == NULL)
-             {
-                //  $timestamp = strtotime($data['leaveItemDate']);
-                //  $leaveDay = date('D', $timestamp);
-                //  if(!$leaveDay == 'Sun')
-                   $userId = $data['userId'];
-                   $actionTakenBy = TinyPHP_Session::get('adminName');
-                   $leaveItem = new Models_LeaveItem($data['leaveItemId']);
-                   if($this->status == APPROVED && ($this->oldStatus == PENDING || $this->oldStatus == DECLINED))
-                   {
-                        $description = 'Leave Approved';
-                         if($this->isHalf == 1)
-                         {
-                            $service = new Service_LeaveBalancesheet();
-                            $amount = 0.5;
-                            $service->doDebit($userId,$amount,$description,$actionTakenBy);
-                            $leaveItem->isLeaveBalanceDeducted = 1;
-                            $leaveItem->update(['isLeaveBalanceDeducted']);
-                         }
-                         else
-                         {
-                            $service = new Service_LeaveBalancesheet();
-                            $amount = 1;
-                            $service->doDebit($userId,$amount,$description,$actionTakenBy);
-                            $leaveItem->isLeaveBalanceDeducted = 1;
-                            $leaveItem->update(['isLeaveBalanceDeducted']);
-                         }
-                     }
-                     elseif($this->status == DECLINED && $this->oldStatus == APPROVED)
-                     {
-                        $description = 'Balance Revert';
-                        if($data['isDeducted'] == 1)
-                        {
-                            if($this->isHalf == 1)
-                            {
-                               $service = new Service_LeaveBalancesheet();
-                               $amount = 0.5;
-                               $service->doCredit($userId,$amount,$description,$actionTakenBy);
-                               $leaveItem->isLeaveBalanceDeducted = 0;
-                               $leaveItem->update(['isLeaveBalanceDeducted']);
-                            }
-                            else
-                            {
-                               $service = new Service_LeaveBalancesheet();
-                               $amount = 1;
-                               $service->doCredit($userId,$amount,$description,$actionTakenBy);
-                               $leaveItem->isLeaveBalanceDeducted = 0;
-                               $leaveItem->update(['isLeaveBalanceDeducted']);
-                            }
-                        }
-                     }
-             }
+            $balanceSheet = new Models_LeaveBalancesheet();
+            $leaveBalance = $balanceSheet->getLeaveBalance($this->userId);
+            if($leaveBalance > 0)
+            {  
+                  $userId = $data['userId'];
+                  $actionTakenBy = TinyPHP_Session::get('adminName');
+                  $leaveItem = new Models_LeaveItem($data['leaveItemId']);
+                  if($this->status == APPROVED && ($this->oldStatus == PENDING || $this->oldStatus == DECLINED))
+                  {
+                          $description = 'Leave Approved';
+                          if($this->isHalf == 1)
+                          {
+                              $service = new Service_LeaveBalancesheet();
+                              $amount = 0.5;
+                              $service->doDebit($userId,$amount,$description,$actionTakenBy);
+                              $leaveItem->isLeaveBalanceDeducted = 1;
+                              $leaveItem->update(['isLeaveBalanceDeducted']);
+                          }
+                          else
+                          {
+                              $service = new Service_LeaveBalancesheet();
+                              $amount = 1;
+                              $service->doDebit($userId,$amount,$description,$actionTakenBy);
+                              $leaveItem->isLeaveBalanceDeducted = 1;
+                              $leaveItem->update(['isLeaveBalanceDeducted']);
+                          }
+                  }
+                      elseif($this->status == DECLINED && $this->oldStatus == APPROVED)
+                      {
+                          $description = 'Balance Revert';
+                          if($data['isDeducted'] == 1)
+                          {
+                              if($this->isHalf == 1)
+                              {
+                              $service = new Service_LeaveBalancesheet();
+                              $amount = 0.5;
+                              $service->doCredit($userId,$amount,$description,$actionTakenBy);
+                              $leaveItem->isLeaveBalanceDeducted = 0;
+                              $leaveItem->update(['isLeaveBalanceDeducted']);
+                              }
+                              else
+                              {
+                              $service = new Service_LeaveBalancesheet();
+                              $amount = 1;
+                              $service->doCredit($userId,$amount,$description,$actionTakenBy);
+                              $leaveItem->isLeaveBalanceDeducted = 0;
+                              $leaveItem->update(['isLeaveBalanceDeducted']);
+                              }
+                          }
+                      }
          }
      }
            
@@ -167,11 +168,6 @@ class Models_Leave extends TinyPHP_ActiveRecord
        if($this->comment == "")
        {
           $this->addError("Description is Empty");
-       }
-
-       if($this->type == "")
-       {
-        $this->addError("Type is Empty");
        }
 
         return !$this->hasErrors();
@@ -217,7 +213,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
     {
         global $db;
         $date = date('Y-m-d');
-        $sql = "SELECT a.id AS attendanceId,a.userId AS userId,a.status AS attendanceStatus,b.isHalf AS isHalf,b.status AS leaveStatus,c.id AS leaveItemId FROM `user_attendance` AS a LEFT JOIN leaves AS b ON b.userId=a.userId LEFT JOIN leave_items AS c ON c.leaveId=b.id AND c.date=a.date WHERE a.date='$date' AND a.status='NA'";
+        $sql = "SELECT lv.userId as userId,l.date as leaveDate,lv.status as status,lv.isHalf AS isHalf FROM leave_items AS l LEFT JOIN leaves AS lv ON lv.id=l.leaveId WHERE l.date='$date'";
         $result = $db->fetchAll($sql);
         return $result;
 
@@ -226,7 +222,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
     public function attendanceToUpdate()
     {
        global $db;
-       $sql = "SELECT b.isLeaveBalanceDeducted AS isDeducted, a.isHalf AS isHalf, c.userId AS userId,a.id AS leaveId, b.id AS leaveItemId, b.date AS leaveItemDate, c.id AS userAttendanceId, c.date AS attendanceDate, d.id AS holidayId FROM leaves AS a INNER JOIN leave_items AS b ON b.leaveId=a.id INNER JOIN user_attendance AS c ON c.date=b.date AND c.userId=a.userId LEFT JOIN holidays AS d ON d.date=c.date WHERE a.id=$this->id";
+       $sql = "SELECT b.isLeaveBalanceDeducted AS isDeducted, a.isHalf AS isHalf, c.userId AS userId,a.id AS leaveId, b.id AS leaveItemId, b.date AS leaveItemDate, c.id AS userAttendanceId, c.date AS attendanceDate, d.id AS holidayId, DAYNAME(c.date) AS DayOfDate FROM leaves AS a INNER JOIN leave_items AS b ON b.leaveId=a.id INNER JOIN user_attendance AS c ON c.date=b.date AND c.userId=a.userId LEFT JOIN holidays AS d ON d.date=c.date WHERE a.id=$this->id";
        $result = $db->fetchAll($sql);
        return $result;
 }

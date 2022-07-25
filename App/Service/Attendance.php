@@ -42,9 +42,7 @@ public function checkout($id,$checkOutDateTime)
         
         $leaveItem = new Models_LeaveItem();
         $isLeave = $leaveItem->todayLeave($id);
-        // echo '<pre>';
-        // print_r($isLeave);
-        // die;
+        
         if(!empty($isLeave))
         {
             $balanceSheet = new Service_LeaveBalancesheet();
