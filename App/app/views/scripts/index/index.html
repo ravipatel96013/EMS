@@ -23,6 +23,7 @@
             {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-lg">CheckOut</button>{/if}
               {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-lg">CheckIn</button>{/if}
                 {if $completed eq true}<h4>Done For the day</h4>{/if}
+                {if $pauseBreakWarning eq true}<h4>Pause Break to Check-Out</h4>{/if}
             </div>
         </div>
       </div>
@@ -77,9 +78,15 @@
       </div>
       <div class="col-sm-1">
           <select name="month" class="form-control" id="month">
-            {foreach item=i from=1|@range:12} 
-            <option value="{$i}" {if $selectedMonth eq $i}selected{/if}>{$i}</option>
+            {if isset($selectedMonth)}
+            {foreach from=$monthOption item=month}
+            <option value="{$month}" {if $selectedMonth eq $month}selected{/if}>{$month}</option>
             {/foreach}
+            {/if}
+
+            <!-- {foreach item=i from=1|@range:12}
+            <option value="{$i}" {if $selectedMonth eq $i}selected{/if}>{$i}</option>
+            {/foreach} -->
           </select>
         </div>
 
@@ -240,7 +247,12 @@
 
     attendanceTable = $('#attendance').DataTable({
           serverSide: true,
-          pageLength: 31,
+          pageLength: 50,
+          bPaginate: false,
+          bLengthChange: false,
+          bFilter: true,
+          bInfo: false,
+          searching: false,
           "ajax": {
               url: '/app/index/getattendance',
               type: "GET",

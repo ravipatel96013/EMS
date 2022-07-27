@@ -15,7 +15,7 @@ class Models_User extends TinyPHP_ActiveRecord
     public $city = "";
     public $state = "";
     public $profileImage = "";
-    public $isActive = 1;
+    public $isActive = 0;
     public $role = '';
     public $gender = '';
     public $dateOfBirth = '';
@@ -50,6 +50,7 @@ class Models_User extends TinyPHP_ActiveRecord
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
         $this->addListener('afterCreate', array($this,'doAfterCreate'));
+        $this->addListener('afterUpdate', array($this,'doAfterUpdate'));
     }
 
 
@@ -74,23 +75,19 @@ class Models_User extends TinyPHP_ActiveRecord
 
     protected function doAfterCreate()
     {
+        if($this->isActive == 1)
+        {
         $attendance = new Models_Attendance();
         $where = 'userId='.$this->id;
         $data = $attendance->getAll(['id'],$where);
         if(empty($data))
         {
-        $currentMonth = date('m');    
-        $currentYear = date('Y');
-        $daysInMonth = date('t');
-
-        for($i=1;$i<=$daysInMonth;$i++)
-        {
-            $attd = new Models_Attendance();
-            $attd->userId = $this->id;
-            $attd->date = $currentYear."-".$currentMonth."-".$i;
-            $attd->create();
+            $year = date('Y');
+            $month = date('m');
+            $service = new Service_Attendance();
+            $service->addAttendance($year,$month,$this->id);
         }
-        }
+    }
     }
 
 
@@ -98,12 +95,32 @@ class Models_User extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
+            if($this->password != "")
+            {
+                $this->password = md5($this->password);
+            }
             $this->updatedOn = time();
             return true;
         }
         else
         {
             return false;
+        }
+    }
+
+    protected function doAfterupdate()
+    {
+        if($this->isActive == 1)
+        { 
+           $currentMonth = date('m');
+           $currentYear = date('Y'); 
+           $attd = new Models_Attendance();
+           $attendace = $attd->getAll(['id'], "userId={$this->id} AND MONTH(date)={$currentMonth} AND YEAR(date)={$currentYear}");
+           if(empty($attendace))
+           {
+            $service = new Service_Attendance();
+            $service->addAttendance($currentYear,$currentMonth,$this->id);
+           }
         }
     }
 
@@ -268,26 +285,6 @@ class Models_User extends TinyPHP_ActiveRecord
     }
 
 
-    public function isUniqueUsername($_username,$id)
-    {
-        global $db;
-
-        $sql = "SELECT count(username) FROM ". $this->tableName ." WHERE username = '$_username'";
-        if($id)
-        {
-            $sql .= " AND id <> ". $id;
-        }
-
-        $count = $db->fetchOne($sql);
-        if($count==0)
-        {
-            return true;
-        }
-        else{
-            return false;
-        }
-    }
-
     public function checkCred($email,$password)
     {
         global $db;
@@ -317,6 +314,5 @@ class Models_User extends TinyPHP_ActiveRecord
         $result = $db->fetchRow($sql);
         return $result;
     }
-
 }
 ?>

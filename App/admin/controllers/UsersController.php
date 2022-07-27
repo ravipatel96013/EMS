@@ -25,9 +25,10 @@ class Admin_UsersController extends TinyPHP_Controller {
             }
             else
             {
-                $isDeleted = $user->delete();
+                $user->delete();
+                $deletedRows = $user->getDeletedRows();
 
-                if( $isDeleted == true )
+                if( $deletedRows > 0 )
                 {
                     $status = 1;
                 }

@@ -28,6 +28,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
+            $this->start_transaction();
             $time = time();
 
             $this->createdOn = $time;
@@ -43,6 +44,9 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
     protected function doAfterCreate()
     {
+        $commit = false;
+        $isCreated = false;
+
             $dates = array();
             $current = strtotime($this->startDate);
             $date2 = strtotime($this->endDate);
@@ -54,21 +58,39 @@ class Models_Leave extends TinyPHP_ActiveRecord
          $dateRange = $dates;
          foreach($dateRange as $date)
          {
-            $day =  date('D', strtotime($date));
-            $holiday = new Models_Holiday();
-            $holiday->fetchByProperty('date',$date);
-            if($day == 'Sun' || (!($holiday->isEmpty)))
+             $day =  date('D', strtotime($date));
+             $holiday = new Models_Holiday();
+             $holiday->fetchByProperty('date',$date);
+             $attendance = new Models_Attendance();
+             $attendance->fetchByProperty(['userId','date'],[$this->userId,$date]);
+            if($attendance->status == 'UL' || $attendance->status == 'HUL')
             {
-            }
-            else{
-            $item = new Models_LeaveItem();
-            $item->leaveId = $this->id;
-            $item->date = $date;
-            $item->isLeaveBalanceDeducted = 0;
-            $item->create();
+                if($day == 'Sun' || (!($holiday->isEmpty)))
+                {
+                }
+                else
+                {
+                $item = new Models_LeaveItem();
+                $item->leaveId = $this->id;
+                $item->date = $date;
+                $item->isLeaveBalanceDeducted = 0;
+                $isCreated = $item->create();
+                }
             }
         }
-        return true;
+        if($isCreated == true)
+        {
+            $commit = true;
+        }
+
+        if($commit == true)
+        {
+            $this->commit();
+        }
+        else{
+            $this->addError("Can not create the Leave application");
+            $this->rollback();
+        }
         // $name = TinyPHP_Session::get('usernName');
         // $mailer = new Helpers_Mailer();
         // $from = 'smitparmar.yrcoder@gmail.com';
@@ -93,9 +115,14 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
     protected function doAfterUpdate()
     {
-        $result = $this->attendanceToUpdate();  
+        $result = $this->attendanceToUpdate();
+        $date = date('Y-m-d');
+        // echo "<pre>";
+        // print_r($result);
+        // die;
         foreach($result as $data)
         {
+            $attendance = new Models_Attendance($data['userAttendanceId']);
             $balanceSheet = new Models_LeaveBalancesheet();
             $leaveBalance = $balanceSheet->getLeaveBalance($this->userId);
             if($leaveBalance > 0)
@@ -108,6 +135,11 @@ class Models_Leave extends TinyPHP_ActiveRecord
                           $description = 'Leave Approved';
                           if($this->isHalf == 1)
                           {
+                              if($data['leaveItemDate'] < $date)  
+                              {
+                                $attendance->status = 'HPL';
+                                $attendance->update(['status','updatedOn']);
+                              }
                               $service = new Service_LeaveBalancesheet();
                               $amount = 0.5;
                               $service->doDebit($userId,$amount,$description,$actionTakenBy);
@@ -116,6 +148,11 @@ class Models_Leave extends TinyPHP_ActiveRecord
                           }
                           else
                           {
+                            if($data['leaveItemDate'] < $date)  
+                              {
+                                $attendance->status = 'PL';
+                                $attendance->update(['status','updatedOn']);
+                              }
                               $service = new Service_LeaveBalancesheet();
                               $amount = 1;
                               $service->doDebit($userId,$amount,$description,$actionTakenBy);
@@ -130,6 +167,11 @@ class Models_Leave extends TinyPHP_ActiveRecord
                           {
                               if($this->isHalf == 1)
                               {
+                              if($data['leaveItemDate'] < $date)  
+                              {
+                                $attendance->status = 'HUL';
+                                $attendance->update(['status','updatedOn']);
+                              }
                               $service = new Service_LeaveBalancesheet();
                               $amount = 0.5;
                               $service->doCredit($userId,$amount,$description,$actionTakenBy);
@@ -138,6 +180,11 @@ class Models_Leave extends TinyPHP_ActiveRecord
                               }
                               else
                               {
+                              if($data['leaveItemDate'] < $date)  
+                              {
+                                $attendance->status = 'UL';
+                                $attendance->update(['status','updatedOn']);
+                              }
                               $service = new Service_LeaveBalancesheet();
                               $amount = 1;
                               $service->doCredit($userId,$amount,$description,$actionTakenBy);
@@ -155,23 +202,37 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
     public function validate()
     {
-        $this->validateLeaveInfo();
+        if($this->comment == "")
+        {
+           $this->addError("Comment is Empty");
+        }
+
+        if(!$this->startDate == '')
+        {
+            $this->startDate = date('Y-m-d',strtotime($this->startDate));
+        }
+        else
+        {
+            $this->addError("Start Date is Empty");
+        }
+
+        if(!$this->endDate == '')
+        {
+            $this->endDate = date('Y-m-d',strtotime($this->endDate));
+            if($this->endDate < $this->startDate)
+            {
+                $this->addError("Start and End Date id not Valid");
+            }
+        }
+        else
+        {
+            $this->addError("End Date is Empty");
+        }
 
         return !$this->hasErrors();
     }
 
 
-
-    public function validateLeaveInfo()
-    {  
-        
-       if($this->comment == "")
-       {
-          $this->addError("Description is Empty");
-       }
-
-        return !$this->hasErrors();
-    }
 
     public function showData()
     {

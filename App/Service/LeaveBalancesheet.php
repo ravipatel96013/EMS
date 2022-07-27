@@ -18,7 +18,7 @@ class Service_LeaveBalancesheet extends Service_Base {
         else{
             $this->addError($leave->getErrors);
         }
-
+        return false;
     }
 
     public function doDebit($userId,$amount,$description,$actionTakenBy)
@@ -38,7 +38,7 @@ class Service_LeaveBalancesheet extends Service_Base {
         else{
             $this->addError($leave->getErrors);
         }
-
+        return false;
     }
 
 }

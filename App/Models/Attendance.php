@@ -21,21 +21,7 @@ class Models_Attendance extends TinyPHP_ActiveRecord
 
         }
 
-        $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
-    }
-
-
-    protected function doBeforeCreate()
-    {
-            $time = time();
-
-            $this->checkInDateTime = NULL; 
-            $this->checkOutDateTime = NULL;
-            $this->status = "NA";
-            $this->createdOn = $time;
-            $this->updatedOn = $time;
-            return true;
     }
 
 

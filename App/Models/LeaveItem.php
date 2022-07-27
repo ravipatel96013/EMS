@@ -38,7 +38,7 @@ class Models_LeaveItem extends TinyPHP_ActiveRecord
     {
         global $db;
 
-        $sql = "SELECT c.*,a.userId AS userId,c.id AS leaveItemId FROM user_attendance AS a LEFT JOIN leaves AS b ON b.userId=a.userId LEFT JOIN leave_items AS c ON c.leaveId=b.id AND c.date=a.date WHERE a.id=$attendanceId AND b.status='1'";
+        $sql = "SELECT c.*,a.userId AS userId,b.isHalf AS isHalf FROM user_attendance AS a LEFT JOIN leaves AS b ON b.userId=a.userId LEFT JOIN leave_items AS c ON c.leaveId=b.id AND c.date=a.date WHERE a.id=$attendanceId GROUP BY a.userId;";
         $result = $db->fetchRow($sql);
         if(!$result == '')
         {

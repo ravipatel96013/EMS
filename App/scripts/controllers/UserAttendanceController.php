@@ -4,44 +4,40 @@ class Scripts_UserAttendanceController extends TinyPHP_Controller
     public function defaultAction()
     {
         $logs = [];
-
         $this->setNoRenderer(true);
-        $nextMonth = 0;
         $today = date('d');
-        $currentMonth = date('m');    
-        $currentYear = date('Y');
         $lastDay = date('t');
        
        if($today == $lastDay)
        { 
-            if($currentMonth == 12)
-            {
-                $nextMonth = 1;
-            }
-            else
-            {
-                $nextMonth = $currentMonth+1;
-            }
-            
-            $daysInMonth = cal_days_in_month(CAL_GREGORIAN,$nextMonth,$currentYear);
+           
+            $daysInNextMonth = date("t",strtotime("next month"));
+            $nextMonth = date("m",strtotime("next month"));
+            $yearOfNextMonth = date("Y",strtotime("next month"));
 
             $attd = new Models_Attendance();
-            $attendace = $attd->getAll(['id'], "MONTH(date)={$nextMonth} AND YEAR(date)={$currentYear}");
+            $attendace = $attd->getAll(['id'], "MONTH(date)={$nextMonth} AND YEAR(date)={$yearOfNextMonth}");
             if(count($attendace) == 0)
             {
+                $entriesCreated = false;
                 $user = new Models_User();
-                $users = $user->getAll(['id']);
+                $users = $user->getAll(['id'],'isActive=1');
                 foreach($users as $user)
                 {
-                    for($i=1;$i<=$daysInMonth;$i++)
+                    $service = new Service_Attendance();
+                    $isCreated = $service->addAttendance($yearOfNextMonth,$nextMonth,$user->id);
+                    if($isCreated)
                     {
-                        $attd = new Models_Attendance();
-                        $attd->userId = $user->id;
-                        $attd->date = $currentYear."-".$nextMonth."-".$i;
-                        $attd->create();
+                        $entriesCreated = true;
                     }
                 }
-                array_push($logs,"Entries Created");
+                if($entriesCreated)
+                {
+                    array_push($logs,"Entries Created");
+                }
+                else{
+                    array_push($logs,"Something went Wrong");
+                }
             }
             else {
                 array_push($logs,"Already Exist");
@@ -57,25 +53,32 @@ public function userattendancestatusAction()
     $this->setNoRenderer(true);
     $date = date('Y-m-d');
     $today = date('D');
+    
     $holiday = new Models_Holiday();
     $holiday->fetchByProperty(['date'],[$date]);
+    
     $where = "date='$date' AND status='NA'";
     $attendace = new Models_Attendance();
     $data = $attendace->getAll(['id','date','userId','status'],$where);
+    
     $leave = new Models_Leave();
     $leaves = $leave->getLeaves();
-    // echo '<pre>';
-    // print_r($data);
-    // print_r($leaves);
-    // die;
+
+    $leavesByUserId = [];
+    foreach($leaves as $leave)
+    {
+        $leavesByUserId[$leave['userId']] = $leave;
+    }
+
+
     foreach($data as $attendace)
     {
         $attd = new Models_Attendance($attendace->id);
-        foreach($leaves as $leave)
+        $leave = [];
+        if( isset($leavesByUserId[$attendace->userId]) ) 
         {
-           if($attendace->userId == $leave['userId'])
-           {
-               if($leave['status'] == APPROVED)
+            $leave = $leavesByUserId[$attendace->userId];
+            if($leave['status'] == APPROVED)
                {
                    if($leave['isHalf'] == 1)
                    {
@@ -93,10 +96,10 @@ public function userattendancestatusAction()
                     $attd->status = 'UL';
                     $attd->update(['status','updatedOn']);
                 }
-            }
-            else
-            {
-                if($today == 'Sun')
+        }
+        else
+        {
+            if($today == 'Sun')
                 {
                     $attd->status = 'WO';
                     $attd->update(['status','updatedOn']);   
@@ -111,9 +114,9 @@ public function userattendancestatusAction()
                     $attd->status = 'UL';
                     $attd->update(['status','updatedOn']);
                 }
-            }
         }
     }
+    
 }
 
 

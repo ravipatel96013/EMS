@@ -116,6 +116,13 @@
                 <label for="joinDate"><b>Date of Joining</b></label>
               <input type="date" class="form-control form-control-sm" name="joinDate" id="joinDate" >
             </div>
+            <div class="col-sm-6">
+              <label for="joinDate"><b>Active Status</b></label>
+              <select class="form-control form-control-sm" name="isActive" id="isActive">
+                <option value="1">Active</option>
+                <option value="0">Inactive</option>
+              </select>
+          </div>
             </div>
           </div>
         </div>
@@ -219,7 +226,7 @@
                   }
                   else
                   {
-                    alert(result.errors);
+                    toastr.error(result.errors);
                   }
                 }
             });

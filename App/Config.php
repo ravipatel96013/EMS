@@ -6,6 +6,7 @@ define('DB_TIMEZONE_STRING', '+05:30');
 define('APPROVED',1);
 define('PENDING',0);
 define('DECLINED',2);
+define('CLOSED',3);
 
 define('SITE_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define('SITE_URL', $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);

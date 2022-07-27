@@ -15,29 +15,55 @@ class App_LeavesController extends TinyPHP_Controller {
 
 			$this->setNoRenderer(true);
 
-        $leaves = new Models_Leave();
+            $leaves = new Models_Leave();
 
-        $leaves->userId = getLoggedInUserId();
-        $leaves->startDate = date("Y-m-d",strtotime($this->getRequest()->getPostVar('startDate')));
-        $leaves->endDate = date("Y-m-d",strtotime($this->getRequest()->getPostVar('endDate')));
-        $leaves->isHalf = $this->getRequest()->getPostVar('isHalf');
-        $leaves->comment = $this->getRequest()->getPostVar('comment');
+            $leaves->userId = getLoggedInUserId();
 
-        $isCreated = $leaves->create();
+            $leaves->startDate = $this->getRequest()->getPostVar('startDate');
 
-        if( $isCreated == true )
-        {
-            $status = 1;
-        }
-        else
-        {
-            $errors = $leaves->getErrors();
-        }
+            $leaves->endDate = $this->getRequest()->getPostVar('endDate');
+            
+            $leaves->isHalf = $this->getRequest()->getPostVar('isHalf');
+            
+            $leaves->comment = $this->getRequest()->getPostVar('comment');
+
+            $isCreated = $leaves->create();
+
+            if( $isCreated == true )
+            {
+                $status = 1;
+            }
+            else
+            {
+                $errors = $leaves->getErrors();
+            }
             
             $response = ["status" => $status, "errors" => $errors];
             echo json_encode($response);
             die;
     	}
+    }
+
+    public function closeleaveAction()
+    {
+        $status = 0;
+        $errors = [];
+
+        $leaveId = $this->getRequest()->getPostVar('id');
+        $leave = new Models_Leave($leaveId);
+        $leave->status = CLOSED;
+        $isUpdated = $leave->update(['status']);
+        if($isUpdated)
+        {
+           $status = 1;
+        }
+        else
+        {
+            $errors = $leave->getErrors();
+        }
+        $response = ["status" => $status, "errors" => $errors];
+        echo json_encode($response);
+        die;
     }
 
     public function leavelistAction()

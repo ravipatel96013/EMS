@@ -4,7 +4,7 @@
           <div class="col-lg-10 col-xl-11">
 
               <div class="row justify-content-center">
-                  <div class="col-md-10 col-lg-5 col-xl-5 order-2 order-lg-1">
+                  <div class="col-md-10 col-lg-5 col-xl-5 order-2 order-lg-1 errorParent">
                       <div class="card card-outline card-primary">
                           <div class="card-header text-center">
                               <a href="/" class="h1"><b>User</b> Login</a>
@@ -12,7 +12,7 @@
                           <div class="card-body">
                               <p class="login-box-msg">Sign in to start your session</p>
 
-                              <form method="post">
+                              <form name="login" method="post">
                                   <div class="input-group mb-3">
                                       <input type="email" class="form-control" id="email" name="email"
                                           placeholder="Email">
@@ -33,18 +33,15 @@
                                   </div>
                                   <div class="row d-flex justify-content-end">
                                       <div class="col-4">
-                                          <button type="submit" class="btn btn-primary btn-block submit">Sign
+                                          <button type="button" class="btn btn-primary btn-block submit">Sign
                                               In</button>
                                       </div>
                                       <!-- /.col -->
                                   </div>
                               </form>
-                              <p class="mb-0">
-                              <!-- <a href="#">I forgot my password</a> -->
-                            </p>
-                          </div>
-                          <!-- /.card-body -->
-                      </div>
+                            </div>
+                            <!-- /.card-body -->
+                        </div>
                   </div>
               </div>
           </div>
@@ -62,26 +59,16 @@
             $.ajax({
                 url: "/app/login/dologin/",
                 type: "POST",
+                dataType: "JSON",
                 data: { email: email, password: pass },
                 success: function (result) {
-                    console.log(result);
-                    if(result == 1)
+                    if(result.status == 1)
                     {
                         window.location.href = "/app";
                     }
-                    else if(result == 2)
-                    {
-                        alert("You are Admin");
+                    else {
+                        toastr.error(result.errors);
                     }
-                    else if(result == 3)
-                    {
-                        alert("Invalid Credentials");
-                    }
-                    
-                    // $email = $("#email").html(result.email).val();
-                    // $pass = $("#password").html(result.password).val();
-                    // console.log($email);
-                    // console.log($pass); 
                 }
             });
         });

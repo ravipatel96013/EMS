@@ -3,15 +3,42 @@ class App_IndexController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
+		$currentYear = date('Y');
+		$currentMonth = date('m');
 		$checkInButton = false;
 		$checkOutButton = false;
 		$startBreakButton = false;
 		$endBreakButton = false;
 		$completed = false;
-		$selectedYear = $this->getRequest()->getVar('year');
-		$selectedMonth = $this->getRequest()->getVar('month');
+		$pauseBreakWarning = false;
+		
+		$selectedYear = $this->getRequest()->getVar('year', 'numeric', date("Y"));
+		$selectedMonth = $this->getRequest()->getVar('month', 'numeric', date("m"));
+		$monthOption = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$yearOption = [];
 
-		$presentDay = 0;
+		for($i=2022;$i<=$currentYear+1;$i++)
+		{
+			array_push($yearOption,$i);
+		}
+
+		foreach($yearOption as $year)
+		{
+			if($year = $selectedYear)
+			{
+				$this->setViewVar('selectedYear',$selectedYear);
+			}
+		}
+
+		foreach($monthOption as $month)
+		{
+			if($month = $selectedMonth)
+			{
+				$this->setViewVar('selectedMonth',$selectedMonth);
+			}
+		}
+
+		//$presentDay = 0;
 		$loggedInUserId = getLoggedInUserId();
 		$date = date('Y-m-d');
 		$currentYear = date('Y');
@@ -19,13 +46,16 @@ class App_IndexController extends TinyPHP_Controller {
 		$holiday = new Models_Holiday();
 		$upComingHolidays = $holiday->getUpComingHolidays();
 
+
 		$leave = new Models_LeaveBalancesheet();
 		$leaveBalance = $leave->getLeaveBalance($loggedInUserId);
 
 	
 		$break = new Models_BreakLog();
 		$totalBreakTime = $break->getTotalBreakTime($loggedInUserId);
+
 		$totalBreakMinutes = $totalBreakTime['SUM(b.totalMinutes)'];
+		
 		if(!$totalBreakMinutes == NULL)
 		{
 			if($totalBreakMinutes > 60)
@@ -43,9 +73,11 @@ class App_IndexController extends TinyPHP_Controller {
 			$breakHours = 0;
 			$breakMinutes = 0;
 		}
+		
 		$attendance = new Models_Attendance();
 		$presentDay = $attendance->getPresentMonthAttendance($loggedInUserId);
 		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
+		
 		$break = new Models_BreakLog();
 		$activeBreak = $break->getActiveBreak($loggedInUserId);
 
@@ -58,6 +90,7 @@ class App_IndexController extends TinyPHP_Controller {
 			}
 			else{
 				$endBreakButton = true;
+				$pauseBreakWarning =true;
 			}
 		}
 		 else
@@ -73,30 +106,37 @@ class App_IndexController extends TinyPHP_Controller {
 				$completed = true;
 			}
 		}
+		
 
 		$this->setViewVar('checkInButton',$checkInButton);
 		$this->setViewVar('checkOutButton',$checkOutButton);
 		$this->setViewVar('startBreakButton',$startBreakButton);
 		$this->setViewVar('endBreakButton',$endBreakButton);
 		$this->setViewVar('completed',$completed);
-		$this->setViewVar('selectedYear',$selectedYear);
-		$this->setViewVar('selectedMonth',$selectedMonth);
+		$this->setViewVar('monthOption',$monthOption);
+		$this->setViewVar('yearOption',$yearOption);
 		$this->setViewVar('currentYear',$currentYear);
+		$this->setViewVar('currentYear',$currentMonth);
 		$this->setViewVar('presentDays',$presentDay['COUNT(status)']);
 		$this->setViewVar('breakHours',$breakHours);
 		$this->setViewVar('breakMinutes',$breakMinutes);
 		$this->setViewVar('upComingHolidays',$upComingHolidays);
 		$this->setViewVar('leaveBalance',$leaveBalance['balance']);
+		$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
 	}
 
 	public function getattendanceAction()
 	{
 		$this->setNoRenderer(true);
+		
 		$month = $this->getRequest()->getVar("month");
 		$year = $this->getRequest()->getVar("year");
+		
 		global $db;
+		
 		$loggedInUserId = getLoggedInUserId();
-        $dt = new TinyPHP_DataTable();
+        
+		$dt = new TinyPHP_DataTable();
 	    $dt->setDBAdapter($db);
         $dt->setTable('user_attendance AS a');
         $dt->setIdColumn('a.id');
@@ -127,8 +167,10 @@ class App_IndexController extends TinyPHP_Controller {
     {
 
 		$this->setNoRenderer(true);
+		
 		$status = 0;
 		$errors = [];
+		
 		$loggedInUserId = getLoggedInUserId();
 		$date = date('Y-m-d');
 
@@ -147,6 +189,7 @@ class App_IndexController extends TinyPHP_Controller {
 			if ( !$attendance->isEmpty && is_null($attendance->checkInDateTime) && is_null($attendance->checkOutDateTime) ) 
 			{
 				$checkInDateTime = date('Y-m-d H:i:s');
+				
 				$service = new Service_Attendance();
 				$isCheckedIn = $service->checkin($attendance->id,$checkInDateTime);
 				if($isCheckedIn)
@@ -191,7 +234,7 @@ class App_IndexController extends TinyPHP_Controller {
 				$status = 1;
 			}
 			else{
-				$errors = $service->getErrors;
+				$errors = $service->getErrors();
 			}
 		}
 		$response = ["status" => $status, "errors" => $errors];
@@ -264,15 +307,20 @@ class App_IndexController extends TinyPHP_Controller {
 		{	
 			$break =new Models_BreakLog();
 			$activeBreak = $break->getActiveBreak($loggedInUserId);
+			
 			if(!empty($activeBreak))
 			{
 				$break = new Models_BreakLog($activeBreak['id']);
 				$break->endTime = date('Y-m-d H:i:s');
-				$to_time = strtotime($activeBreak['startTime']);
-				$from_time = strtotime($break->endTime);
-				$totalMinutes = round(abs($to_time - $from_time) / 60,2);
+				
+				$to_time = strtotime($break->endTime);
+				$from_time = strtotime($activeBreak['startTime']);
+				
+				$totalMinutes = round(abs($from_time - $to_time) / 60,2);
 				$break->totalMinutes = $totalMinutes;
+				
 				$isUpdated = $break->update(array('endTime','totalMinutes'));
+				
 				if($isUpdated)
 				{
 					$status = 1;

@@ -36,6 +36,7 @@
                   <th scope="col">To</th>
                   <th scope="col">Comment</th>
                   <th scope="col">Status</th>
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -129,7 +130,7 @@
         if (result.status == 1) {
           location.reload();
         } else {
-          console.log(result);
+          toastr.error(result.errors);;
         }
       },
     });
@@ -160,11 +161,47 @@
                             return ' <h6 class="mb-0"><span class="badge bg-danger"  >Declined</span></h6>';
                         } else if (row.status == 0) {
                             return ' <h6 class="mb-0"><span class="badge bg-warning"  >Pending</span></h6>';
+                        }else if (row.status == 3) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning"  >Closed</span></h6>';
                         }
                     }
+                },
+                { data: 'id',name: 'id'}
+          ],
+          "aoColumnDefs": [
+           {
+                "aTargets": [5],
+                "mData": "id",
+                "mRender": function (data, type, full) {
+                    return '<i class="fa-solid fa-rectangle-xmark cancle" id='+data+'></i>';
                 }
-          ]
+            }
+         ]
       });
   });
+</script>
+<script>
+  $('body').on('click', 'i.cancle', function () {
+    if(confirm('Sure You want to Close Leave Application'))
+    {
+          var id = $(this).attr('id');
+          $.ajax({
+              url: "/app/leaves/closeleave/",
+              type: 'POST',
+              dataType: 'JSON',
+              data: {
+                  id: id
+              },
+              success: function (resutlt) {
+                  if (result.status == 1) {
+                      location.reload();
+                  } else {
+                      console.log(result.errors);
+                  }
+              }
+          });
+        }
+  });
+
 </script>
 {/literal}

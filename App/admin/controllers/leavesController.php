@@ -99,6 +99,13 @@ class Admin_LeavesController extends TinyPHP_Controller {
 
         $dt->setJoins("INNER JOIN users AS b ON b.id = l.userId");
 
+        $defaultFilters = array(
+            "l.status" => APPROVED,
+            "l.status" => DECLINED,
+            "l.status" => PENDING);
+        
+        $dt->setDefaultFilters($defaultFilters);
+
         $dt->addColumns(array(
             'id' => 'l.id',
             'userName' => 'b.firstName',
