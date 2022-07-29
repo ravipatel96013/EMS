@@ -243,13 +243,13 @@
 
 <script>
     $('select#month').change(function() {
-      window.location.href = 'http://local.ems.com/admin/userattendance'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
+      window.location.href = '/admin/userattendance'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
       });
     $('select#year').change(function() {
-      window.location.href = 'http://local.ems.com/admin/userattendance'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
+      window.location.href = '/admin/userattendance'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
     });
     $('select#user').change(function() {
-      window.location.href = 'http://local.ems.com/admin/userattendance'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
+      window.location.href = '/admin/userattendance'+'?year='+$('select#year').val()+'&month='+$('select#month').val()+'&user='+$('select#user').val();
     });
 </script>
 {/literal}
