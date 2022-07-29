@@ -10,6 +10,7 @@ class App_IndexController extends TinyPHP_Controller {
 		$startBreakButton = false;
 		$endBreakButton = false;
 		$completed = false;
+		$attendanceNotFound = false;
 		$pauseBreakWarning = false;
 		
 		$selectedYear = $this->getRequest()->getVar('year', 'numeric', date("Y"));
@@ -53,19 +54,19 @@ class App_IndexController extends TinyPHP_Controller {
 	
 		$break = new Models_BreakLog();
 		$totalBreakTime = $break->getTotalBreakTime($loggedInUserId);
-
+		if($totalBreakTime != false)
+		{
 		$totalBreakMinutes = $totalBreakTime['SUM(b.totalMinutes)'];
-		
 		if(!$totalBreakMinutes == NULL)
 		{
 			if($totalBreakMinutes > 60)
 			{
-				$breakHours = $totalBreakMinutes/60;
-				$breakMinutes = $totalBreakMinutes - 60*$breakHours;
+				$breakHours = round($totalBreakMinutes/60, 0);
+				$breakMinutes = round($totalBreakMinutes - 60*$breakHours, 0);
 			}
 			else{
 				$breakHours = 0;
-				$breakMinutes = $totalBreakMinutes;
+				$breakMinutes = round($totalBreakMinutes,0);
 			}
 		}
 		else
@@ -73,7 +74,12 @@ class App_IndexController extends TinyPHP_Controller {
 			$breakHours = 0;
 			$breakMinutes = 0;
 		}
-		
+		$this->setViewVar('breakHours',$breakHours);
+		$this->setViewVar('breakMinutes',$breakMinutes);
+		}
+		else{
+			$attendanceNotFound = true;
+		}
 		$attendance = new Models_Attendance();
 		$presentDay = $attendance->getPresentMonthAttendance($loggedInUserId);
 		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
@@ -118,11 +124,10 @@ class App_IndexController extends TinyPHP_Controller {
 		$this->setViewVar('currentYear',$currentYear);
 		$this->setViewVar('currentYear',$currentMonth);
 		$this->setViewVar('presentDays',$presentDay['COUNT(status)']);
-		$this->setViewVar('breakHours',$breakHours);
-		$this->setViewVar('breakMinutes',$breakMinutes);
 		$this->setViewVar('upComingHolidays',$upComingHolidays);
 		$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 		$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
+		$this->setViewVar('attendanceNotFound',$attendanceNotFound);
 	}
 
 	public function getattendanceAction()

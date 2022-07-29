@@ -7,7 +7,6 @@ class Models_User extends TinyPHP_ActiveRecord
     public $password = "";
     public $firstName = "";
     public $lastName = "";
-    public $phone = "";
     public $mobile= "";
     public $designation = "";
     public $joinDate = "";
@@ -58,14 +57,13 @@ class Models_User extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            $this->createdOn = time();
-            $this->updatedOn = time();
-
-            if($this->password != "")
+            if($this->validatePassword())
             {
                 $this->password = md5($this->password);
+                $this->createdOn = time();
+                $this->updatedOn = time();
+                return true;
             }
-            return true;
         }
         else
         {
@@ -95,12 +93,19 @@ class Models_User extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            if($this->password != "")
+            if($this->password == "")
             {
-                $this->password = md5($this->password);
+                array_push($this->dbIgnoreFields,'password');
+                return true;
             }
-            $this->updatedOn = time();
-            return true;
+            else{
+                if($this->validatePassword())
+                {
+                    $this->password = md5($this->password);
+                    $this->updatedOn = time();
+                    return true;
+                }
+            }
         }
         else
         {
@@ -127,7 +132,7 @@ class Models_User extends TinyPHP_ActiveRecord
     public function validate()
     {
         $this->validateUserInfo();
-        $this->validatePassword();
+        //$this->validatePassword();
 
         //$this->validateLoginInfo();
 
@@ -168,17 +173,6 @@ class Models_User extends TinyPHP_ActiveRecord
             $this->addError("Last name is required");
         }
 
-        if($this->phone == "")
-        {
-            $this->addError("Phone number is blank");
-        }
-        else{
-            if(!preg_match('/^[0-9]{10}+$/', $this->phone))
-            {
-                $this->addError("Enter Valid Phone Number");
-            }
-
-        }
         if($this->mobile == "")
         {
             $this->addError("Mobile number is blank");

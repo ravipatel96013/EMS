@@ -20,6 +20,8 @@ class Admin_LoginController extends TinyPHP_Controller {
         $user = new Models_User();
         $user->fetchByProperty('email', $email);
 
+
+
         if( !$user->isEmpty )
         {
             if( $user->password == md5($pass) && $user->isActive == 1 )
@@ -36,12 +38,12 @@ class Admin_LoginController extends TinyPHP_Controller {
             }
             else
             {
-                $user->addError('Invalid Credentials');
+                $user->addError('Invalid username or password');
             }
         }
         else
         {
-            if(empty($user->email) || ($user->password))
+            if($email == '' || $pass == '')
             {
                 $user->addError('Fields are Empty');
             }

@@ -67,17 +67,6 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
         return !$this->hasErrors();
     }
 
-    public function showData()
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
 
     public function getActiveBreak($id)
     {

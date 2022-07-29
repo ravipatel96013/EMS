@@ -42,10 +42,13 @@ public function checkout($id,$checkOutDateTime)
         $leaveItem = new Models_LeaveItem();
         $leave = $leaveItem->todayLeave($id);
         $attendance = new Models_Attendance($id);
-        $checkInTime = new DateTime($attendance->checkInDateTime);
-        $checkOutTime = new DateTime($checkOutDateTime);
-        $interval = $checkInTime->diff($checkOutTime);
-        if($interval->format('%H') < 6)
+        $from_time = strtotime($attendance->checkInDateTime); 
+        $to_time = strtotime($checkOutDateTime); 
+        $workingHours = round(abs($from_time - $to_time) / 60,2);
+        $breakTime = $attendance->getInfo();
+        $breakTime = $breakTime['breakTime'];
+        $productiveHours = ($workingHours - $breakTime)/60;
+        if($productiveHours < 6)
         {
             if($leave['leaveId'] == NULL)
             {   

@@ -22,8 +22,9 @@
           <div class="col">
             {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-lg">CheckOut</button>{/if}
               {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-lg">CheckIn</button>{/if}
-                {if $completed eq true}<h4>Done For the day</h4>{/if}
-                {if $pauseBreakWarning eq true}<h4>Pause Break to Check-Out</h4>{/if}
+              {if $attendanceNotFound eq false && $completed eq true}<h4>Done For the day</h4>{/if}
+              {if $attendanceNotFound eq true}<h4>Please Contact Admin</h4>{/if}
+              {if $pauseBreakWarning eq true}<h4>Pause Break to Check-Out</h4>{/if}
             </div>
         </div>
       </div>
@@ -42,9 +43,9 @@
             {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-lg">End Break</button>{/if}
           </div>
           <div class="col d-flex justify-content-center mt-2">
-          <h4 id="hours">{$breakHours}:</h4>
-          <h4 id="mins">{$breakMinutes}:</h4>
-          <h4 id="seconds">00</h4>
+            <h4 id="hours">{if isset($breakHours)}{$breakHours}:{else}00:{/if}</h4>
+            <h4 id="mins">{if isset($breakMinutes)}{$breakMinutes}:{else}00:{/if}</h4>
+            <h4 id="seconds">00</h4>
         </div>
         </div>
       </div>
@@ -211,10 +212,10 @@
 
   <script>
   $('select#month').change(function() {
-    window.location.href = 'http://local.ems.com/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+    window.location.href = '/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
     });
   $('select#year').change(function() {
-    window.location.href = 'http://local.ems.com/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+    window.location.href = '/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
   });
   </script>
 
