@@ -73,7 +73,7 @@ public function checkout($id,$checkOutDateTime)
                     $attendance->checkOutDateTime = $checkOutDateTime;
                     $attendance->update(array('checkOutDateTime','status','updatedOn'));
                     $isUpdated = true;
-                    $balanceSheet = new Service_LeaveBalancesheet();
+                    $balanceSheet = new Service_Leavebalancesheet();
                     $balanceSheet->doCredit($leave['userId'],1,'Leave Revert','SYSTEM');
 
                     $leaveItem = new Models_LeaveItem($leave['id']);
@@ -108,7 +108,7 @@ public function checkout($id,$checkOutDateTime)
                 {
                     $amount = 0.5;
                 }  
-                $balanceSheet = new Service_LeaveBalancesheet();
+                $balanceSheet = new Service_Leavebalancesheet();
                 $balanceSheet->doCredit($leave['userId'],$amount,'Leave Revert','SYSTEM');
                 $leaveItem = new Models_LeaveItem($leave['id']);
                 $leaveItem->isLeaveBalanceDeducted = 0;

@@ -1,5 +1,5 @@
 <?php
-class Admin_UserAttendanceController extends TinyPHP_Controller {
+class Admin_UserattendanceController extends TinyPHP_Controller {
     public function indexAction()
     {
         $currentYear = date('Y');

@@ -1,5 +1,5 @@
 <?php
-class Scripts_UserAttendanceController extends TinyPHP_Controller
+class Scripts_UserattendanceController extends TinyPHP_Controller
 {
     public function defaultAction()
     {
@@ -84,7 +84,7 @@ public function userattendancestatusAction()
                         $attd->status = 'UL';
                         $attd->update(['status','updatedOn']);
 
-                        $service = new Service_LeaveBalancesheet();
+                        $service = new Service_Leavebalancesheet();
                         $service->doCredit($attendace->userId,0.5,'Leave Revert','SYSTEM');
                         $leaveItem = new Models_LeaveItem($leave['leaveItemId']);
                         $leaveItem->isLeaveBalanceDeducted = 0;
@@ -140,7 +140,7 @@ public function userattendancestatusAction()
     
         foreach($userIds as $user)
         {
-            $leave = new Service_LeaveBalancesheet();
+            $leave = new Service_Leavebalancesheet();
             $userId = $user->id;
             $amount = 1;
             $description = 'Monthly Free Paid Leave';

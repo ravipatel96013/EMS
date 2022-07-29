@@ -1,5 +1,5 @@
 <?php
-class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
+class Admin_LeavebalancesheetController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
@@ -21,7 +21,7 @@ class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
         $type = $this->getRequest()->getPostVar('type');
         $description = $this->getRequest()->getPostVar('description');
         $actionTakenBy = TinyPHP_Session::get('adminName');
-        $service = new Service_LeaveBalancesheet();
+        $service = new Service_Leavebalancesheet();
         if($type == 'credit')
         {
             $isCreated = $service->doCredit($userId,$amount,$description,$actionTakenBy);
