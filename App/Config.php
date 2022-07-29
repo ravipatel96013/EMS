@@ -49,14 +49,15 @@ if ($_SERVER['HTTP_HOST'] ==  'local.ems.com') {
      */
 
     define('DB_HOST', 'localhost');
-    define('DB_UNAME', '');
-    define('DB_PWD', '');
-    define('DB_NAME', '');
+    define('DB_UNAME', 'ems_yrcoder');
+    define('DB_PWD', 'ems_yrcoder');
+    define('DB_NAME', 'EMS');
 
 
-    define('DEBUG_EMAIL', 'debug@domain.com');
+    define('DEBUG_EMAIL', 'ravipatel96013@gmail.com');
 
     define('ENV', "production");
-    ini_set('display_errors', "Off");
-    error_reporting(0);
+    //ini_set('display_errors', "Off");
+    error_reporting(1);
+    ini_set('display_errors', "On");
 }
