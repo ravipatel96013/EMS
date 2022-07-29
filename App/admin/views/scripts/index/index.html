@@ -22,7 +22,9 @@
                     <div class="col">
                       {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-lg">CheckOut</button>{/if}
                         {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-lg">CheckIn</button>{/if}
-                          {if $completed eq true}<h4>Done For the day</h4>{/if}
+                          {if $attendanceNotFound eq false && $completed eq true}<h4>Done For the day</h4>{/if}
+                          {if $attendanceNotFound eq true}<h4>Attendance Not Found</h4>{/if}   
+                           {if $pauseBreakWarning eq true}<h4>Pause Break to Check-Out</h4>{/if}
                       </div>
                   </div>
                 </div>
@@ -41,8 +43,8 @@
                       {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-lg">End Break</button>{/if}
                     </div>
                     <div class="col d-flex justify-content-center mt-2">
-                    <h4 id="hours">{$breakHours}:</h4>
-                    <h4 id="mins">{$breakMinutes}:</h4>
+                    <h4 id="hours">{if isset($breakHours)}{$breakHours}:{else}00:{/if}</h4>
+                    <h4 id="mins">{if isset($breakMinutes)}{$breakMinutes}:{else}00:{/if}</h4>
                     <h4 id="seconds">00</h4>
                   </div>
                   </div>
@@ -55,8 +57,8 @@
                 <div class="card-header"><h3>Working Days</h3></div>
                 <div class="card-body">
                   <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><h6><b>Present Days : </b>{$presentDays}</h6></li>
-                    <li class="list-group-item"><h6><b>Leave Balance : </b>{$leaveBalance}</h6></li>
+                    <li class="list-group-item"><h6><b>Present Days : </b>{if isset($presentDays)}{$presentDays}{else}0{/if}</h6></li>
+                    <li class="list-group-item"><h6><b>Leave Balance : </b>{if isset($leaveBalance)}{$leaveBalance}{else}0{/if}</h6></li>
                   </ul>
                   <div class="card-header"><h3>Upcoming Holidays</h3></div>
                   <ul class="list-group list-group-flush">
@@ -177,8 +179,8 @@
 
 <script>
 
-  hours = {/literal}{$breakHours}{literal};
-  mins = {/literal}{$breakMinutes}{literal};
+  hours = {/literal}{if isset($breakHours)}{$breakHours}{else}0{/if}{literal};
+  mins = {/literal}{if isset($breakMinutes)}{$breakMinutes}{else}0{/if}{literal};
   seconds = 0;
 
 

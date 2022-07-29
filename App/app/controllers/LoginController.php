@@ -26,7 +26,7 @@ class App_LoginController extends TinyPHP_Controller {
             {
                 if($user->role != 'user')
                 {
-                    $user->addError('You are Admin');    
+                    $user->addError('You are not user');    
                 }
                 else{
                 $status = 1;
@@ -36,12 +36,12 @@ class App_LoginController extends TinyPHP_Controller {
             }
             else
             {
-                $user->addError('Invalid Credentials');
+                $user->addError('Invalid username or password');
             }
         }
         else
         {
-            if(empty($user->email) || ($user->password))
+            if($email == '' || $pass == '')
             {
                 $user->addError('Fields are Empty');
             }

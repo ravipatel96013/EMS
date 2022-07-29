@@ -25,7 +25,7 @@
                   <th scope="col">Name</th>
                   <th scope="col">Date of Joining</th>
                   <th scope="col">E-mail</th>
-                  <th scope="col">Phone</th>
+                  <th scope="col">Mobile</th>
                   <th scope="col">Role</th>
                   <th scope="col">Designation</th>
                   <th scope="col">Locality</th>
@@ -84,7 +84,7 @@
               { data: 'firstName',name: 'firstName'},
               { data: 'joinDate',name: 'joinDate'},
               { data: 'email',name: 'email'},
-              { data: 'phone', name: 'phone'},
+              { data: 'mobile', name: 'mobile'},
               { data: 'role', name: 'role'},
               { data: 'designation', name: 'designation'},
               { data: 'address', name: 'address'},
@@ -95,7 +95,7 @@
                 "aTargets": [8],
                 "mData": "id",
                 "mRender": function (data, type, full) {
-                    return '<a href="http://local.ems.com/admin/users/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
+                    return '<a href="/admin/users/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
                 }
             }
          ]
