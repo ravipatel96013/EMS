@@ -8,6 +8,8 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$startBreakButton = false;
 	$endBreakButton = false;
 	$completed = false;
+	$attendanceNotFound = false;
+	$pauseBreakWarning = false;
 	
 	$presentDay = 0;
 	$loggedInAdminId = getLoggedInAdminId();
@@ -21,23 +23,31 @@ class Admin_IndexController extends TinyPHP_Controller {
 
 	$break = new Models_BreakLog();
 	$totalBreakTime = $break->getTotalBreakTime($loggedInAdminId);
+	if($totalBreakTime != false)
+	{
 	$totalBreakMinutes = $totalBreakTime['SUM(b.totalMinutes)'];
 	if(!$totalBreakMinutes == NULL)
 	{
 		if($totalBreakMinutes > 60)
 		{
-			$breakHours = $totalBreakMinutes/60;
-			$breakMinutes = $totalBreakMinutes - 60*$breakHours;
+			$breakHours = round($totalBreakMinutes/60,0);
+			$breakMinutes = round($totalBreakMinutes - 60*$breakHours,0);
 		}
 		else{
 			$breakHours = 0;
-			$breakMinutes = $totalBreakMinutes;
+			$breakMinutes = round($totalBreakMinutes,0);
 		}
 	}
 	else
 	{
 		$breakHours = 0;
 		$breakMinutes = 0;
+	}
+	$this->setViewVar('breakHours',$breakHours);
+	$this->setViewVar('breakMinutes',$breakMinutes);
+	}
+	else{
+		$attendanceNotFound = true;
 	}
 	$attendance = new Models_Attendance();
 	$presentDay = $attendance->getPresentMonthAttendance($loggedInAdminId);
@@ -54,6 +64,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 		}
 		else{
 			$endBreakButton = true;
+			$pauseBreakWarning = true;
 		}
 	}
 	 else
@@ -75,11 +86,11 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$this->setViewVar('startBreakButton',$startBreakButton);
 	$this->setViewVar('endBreakButton',$endBreakButton);
 	$this->setViewVar('completed',$completed);
+	$this->setViewVar('attendanceNotFound',$attendanceNotFound);
 	$this->setViewVar('presentDays',$presentDay['COUNT(status)']);
-	$this->setViewVar('breakHours',$breakHours);
-	$this->setViewVar('breakMinutes',$breakMinutes);
 	$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 	$this->setViewVar('upComingHolidays',$upComingHolidays);
+	$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
 	}
 	public function checkinAction()
     {

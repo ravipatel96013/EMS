@@ -150,6 +150,7 @@ class TinyPHP_Front {
 	    
 	    global $db, $dataCache, $siteConfig;
 		
+		
 		self::$_requestObj->setupRequest(array_keys($this->directories), $_extraParams, $this->reroute);
 
 		

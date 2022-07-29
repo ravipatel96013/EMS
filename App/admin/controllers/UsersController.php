@@ -123,9 +123,16 @@ class Admin_UsersController extends TinyPHP_Controller {
 
             $id = $this->getRequest()->getVar('id');
 
-            $user = new Models_User();        
+            $user = new Models_User($id);
+            if(!$user->isEmpty)  
+            {          
             $userData = $user->fetchUser($id);
             $this->setViewVar('userRow',$userData);
+            }
+            else{
+                header("Location: /admin/users");
+
+            }
         }
            
     }
@@ -145,7 +152,7 @@ class Admin_UsersController extends TinyPHP_Controller {
             'firstName' => 'u.firstName',
             'joinDate' => 'u.joinDate',
             'email' => 'u.email',
-            'phone' => 'u.phone',
+            'mobile' => 'u.mobile',
             'role' => 'u.role',
             'designation' => 'u.designation',
             'address' => 'u.address',
