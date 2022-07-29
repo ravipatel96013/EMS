@@ -20,6 +20,7 @@ error-log.txt
 
 # Log files
 *.log
+error-log.log
 
 # Package files
 *.jar
