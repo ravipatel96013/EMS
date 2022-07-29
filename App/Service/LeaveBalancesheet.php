@@ -1,5 +1,5 @@
 <?php
-class Service_LeaveBalancesheet extends Service_Base {
+class Service_Leavebalancesheet extends Service_Base {
 
     public function doCredit($userId,$amount,$description,$actionTakenBy)
     {
