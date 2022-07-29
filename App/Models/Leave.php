@@ -116,6 +116,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
         $result = $this->attendanceToUpdate();
         $date = date('Y-m-d');
         // echo "<pre>";
+        // echo $this->id;
         // print_r($result);
         // die;
         foreach($result as $data)

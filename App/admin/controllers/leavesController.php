@@ -80,7 +80,7 @@ class Admin_LeavesController extends TinyPHP_Controller {
             // GET Request
             $id = $this->getRequest()->getVar('id');
 
-            $leave = new Models_Leave();      
+            $leave = new Models_Leave();
             $leaveData = $leave->fetchRow($id);
             $this->setViewVar('dataRow',$leaveData);
         }
@@ -100,9 +100,7 @@ class Admin_LeavesController extends TinyPHP_Controller {
         $dt->setJoins("INNER JOIN users AS b ON b.id = l.userId");
 
         $defaultFilters = array(
-            "l.status" => APPROVED,
-            "l.status" => DECLINED,
-            "l.status" => PENDING);
+            "combination_filter" => "(l.status=".APPROVED." OR l.status=".DECLINED." OR l.status=".PENDING.")");
         
         $dt->setDefaultFilters($defaultFilters);
 

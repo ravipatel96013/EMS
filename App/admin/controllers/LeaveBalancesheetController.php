@@ -4,7 +4,7 @@ class Admin_LeaveBalancesheetController extends TinyPHP_Controller {
 	public function indexAction()  
 	{
         $user = new Models_User();
-        $users = $user->getAll(['id','firstName','lastName']);
+        $users = $user->getAll(['id','firstName','lastName'],'isActive=1');
         $this->setViewVar('data',$users);
 	}
 

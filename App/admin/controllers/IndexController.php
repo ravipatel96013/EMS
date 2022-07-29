@@ -92,6 +92,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$this->setViewVar('upComingHolidays',$upComingHolidays);
 	$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
 	}
+
 	public function checkinAction()
     {
 
@@ -238,10 +239,12 @@ class Admin_IndexController extends TinyPHP_Controller {
 			{
 				$break = new Models_BreakLog($activeBreak['id']);
 				$break->endTime = date('Y-m-d H:i:s');
-				$to_time = strtotime($activeBreak['startTime']);
-				$from_time = strtotime($break->endTime);
-				$totalMinutes = round(abs($to_time - $from_time) / 60,2);
+				$to_time = strtotime($break->endTime);
+				$from_time = strtotime($activeBreak['startTime']);
+				
+				$totalMinutes = round(abs($from_time - $to_time) / 60,2);
 				$break->totalMinutes = $totalMinutes;
+				
 				$isUpdated = $break->update(array('endTime','totalMinutes'));
 				if($isUpdated)
 				{
