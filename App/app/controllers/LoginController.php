@@ -24,9 +24,15 @@ class App_LoginController extends TinyPHP_Controller {
         {
             if( $user->password == md5($pass) && $user->isActive == 1 )
             {
+                if($user->role != 'user')
+                {
+                    $user->addError('You are Admin');    
+                }
+                else{
                 $status = 1;
                 TinyPHP_Session::set('userName',$user->firstName);
                 TinyPHP_Session::set('userId',$user->id);
+                }
             }
             else
             {

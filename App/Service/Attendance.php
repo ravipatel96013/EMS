@@ -13,8 +13,7 @@ public function checkin($id,$checkInDateTime)
 		else
 		{
             $attendance->checkInDateTime = $checkInDateTime;
-			$attendance->status = 'P';
-			$isUpdated = $attendance->update(array('checkInDateTime','updatedOn','status'));
+			$isUpdated = $attendance->update(array('checkInDateTime','updatedOn'));
 			if($isUpdated)
 			{
 				return true;
@@ -46,7 +45,6 @@ public function checkout($id,$checkOutDateTime)
         $checkInTime = new DateTime($attendance->checkInDateTime);
         $checkOutTime = new DateTime($checkOutDateTime);
         $interval = $checkInTime->diff($checkOutTime);
-
         if($interval->format('%H') < 6)
         {
             if($leave['leaveId'] == NULL)

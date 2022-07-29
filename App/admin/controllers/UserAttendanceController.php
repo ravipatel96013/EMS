@@ -3,8 +3,8 @@ class Admin_UserAttendanceController extends TinyPHP_Controller {
     public function indexAction()
     {
         $currentYear = date('Y');
-        $selectedYear = $this->getRequest()->getVar('year');
-        $selectedMonth = $this->getRequest()->getVar('month');
+        $selectedYear = $this->getRequest()->getVar('year','numeric', date("Y"));
+        $selectedMonth = $this->getRequest()->getVar('month','numeric', date("m"));
         $selectedUser = $this->getRequest()->getVar('user');
 
         $user = new Models_User();

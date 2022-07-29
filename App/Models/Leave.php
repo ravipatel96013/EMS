@@ -56,6 +56,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                $current = strtotime($stepVal, $current);
             }
          $dateRange = $dates;
+     
          foreach($dateRange as $date)
          {
              $day =  date('D', strtotime($date));
@@ -63,20 +64,17 @@ class Models_Leave extends TinyPHP_ActiveRecord
              $holiday->fetchByProperty('date',$date);
              $attendance = new Models_Attendance();
              $attendance->fetchByProperty(['userId','date'],[$this->userId,$date]);
-            if($attendance->status == 'UL' || $attendance->status == 'HUL')
-            {
-                if($day == 'Sun' || (!($holiday->isEmpty)))
-                {
-                }
-                else
-                {
+             if($day == 'Sun' || (!($holiday->isEmpty)))
+             {
+             }
+             else
+             {
                 $item = new Models_LeaveItem();
                 $item->leaveId = $this->id;
                 $item->date = $date;
                 $item->isLeaveBalanceDeducted = 0;
                 $isCreated = $item->create();
-                }
-            }
+             }
         }
         if($isCreated == true)
         {
@@ -274,7 +272,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
     {
         global $db;
         $date = date('Y-m-d');
-        $sql = "SELECT lv.userId as userId,l.date as leaveDate,lv.status as status,lv.isHalf AS isHalf FROM leave_items AS l LEFT JOIN leaves AS lv ON lv.id=l.leaveId WHERE l.date='$date'";
+        $sql = "SELECT l.id as leaveItemId,lv.userId as userId,l.date as leaveDate,lv.status as status,lv.isHalf AS isHalf FROM leave_items AS l LEFT JOIN leaves AS lv ON lv.id=l.leaveId WHERE l.date='$date'";
         $result = $db->fetchAll($sql);
         return $result;
 

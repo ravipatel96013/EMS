@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 mt-3">Users</h1>
+        <h1 class="m-0">Users</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <div class="float-sm-right">
@@ -57,9 +57,9 @@
               data: {
                   id: id
               },
-              success: function (resutlt) {
+              success: function (result) {
                   if (result.status == 1) {
-                      window.location.href = "/admin/users/";
+                      window.location.reload(true);
                   } else {
                       console.log(result.errors);
                   }

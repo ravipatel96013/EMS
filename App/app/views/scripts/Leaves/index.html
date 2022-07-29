@@ -166,17 +166,19 @@
                         }
                     }
                 },
-                { data: 'id',name: 'id'}
-          ],
-          "aoColumnDefs": [
-           {
-                "aTargets": [5],
-                "mData": "id",
-                "mRender": function (data, type, full) {
-                    return '<i class="fa-solid fa-rectangle-xmark cancle" id='+data+'></i>';
+                {
+                  data:null,
+                name: 'id',
+                name: 'status',
+                render: function (data, type, row) {
+                  if(row.status == 0 || row.status==1){
+                    return '<i class="fa-solid fa-rectangle-xmark cancle" id='+row.id+'></i>';
+                  }else{
+                    return '';
+                  }
                 }
-            }
-         ]
+              }
+          ]
       });
   });
 </script>
@@ -192,7 +194,7 @@
               data: {
                   id: id
               },
-              success: function (resutlt) {
+              success: function (result) {
                   if (result.status == 1) {
                       location.reload();
                   } else {

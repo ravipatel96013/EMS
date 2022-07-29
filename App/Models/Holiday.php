@@ -22,6 +22,7 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         }
 
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
+        $this->addListener('afterCreate', array($this,'doAfterCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
     }
 
@@ -31,7 +32,6 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         if($this->validate())
         {
             $time = time();
-
             $this->createdOn = $time;
             $this->updatedOn = $time;
             $this->createdBy = getLoggedInAdminId();
@@ -42,6 +42,23 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         else
         {
             return false;
+        }
+    }
+
+    protected function doAfterCreate()
+    {
+        $date = date('Y-m-d');
+        if($this->date > $date)
+        {
+            $year = date('Y', strtotime($this->date));
+            $month = date('m', strtotime($this->date));
+            
+            if($year == date('Y') && $month == date('m'))
+            {
+                global $db;   
+                $where = "date='$this->date'";
+                $db->update('user_attendance',['status'=>'HO'],$where);
+            }
         }
     }
 
@@ -82,8 +99,15 @@ class Models_Holiday extends TinyPHP_ActiveRecord
           $this->addError("Description is Empty");
        }
 
-       if($this->date == "")
+       if($this->date != "")
        {
+        $date = date('Y-m-d');
+        if($this->date < $date)
+        {
+            $this->addError("Invalid Date");
+        }
+       }
+       else{
         $this->addError("Date is Empty");
        }
 

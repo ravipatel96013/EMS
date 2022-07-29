@@ -99,12 +99,12 @@
 
             <div class="row mt-3">
               <label class="col-md-3 offset-md-1"><b>Check-in</b></label>
-              <input type="text" id="checkIn" name="checkIn" class="form-control form-control-sm col-md-6">
+              <input type="text" id="checkIn" name="checkIn" class="form-control form-control-sm col-md-6" placeholder="YYYY-MM-DD HH:MM:SS">
             </div>
 
             <div class="row mt-3">
               <label class="col-md-3 offset-md-1"><b>Check-out</b></label>
-              <input type="text" id="checkOut" name="checkOut" class="form-control form-control-sm col-md-6">
+              <input type="text" id="checkOut" name="checkOut" class="form-control form-control-sm col-md-6" placeholder="YYYY-MM-DD HH:MM:SS">
             </div>
 
             <div class="row mt-3">
@@ -119,13 +119,7 @@
 
             <div class="row mt-3">
               <label class="col-md-3 offset-md-1"><b>Status</b></label>
-              <select name="status" id="status" class="form-control form-control-sm col-md-6">
-                <option>P</option>
-                <option>PL</option>
-                <option>UL</option>
-                <option>HPL</option>
-                <option>HUL</option>
-                </select>
+              <input name="status" id="status" class="form-control form-control-sm col-md-6">
             </div>
 
             </div>
@@ -165,8 +159,13 @@
 <script>
     jQuery(document).ready(function (){
     attendanceTable = $('#attendance').DataTable({
-          serverSide: true,
-          pageLength: 31,
+      serverSide: true,
+      pageLength: 50,
+      bPaginate: false,
+      bLengthChange: false,
+      bFilter: true,
+      bInfo: false,
+      searching: false,
           "ajax": {
               url: '/admin/userattendance/getattendance',
               type: "GET",
@@ -196,13 +195,16 @@
                 data: 'status',
                 name: 'status',
                 "render": function(data, type, row, meta){
-                  
-                  console.log(row);
-
+                  if(row.status != 'NA')
+                  {
                   if(type === 'display'){
                     data = '<a class="editLink" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
                   }
                   return data;
+                }
+                else{
+                  return data;
+                }
                 }
               }
             ]

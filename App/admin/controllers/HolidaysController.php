@@ -18,6 +18,7 @@ class Admin_HolidaysController extends TinyPHP_Controller {
         {
             $status = 0;
             $errors = [];
+            $date = date('Y-m-d');
 
 			$this->setNoRenderer(true);
 
@@ -34,6 +35,18 @@ class Admin_HolidaysController extends TinyPHP_Controller {
 
                 if($deletedRows > 0)
                 {
+                    if($holiday->date > $date)
+                    {
+                        $year = date('Y', strtotime($holiday->date));
+                        $month = date('m', strtotime($holiday->date));
+            
+                        if($year == date('Y') && $month == date('m'))
+                        {
+                            global $db;   
+                            $where = "date='$holiday->date'";
+                            $db->update('user_attendance',['status'=>'NA'],$where);
+                        }
+                    }
                     $status = 1;
                 }
                 else

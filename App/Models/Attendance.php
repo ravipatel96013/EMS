@@ -16,17 +16,16 @@ class Models_Attendance extends TinyPHP_ActiveRecord
     public function init()
     {
     
-        if($this->id>0)
-        {
-
-        }
-
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
     }
 
 
     protected function doBeforeUpdate()
     {
+        if(!$this->checkInDateTime == NULL)
+        {
+            
+        }
             $this->updatedOn = time();
             return true;
     }

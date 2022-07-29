@@ -33,7 +33,7 @@
                                   </div>
                                   <div class="row d-flex justify-content-end">
                                       <div class="col-4">
-                                          <button type="submit" class="btn btn-primary btn-block submit">Sign
+                                          <button type="button" class="btn btn-primary btn-block submit">Sign
                                               In</button>
                                       </div>
                                       <!-- /.col -->
@@ -66,21 +66,18 @@
             $.ajax({
                 url: "/admin/login/dologin/",
                 type: "POST",
+                dataType: "JSON",
                 data: { email: email, password: pass },
                 success: function (result) {
-                    console.log(result);
-                    if(result == 1) // ready to login.
+                    if(result.status == 1)
                     {
-                        window.location.href = "/admin";
+                        window.location.href = '/admin';
                     }
-                    else if(result == 2) // not admin. 
+                    else
                     {
-                        alert("You are not Admin");
+                        toastr.error(result.errors);
                     }
-                    else if(result == 3) // Invalid Credentials.
-                    {
-                        alert("Invalid Credentials");
-                    }
+                   
                 }
             });
         });

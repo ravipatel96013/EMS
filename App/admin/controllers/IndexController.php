@@ -3,7 +3,6 @@ class Admin_IndexController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
-
 	$checkInButton = false;
 	$checkOutButton = false;
 	$startBreakButton = false;

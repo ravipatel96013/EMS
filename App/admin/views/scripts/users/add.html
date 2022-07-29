@@ -226,7 +226,10 @@
                   }
                   else
                   {
-                    toastr.error(result.errors);
+                    $.each(result.errors,function(index,value){
+                      toastr.error(value);
+                    });
+                   // toastr.error(result.errors);
                   }
                 }
             });

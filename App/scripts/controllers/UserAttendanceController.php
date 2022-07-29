@@ -63,14 +63,13 @@ public function userattendancestatusAction()
     
     $leave = new Models_Leave();
     $leaves = $leave->getLeaves();
-
+    
     $leavesByUserId = [];
     foreach($leaves as $leave)
     {
         $leavesByUserId[$leave['userId']] = $leave;
     }
-
-
+    
     foreach($data as $attendace)
     {
         $attd = new Models_Attendance($attendace->id);
@@ -79,11 +78,17 @@ public function userattendancestatusAction()
         {
             $leave = $leavesByUserId[$attendace->userId];
             if($leave['status'] == APPROVED)
-               {
+            {
                    if($leave['isHalf'] == 1)
                    {
-                        $attd->status = 'HPL';
+                        $attd->status = 'UL';
                         $attd->update(['status','updatedOn']);
+
+                        $service = new Service_LeaveBalancesheet();
+                        $service->doCredit($attendace->userId,0.5,'Leave Revert','SYSTEM');
+                        $leaveItem = new Models_LeaveItem($leave['leaveItemId']);
+                        $leaveItem->isLeaveBalanceDeducted = 0;
+                        $leaveItem->update(['isLeaveBalanceDeducted']);            
                     }
                     else
                     {
