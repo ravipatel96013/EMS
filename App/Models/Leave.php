@@ -139,7 +139,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                                 $attendance->status = 'HPL';
                                 $attendance->update(['status','updatedOn']);
                               }
-                              $service = new Service_LeaveBalancesheet();
+                              $service = new Service_Leavebalancesheet();
                               $amount = 0.5;
                               $service->doDebit($userId,$amount,$description,$actionTakenBy);
                               $leaveItem->isLeaveBalanceDeducted = 1;
@@ -152,7 +152,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                                 $attendance->status = 'PL';
                                 $attendance->update(['status','updatedOn']);
                               }
-                              $service = new Service_LeaveBalancesheet();
+                              $service = new Service_Leavebalancesheet();
                               $amount = 1;
                               $service->doDebit($userId,$amount,$description,$actionTakenBy);
                               $leaveItem->isLeaveBalanceDeducted = 1;
@@ -171,7 +171,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                                 $attendance->status = 'HUL';
                                 $attendance->update(['status','updatedOn']);
                               }
-                              $service = new Service_LeaveBalancesheet();
+                              $service = new Service_Leavebalancesheet();
                               $amount = 0.5;
                               $service->doCredit($userId,$amount,$description,$actionTakenBy);
                               $leaveItem->isLeaveBalanceDeducted = 0;
@@ -184,7 +184,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                                 $attendance->status = 'UL';
                                 $attendance->update(['status','updatedOn']);
                               }
-                              $service = new Service_LeaveBalancesheet();
+                              $service = new Service_Leavebalancesheet();
                               $amount = 1;
                               $service->doCredit($userId,$amount,$description,$actionTakenBy);
                               $leaveItem->isLeaveBalanceDeducted = 0;

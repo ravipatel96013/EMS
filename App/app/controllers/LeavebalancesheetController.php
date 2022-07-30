@@ -1,5 +1,5 @@
 <?php
-class App_LeaveBalancesheetController extends TinyPHP_Controller {
+class App_LeavebalancesheetController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
