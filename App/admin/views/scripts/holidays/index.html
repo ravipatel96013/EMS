@@ -1,0 +1,159 @@
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Holiday List</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <div class="float-sm-right">
+          <button type="button" class="btn btn-primary btn-sm mt-3" data-toggle="modal" data-target="#addModal">Add Holiday</button>
+           </div>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm mt-3" id="holidayTable">
+              <thead>
+                <tr>
+                  <th scope="col">ID</th>
+                  <th scope="col">Holiday Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Date</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>          
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+      <!--Model-->
+      <form method="post" id="addHoliday">
+      <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #007bff;">
+              <h5 class="modal-title" id="exampleModalLabel">Add Holiday</h5>
+            </div>
+            <div class="modal-body text-left">
+
+              <div class="row">
+              <label class="col-md-3 offset-md-1"><b>Name</b></label>
+              <input type="text" name="name" class="form-control form-control-sm col-md-6">
+          </div>
+
+            <div class="row mt-3">
+              <label class="col-md-3 offset-md-1"><b>Date</b></label>
+              <input type="date" name="date" class="form-control form-control-sm col-md-6">
+            </div>
+
+            <div class="row mt-4">
+              <label class="col-md-3 offset-md-1"><b>Description</b></label>
+              <textarea type="text" name="description" class="form-control form-control-sm col-md-6"></textarea>
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary add">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+      <!-- Model End -->
+        <!--  Button trigger modal End -->
+      <!--Model-->
+        <!-- Model End -->
+</div>
+{literal}
+<script>
+  $(document).ready(function () {
+      $('#holidayTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/admin/holidays/holidaylist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'name',name: 'name'},
+              { data: 'description',name: 'description'},
+              { data: 'date',name: 'date'},
+              { data: 'id', name: 'id'}
+          ],
+          "aoColumnDefs": [
+           {
+                "aTargets": [4],
+                "mData": "id",
+                "mRender": function (data, type, full) {
+                    return '<a href="/admin/holidays/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
+                }
+            }
+         ]
+      });
+  });
+</script>
+<script>
+
+  $('body').on('click', 'button.delete', function () {
+    if(confirm('Sure You want to delete'))
+    {
+          var id = $(this).attr('id');
+          $.ajax({
+              url: "/admin/holidays/delete/",
+              type: 'POST',
+              dataType: 'JSON',
+              data: {
+                  id: id
+              },
+              success: function (result) {
+                  if (result.status == 1) {
+                      window.location.href = "/admin/holidays/";
+                  } else {
+                      toastr.error(result.errors);
+                  }
+              }
+          });
+      }
+  });
+
+</script>
+
+<script>
+  $(".add").click(function()
+  {
+    var holidayData = $("form#addHoliday").serializeArray();
+      $.ajax({
+          url: "/admin/holidays/add",
+          type: "POST",
+          dataType: "json",
+          data: holidayData,
+          success: function (result) {
+            if(result.status == 1)
+            {
+              location.reload();
+            }
+            else
+            {
+              toastr.error(result.errors);
+            }
+          }
+      });
+  });
+</script>
+
+{/literal}
