@@ -1,0 +1,231 @@
+<div class="container">
+
+  <div id="userForm">
+    <div class="content-header">
+      <div class="container">
+        <div class="row mb-2">
+          <div class="col-sm-6">
+            <h1 class="m-0">Add User</h1>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+
+    <form class="form-horizontal" id="updateUser">
+      <input type="hidden" value="{$userRow.id}" name="id" id="id">
+    <div class="row" id="top_blocks">
+      <div class="col-sm-6">
+        <div class="card">
+        <div class="card-header">
+          <div class="card-title"><h4>Personal information}</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" value="{$userRow.firstName}" name="firstName" id="firstName" placeholder="First Name" required>
+            </div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" value="{$userRow.lastName}" name="lastName" id="lastName" placeholder="Last Name" required>
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <select class="form-control form-control-sm" name="gender" id="gender" required>
+                <option selected disabled>Gender</option>
+                <option value="male" {if $userRow.gender eq 'male'}selected{/if}>Male</option>
+                <option value="female" {if $userRow.gender eq 'female'}selected{/if}>Female</option>
+                <option value="other" {if $userRow.gender eq 'other'}selected{/if}>Other</option>
+              </select>
+          </div>
+          <div class="col-sm-6">
+            <select class="form-control form-control-sm" name="maritialStatus" id="maritialStatus">
+              <option value="single" {if $userRow.maritialStatus eq 'single'}selected{/if}>Single</option>
+              <option value="married" {if $userRow.maritialStatus eq 'married'}selected{/if}>Married</option>
+              <option value="divorced" {if $userRow.maritialStatus eq 'divorced'}selected{/if}>Divorced</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group row">
+          <div class="col-sm-6">
+            <label for="dateOfBirth">Date of Birth</label>
+          <input type="date" value="{$userRow.dateOfBirth}" class="form-control form-control-sm" name="dateOfBirth" id="dateOfBirth" >
+        </div>
+        <div class="col-sm-6">
+          <label for="dateOfBirth">Blood Group</label>
+          <select class="form-control form-control-sm" name="bloodGroup" id="bloodGroup">
+            <!-- <option selected disabled>Blood Group</option> -->
+            <option value="A+" {if $userRow.bloodGroup eq 'A+'}selected{/if}>A+</option>
+            <option value="A-" {if $userRow.bloodGroup eq 'A-'}selected{/if}>A-</option>
+            <option value="B+" {if $userRow.bloodGroup eq 'B+'}selected{/if}>B+</option>
+            <option value="B-" {if $userRow.bloodGroup eq 'B-'}selected{/if}>B-</option>
+            <option value="AB+" {if $userRow.bloodGroup eq 'AB+'}selected{/if}>AB+</option>
+            <option value="AB-" {if $userRow.bloodGroup eq 'AB-'}selected{/if}>AB-</option>
+            <option value="O+" {if $userRow.bloodGroup eq 'O+'}selected{/if}>O+</option>
+            <option value="O-" {if $userRow.bloodGroup eq 'O-'}selected{/if}>O-</option>
+          </select>
+      </div>
+        </div>
+          </div>          
+      </div>
+      <div class="card">
+        <div class="card-header">
+          <div class="card-title"><h4>Additional information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.aadharId}" type="text" name="aadharId" id="aadharId" placeholder="Aadhar ID">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.voterId}" type="text" name="voterId" id="voterId" placeholder="Voter Id">
+              </div>
+            </div>  
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.panId}" type="text" name="panId" id="panId" placeholder="PAN">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.licenseNumber}" type="text" name="licenseNumber" id="licenseNumber" placeholder="License Number">
+              </div>
+            </div> 
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.designation}" type="text" name="designation" id="designation" placeholder="Designation">
+              </div>
+              <div class="col-sm-6">
+                <select class="form-control form-control-sm" name="role" id="role">
+                  <option value="user" {if $userRow.designation eq 'user'}selected{/if}>User</option>
+                  <option value="admin" {if $userRow.designation eq 'admin'}selected{/if}>Admin</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="password" class="form-control form-control-sm" name="password" id="password" placeholder="Password">
+              </div>
+              <div class="col-sm-6">
+                <input type="password" class="form-control form-control-sm" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <label for="joinDate"><b>Date of Joining</b></label>
+              <input type="date" class="form-control form-control-sm" value="{$userRow.joinDate}" name="joinDate" id="joinDate" >
+            </div>
+            <div class="col-sm-6">
+              <label for="joinDate"><b>Active Status</b></label>
+              <select class="form-control form-control-sm" name="isActive" id="isActive">
+                <option value="1" {if $userRow.isActive eq 1}selected{/if}>Active</option>
+                <option value="0" {if $userRow.isActive eq 0}selected{/if}>Inactive</option>
+              </select>
+          </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-sm-6">
+        <div class="card">
+        <div class="card-header">
+          <div class="card-title"><h4>Contact information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="email" class="form-control form-control-sm" value="{$userRow.email}" name="email" id="email" placeholder="E-mail">
+              </div>
+              <div class="col-sm-6">
+                <input type="email" class="form-control form-control-sm" value="{$userRow.personalEmail}" name="personalEmail" id="personalEmail" placeholder="Personal E-mail">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-12">
+                <input type="tel" class="form-control form-control-sm" value="{$userRow.mobile}" name="mobile" id="mobile" placeholder="Mobile">
+              </div>
+            </div>
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input type="tel" class="form-control form-control-sm" value="{$userRow.emgContactNo}" name="emgContactNo" id="emgContactNo" placeholder="Emergencey Contact">
+              </div>
+              <div class="col-sm-6">
+                <input type="text" class="form-control form-control-sm" value="{$userRow.emgContactName}" name="emgContactName" id="emgContactName" placeholder="Emergencey Contact Name">
+              </div>
+            </div>
+          <div class="form-group row">
+            <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" value="{$userRow.state}" name="state" id="state" placeholder="State">
+            </div>
+            <div class="col-sm-6">
+              <input type="text" class="form-control form-control-sm" value="{$userRow.city}" name="city" id="city" placeholder="City">
+            </div>
+          </div>
+          <div class="form-group row">
+            <div class="col-sm-12">
+              <textarea class="form-control form-control-sm" id="address" name="address" rows="3" placeholder="Address...">{$userRow.address}</textarea>
+            </div>
+          </div>
+          </div>
+      </div>
+
+      <div class="card" style="height: 265px;">
+        <div class="card-header">
+          <div class="card-title"><h4>Bank information</h4></div>
+        </div>
+          <div class="card-body">
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.bank}" type="text" name="bank" id="bank" placeholder="Bank Name">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.namePerBank}" type="text" name="namePerBank" id="namePerBank" placeholder="Name As Per Bank Account">
+              </div>
+            </div>  
+            <div class="form-group row">
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.bankAcNumber}" type="text" name="bankAcNumber" id="bankAcNumber" placeholder="Bank Account Number">
+              </div>
+              <div class="col-sm-6">
+                <input class="form-control form-control-sm" value="{$userRow.bankIFSC}" type="text" name="bankIFSC" id="bankIFSC" placeholder="Bank IFSC Code">
+              </div>
+            </div> 
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <div class="card-footer d-flex justify-content-end">
+      <button type="button" class="btn btn-primary submit">Edit</button>
+    </div>
+  </form>
+    </div>
+  </div>
+  </div>
+{literal}
+<script>
+    $(document).ready(function()
+    {
+        $(".submit").click(function()
+        {
+            var userdata = $("form#updateUser").serializeArray();
+            $.ajax({
+                url: "/admin/users/update/",
+                type: "POST",
+                dataType: "json",
+                data: userdata, 
+                success: function (result) {
+                  if(result.status == 1)
+                  {
+                    window.location.href = "/admin/users";
+                  }
+                  else
+                  {
+                    toastr.error(result.errors);
+                  }
+                }
+            });
+        });
+    });
+</script>
+{/literal}

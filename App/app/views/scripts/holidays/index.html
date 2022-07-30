@@ -1,0 +1,57 @@
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Holiday List</h1>
+      </div>
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm" id="holidayTable">
+              <thead>
+                <tr>
+                  <th scope="col">Holiday Name</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</div>
+{literal}
+<script>
+  $(document).ready(function () {
+      $('#holidayTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/app/holidays/holidaylist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'name',name: 'name'},
+              { data: 'description',name: 'description'},
+              { data: 'date',name: 'date'}
+          ]
+      });
+  });
+</script>
+{/literal}

@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en-US">
+  <head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <title>
+      {if isset($page_title) && $page_title neq ""}TinyPHP | {$page_title}{else}TinyPHP{/if}
+    </title>
+    <meta name="description" content="" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" />
+    <!-- Place favicon.ico in the root directory -->
+
+    <!-- Latest compiled and minified CSS -->
+    <script type="text/javascript" src="/assets/js/js.jquery.min.js"></script>
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
+    <link
+      rel="stylesheet"
+      href="/assets/css/fontawesome-free-6.1.1-web/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/assets/css/adminlte.min.css" />
+    <link rel="stylesheet" href="/assets/css/icheck-bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <link rel="stylesheet" href="/assets/css/toastr.css" />
+    <link rel="stylesheet" href="/assets/css/toastr.min.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
+    />
+
+    {$styleSheets} {$headerScripts}
+  </head>
+
+  <body class="{$bodyClasses} layout-top-nav">
+    {if $showHeader} {include file="../views/partials/header.html"} {/if}
+
+    <div class="content-wrapper">{$viewContent}</div>
+
+    {if $showFooter} {include file="../views/partials/footer.html"} {/if}
+
+   
+    <link
+      rel="stylesheet"
+      type="text/css"
+      href="/assets/DataTables/DataTables-1.12.1/css/jquery.dataTables.css"
+    />
+    <script src="/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/assets/js/toastr.min.js"></script>
+    <script src="/assets/css/toastr.js.map"></script>
+
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="/assets/DataTables/DataTables-1.12.1/js/jquery.dataTables.js"
+    ></script>
+
+    {$footerScripts}
+  </body>
+</html>
