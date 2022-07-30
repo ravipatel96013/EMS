@@ -7,6 +7,29 @@ class Admin_UserAttendanceController extends TinyPHP_Controller {
         $selectedYear = $this->getRequest()->getVar('year','numeric', date("Y"));
         $selectedMonth = $this->getRequest()->getVar('month','numeric', date("m"));
         $selectedUser = $this->getRequest()->getVar('user');
+		$monthOption = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$yearOption = [];
+
+        for($i=2022;$i<=$currentYear+1;$i++)
+		{
+			array_push($yearOption,$i);
+		}
+
+		foreach($yearOption as $year)
+		{
+			if($year = $selectedYear)
+			{
+				$this->setViewVar('selectedYear',$selectedYear);
+			}
+		}
+
+		foreach($monthOption as $month)
+		{
+			if($month = $selectedMonth)
+			{
+				$this->setViewVar('selectedMonth',$selectedMonth);
+			}
+		}
 
         $user = new Models_User();
         $users = $user->getAll(array('id','firstName','lastName'));
@@ -15,6 +38,8 @@ class Admin_UserAttendanceController extends TinyPHP_Controller {
         $this->setViewVar('selectedMonth',$selectedMonth);
         $this->setViewVar('selectedUser',$selectedUser);
         $this->setViewVar('currentYear',$currentYear);
+        $this->setViewVar('monthOption',$monthOption);
+        $this->setViewVar('yearOption',$yearOption);
         $this->setViewVar('users',$users);
     }
 
