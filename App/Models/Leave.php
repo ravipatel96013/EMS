@@ -201,6 +201,14 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
     public function validate()
     {
+        if($this->isHalf == 1)
+        {
+            if(date('Y-m-d',strtotime($this->startDate)) != date('Y-m-d',strtotime($this->endDate)))
+            {
+                $this->addError("Invalid Date Option");
+            }
+        }
+
         if($this->comment == "")
         {
            $this->addError("Comment is Empty");

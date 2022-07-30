@@ -15,7 +15,6 @@ class Models_Resetpassword extends TinyPHP_ActiveRecord
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
     }
 
-
     protected function doBeforeCreate()
     {
         $time = time();

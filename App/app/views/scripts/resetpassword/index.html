@@ -1,0 +1,65 @@
+<section class="vh-100">
+    <div class="container h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+            <div class="col-lg-10 col-xl-11">
+  
+                <div class="row justify-content-center">
+                    <div class="col-md-10 col-lg-5 col-xl-5 order-2 order-lg-1 errorParent">
+                        <div class="card card-outline card-primary">
+                            <div class="card-header text-center">
+                                <h1>Reset Password</h1>
+                            </div>
+                            <div class="card-body">
+                                <form name="resetpassword" method="post">
+                                    <div class="input-group mb-3">
+                                        <input type="email" class="form-control" id="email" name="email"
+                                            placeholder="Email">
+                                        <div class="input-group-append">
+                                            <div class="input-group-text">
+                                                <span class="fa fa-envelope"></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row d-flex justify-content-end">
+                                        <div class="col-4">
+                                            <button type="button" class="btn btn-sm btn-primary btn-block submit">Submit</button>
+                                        </div>
+                                        <!-- /.col -->
+                                    </div>
+                                </form>
+                              </div>
+                              <!-- /.card-body -->
+                          </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+  </section>
+  {literal}
+  <script>
+     $(document).ready(function()
+    {
+        $(".submit").click(function()
+        {
+            var email = $("#email").val();
+            $.ajax({
+                url: "/app/resetpassword/checkemail/",
+                type: "POST",
+                dataType: "JSON",
+                data: { email: email, password: pass },
+                success: function (result) {
+                    if(result.status == 1)
+                    {
+                        window.location.href = "/app";
+                    }
+                    else {
+                        toastr.error(result.errors);
+                    }
+                }
+            });
+        });
+    });
+</script>
+  </script>
+  {/literal}
