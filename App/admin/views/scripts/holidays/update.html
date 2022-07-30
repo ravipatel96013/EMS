@@ -1,0 +1,66 @@
+<div class="container">
+  <div class="content">
+      <div class="row">
+        <div class="col-lg-6 offset-sm-3 mt-3">
+          <div class="card">
+            <div class="card-header">
+              <h2>Edit Holiday</h2>
+            </div>
+            <div class="card-body offset-sm-3">
+          <form method="post" id="editHoliday">
+            <input type="hidden" name="id" value="{$dataRow.id}">
+            <div class="row">
+            <label class="col-md-4"><b>Name</b></label>
+            <input type="text" name="name" value="{$dataRow.name}" class="form-control form-control-sm col-md-4">
+          </div>
+
+          <div class="row mt-4">
+            <label class="col-md-4"><b>Date</b></label>
+            <input type="date" name="date" value="{$dataRow.date}" class="form-control form-control-sm col-md-4">
+          </div>
+
+          <div class="row mt-4">
+            <label class="col-md-4"><b>Description</b></label>
+            <textarea type="text" name="description" class="form-control form-control-sm col-md-4">{$dataRow.description}</textarea>
+          </div>
+          </div>
+          <div class="card-footer d-flex justify-content-center">
+            <button type="button" class="btn btn-primary submit">Edit Holiday</button>
+          </div>      
+          </form>
+        </div>
+      </div>
+    </div>
+    <!-- /.col-md-6 -->
+    <!-- /.col-md-6 -->
+  </div>
+  <!-- /.row -->
+</div><!-- /.container-fluid -->
+</div>
+{literal}
+<script>
+    $(document).ready(function()
+    {
+        $(".submit").click(function()
+        {
+            var holidayData = $("form#editHoliday").serializeArray();
+            $.ajax({
+                url: "/admin/holidays/update/",
+                type: "POST",
+                dataType: "json",
+                data: holidayData, 
+                success: function (result) {
+                  if(result.status == 1)
+                  {
+                    window.location.href = "/admin/holidays";
+                  }
+                  else
+                  {
+                    console.log(result.errors);
+                  }
+                }
+            });
+        });
+    });
+</script>
+{/literal}

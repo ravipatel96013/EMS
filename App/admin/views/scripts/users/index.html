@@ -1,0 +1,105 @@
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Users</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <div class="float-sm-right">
+          <a href="/admin/users/add"><button class="btn btn-primary btn-sm mt-3">Add User</button></a>
+           </div>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm table-hover" id="usersTable">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Name</th>
+                  <th scope="col">Date of Joining</th>
+                  <th scope="col">E-mail</th>
+                  <th scope="col">Mobile</th>
+                  <th scope="col">Role</th>
+                  <th scope="col">Designation</th>
+                  <th scope="col">Locality</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+{literal}
+<script>
+  $('body').on('click', '.delete', function () {
+    if(confirm('Sure You want to delete'))
+    {
+          var id = $(this).attr('id');
+          $.ajax({
+              url: "/admin/users/delete/",
+              type: 'POST',
+              dataType: 'JSON',
+              data: {
+                  id: id
+              },
+              success: function (result) {
+                  if (result.status == 1) {
+                      window.location.reload(true);
+                  } else {
+                      console.log(result.errors);
+                  }
+              }
+          });
+        }
+  });
+
+</script>
+
+<script>
+  $(document).ready(function () {
+      $('#usersTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/admin/users/userlist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'firstName',name: 'firstName'},
+              { data: 'joinDate',name: 'joinDate'},
+              { data: 'email',name: 'email'},
+              { data: 'mobile', name: 'mobile'},
+              { data: 'role', name: 'role'},
+              { data: 'designation', name: 'designation'},
+              { data: 'address', name: 'address'},
+              { data: 'id',name: 'id'}
+          ],
+          "aoColumnDefs": [
+           {
+                "aTargets": [8],
+                "mData": "id",
+                "mRender": function (data, type, full) {
+                    return '<a href="/admin/users/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
+                }
+            }
+         ]
+      });
+  });
+</script>
+{/literal}

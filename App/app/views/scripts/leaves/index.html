@@ -1,0 +1,209 @@
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0">Leave Applications</h1>
+      </div>
+      <!-- /.col -->
+      <div class="col-sm-6 mt-3">
+        <div class="float-sm-right">
+          <button
+          type="button"
+          class="btn btn-primary btn-sm"
+          data-toggle="modal"
+          data-target="#addModal">
+          <i class="fa-solid fa-plus mr-2"></i>New Application
+        </button>
+        </div>
+      </div>
+      <!-- /.col -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm mt-3" id="leaveTable">
+              <thead>
+                <tr>
+                  <th scope="col">Leave Id</th>
+                  <th scope="col">From</th>
+                  <th scope="col">To</th>
+                  <th scope="col">Comment</th>
+                  <th scope="col">Status</th>
+                  <th scope="col">Action</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div>
+  <!-- /.container-fluid -->
+</div>
+<!--Model-->
+<form method="post" id="leaveApplication">
+  <div
+    class="modal fade"
+    id="addModal"
+    tabindex="-1"
+    role="dialog"
+    aria-labelledby="exampleModalLabel"
+    aria-hidden="true"
+  >
+    <div class="modal-dialog" role="document">
+      <div class="modal-content">
+        <div class="modal-header text-white" style="background-color: #007bff">
+          <h5 class="modal-title" id="exampleModalLabel">Leave Application</h5>
+        </div>
+        <div class="modal-body text-left">
+          <div class="row mt-1">
+            <label class="col-md-3 offset-md-1"><b>From</b></label>
+            <input
+              type="date"
+              name="startDate"
+              class="form-control form-control-sm col-md-6"
+            />
+          </div>
+
+          <div class="row mt-4">
+            <label class="col-md-3 offset-md-1"><b>To</b></label>
+            <input
+              type="date"
+              name="endDate"
+              class="form-control form-control-sm col-md-6"
+            />
+          </div>
+
+          <div class="row mt-4">
+            <label class="col-md-3 offset-md-1"><b>Half Leave </b></label>
+            <div class="col-md-1">&nbsp;&nbsp;&nbsp;&nbsp;
+              <input
+                class="form-check-input"
+                type="checkbox"
+                name="isHalf"
+                value="1"
+              />
+            </div>
+          </div>
+
+          <div class="row mt-4">
+            <label class="col-md-3 offset-md-1"><b>Comment</b></label>
+            <textarea
+              type="text"
+              name="comment"
+              class="form-control form-control-sm col-md-6"
+            ></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary" data-dismiss="modal">
+            Close
+          </button>
+          <button type="button" class="btn btn-primary send">Send</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</form>
+{literal}
+<script>
+  $(".send").click(function () {
+    var data = $("form#leaveApplication").serializeArray();
+    $.ajax({
+      url: "/app/leaves/add",
+      type: "POST",
+      dataType: "json",
+      data: data,
+      success: function (result) {
+        if (result.status == 1) {
+          location.reload();
+        } else {
+          toastr.error(result.errors);;
+        }
+      },
+    });
+  });
+</script>
+
+<script>
+  $(document).ready(function () {
+      $('#leaveTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/app/leaves/leavelist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'startDate',name: 'startDate'},
+              { data: 'endDate', name: 'endDate'},
+              { data: 'comment',name: 'comment'},
+              {
+                    data: 'status',
+                    name: 'status',
+                    render: function (data, type, row) {
+                        if (row.status == 1) {
+                            return ' <h6 class="mb-0"><span  class="badge bg-success"  >Approved</span></h6>';
+                        } else if (row.status == 2) {
+                            return ' <h6 class="mb-0"><span class="badge bg-danger"  >Declined</span></h6>';
+                        } else if (row.status == 0) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning"  >Pending</span></h6>';
+                        }else if (row.status == 3) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning"  >Closed</span></h6>';
+                        }
+                    }
+                },
+                {
+                  data:null,
+                name: 'id',
+                name: 'status',
+                render: function (data, type, row) {
+                  if(row.status == 0 || row.status==1){
+                    return '<i class="fa-solid fa-rectangle-xmark cancle" id='+row.id+'></i>';
+                  }else{
+                    return '';
+                  }
+                }
+              }
+          ]
+      });
+  });
+</script>
+<script>
+  $('body').on('click', 'i.cancle', function () {
+    if(confirm('Sure You want to Close Leave Application'))
+    {
+          var id = $(this).attr('id');
+          $.ajax({
+              url: "/app/leaves/closeleave/",
+              type: 'POST',
+              dataType: 'JSON',
+              data: {
+                  id: id
+              },
+              success: function (result) {
+                  if (result.status == 1) {
+                      location.reload();
+                  } else {
+                      console.log(result.errors);
+                  }
+              }
+          });
+        }
+  });
+
+</script>
+{/literal}

@@ -1,0 +1,139 @@
+<div class="content-header">
+  <div class="container">
+    <div class="row mb-2">
+      <div class="col-sm-6">
+        <h1 class="m-0 mt-3">Leave Balancesheet</h1>
+      </div><!-- /.col -->
+      <div class="col-sm-6">
+        <div class="float-sm-right">
+          <button type="button" class="btn btn-primary btn-sm mt-3" data-toggle="modal" data-target="#addModal">
+            Debit/Credit
+          </button>
+           </div>
+      </div><!-- /.col -->
+    </div><!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+<div class="content">
+  <div class="container">
+    <div class="row">
+      <div class="col-lg-12">
+        <div class="card">
+          <div class="card-body">
+            <table class="table table-sm mt-3" id="balancesheetTable">
+              <thead>
+                <tr>
+                  <th scope="col">Id</th>
+                  <th scope="col">Username</th>
+                  <th scope="col">Amount</th>
+                  <th scope="col">Type</th>
+                  <th scope="col">Description</th>
+                  <th scope="col">Action by</th>
+                  <th scope="col">Date</th>
+                </tr>
+              </thead>
+              <tbody>
+              </tbody>
+          </table>          
+          </div>
+        </div>
+      </div>
+      <!-- /.col-md-6 -->
+      <!-- /.col-md-6 -->
+    </div>
+    <!-- /.row -->
+  </div><!-- /.container-fluid -->
+</div>
+  <!--  Button trigger modal End -->
+      <!--Model-->
+      <form method="post" id="leaveSheet">
+      <div class="modal fade" id="addModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+          <div class="modal-content">
+            <div class="modal-header text-white" style="background-color: #007bff;">
+              <h5 class="modal-title" id="exampleModalLabel">Debit/Credit Leaves</h5>
+            </div>
+            <div class="modal-body text-left">
+
+              <div class="row">
+              <label class="col-md-3 offset-md-1"><b>User Id</b></label>
+              <select name="userId" class="form-control form-control-sm col-md-6">
+                {foreach from=$data item=user}
+                <option value="{$user->id}">{$user->firstName} {$user->lastName} - ID {$user->id}</option>
+                {/foreach}
+              </select>
+            </div>
+
+            <div class="row mt-4">
+              <label class="col-md-3 offset-md-1"><b>Amount</b></label>
+              <input type="number" step="0.5" min="0.5" name="amount" class="form-control form-control-sm col-md-6">
+            </div>
+
+            <div class="row mt-4">
+              <label class="col-md-3 offset-md-1"><b>Type</b></label>
+              <select name="type" class="form-control form-control-sm col-md-6">
+                <option selected disabled>Select</option>
+                <option value="debit">Debit</option>
+                <option value="credit">Credit</option>
+              </select>
+            </div>
+
+            <div class="row mt-4">
+              <label class="col-md-3 offset-md-1"><b>Description</b></label>
+              <textarea type="text" name="description" class="form-control form-control-sm col-md-6"></textarea>
+            </div>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+              <button type="button" class="btn btn-primary add">Add</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+    {literal}
+    <script>
+      $(".add").click(function()
+      {
+        var data = $("form#leaveSheet").serializeArray();
+          $.ajax({
+              url: "/admin/leaveBalancesheet/add",
+              type: "POST",
+              dataType: "json",
+              data: data,
+              success: function (result) {
+                if(result.status == 1)
+                {
+                  location.reload();
+                }
+                else
+                {
+                  console.log(result);
+                }
+              }
+          });
+      });
+    </script>
+
+<script>
+  $(document).ready(function () {
+      $('#balancesheetTable').DataTable({
+          serverSide: true,
+          "ajax": {
+              url: '/admin/leaveBalancesheet/balancesheetlist',
+              type: "GET",
+              dataType: "json"
+          },
+          "columns": [
+              { data: 'id',name: 'id'},
+              { data: 'userName',name: 'userName'},
+              { data: 'amount',name: 'amount'},
+              { data: 'type',name: 'type'},
+              { data: 'description', name: 'description'},
+              { data: 'actionby',name: 'actionby'},
+              { data: 'date',name: 'date'}
+          ]
+      });
+  });
+</script>
+    {/literal}
