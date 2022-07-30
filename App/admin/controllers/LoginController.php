@@ -20,8 +20,6 @@ class Admin_LoginController extends TinyPHP_Controller {
         $user = new Models_User();
         $user->fetchByProperty('email', $email);
 
-
-
         if( !$user->isEmpty )
         {
             if( $user->password == md5($pass) && $user->isActive == 1 )

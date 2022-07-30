@@ -3,13 +3,7 @@ class Admin_HolidaysController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
-        if($this->isPost())
-        {
-        $this->setNoRenderer(true);
-		$holidays = new Models_Holiday();
-		$data = $holidays->showData();
-        echo json_encode(array('data' => $data));
-        }
+        
 	}
 
 	public function deleteAction()

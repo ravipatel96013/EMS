@@ -77,13 +77,14 @@
 
 <script>
   function doCheckIn() {
+    if(confirm("Are you sure you want to Check-in?"))
+    {
     $.ajax({
       url: "/admin/index/checkin",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedIn Successfully");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -91,17 +92,19 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function doCheckOut() {
+    if(confirm("Are you Sure you want to Check-out?"))
+    {
     $.ajax({
       url: "/admin/index/checkout",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedOut Successfully");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -109,17 +112,19 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function startBreak() {
+    if(confirm("Are you sure?"))
+    {
     $.ajax({
       url: "/admin/index/startbreak",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You Break Started");
           location.reload();
           startTimer();
         } else {
@@ -128,23 +133,26 @@
       },
     });
   }
+  }
 </script>
 
 <script>
-  function endBreak() {
+  function endBreak(){
+    if(confirm("Are you sure?"))
+    {
     $.ajax({
       url: "/admin/index/endbreak",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("Break Ended");
           location.reload();
         } else {
           consol.log(response.errors);
         }
       },
     });
+  }
   }
 </script>
 

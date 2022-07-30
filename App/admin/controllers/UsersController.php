@@ -5,8 +5,7 @@ class Admin_UsersController extends TinyPHP_Controller {
     {
         
     }
-
-
+    
     public function deleteAction()
     {
         if($this->isPost())
@@ -126,12 +125,10 @@ class Admin_UsersController extends TinyPHP_Controller {
             $user = new Models_User($id);
             if(!$user->isEmpty)  
             {          
-            $userData = $user->fetchUser($id);
-            $this->setViewVar('userRow',$userData);
+            $this->setViewVar('userRow',$user);
             }
             else{
                 header("Location: /admin/users");
-
             }
         }
            
@@ -150,7 +147,6 @@ class Admin_UsersController extends TinyPHP_Controller {
         $dt->addColumns(array(
             'id' => 'u.id',
             'firstName' => 'u.firstName',
-            'joinDate' => 'u.joinDate',
             'email' => 'u.email',
             'mobile' => 'u.mobile',
             'role' => 'u.role',

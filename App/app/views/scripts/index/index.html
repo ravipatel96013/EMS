@@ -74,10 +74,8 @@
     <div class="card">
     <div class="card-body">
       <div class="row">
-      <div class="col-sm-1">
-          <label>Month</label>
-      </div>
-      <div class="col-sm-1">
+        <div class="col-sm-1">
+        <label>Month</label>
           <select name="month" class="form-control" id="month">
             {if isset($selectedMonth)}
             {foreach from=$monthOption item=month}
@@ -86,11 +84,8 @@
             {/if}
           </select>
         </div>
-
-      <div class="col-sm-1">
-          <label>Year</label>
-          </div>
-          <div class="col-sm-1">
+        <div class="col-sm-1">
+            <label>Year</label>
           <select name="month" class="form-control" id="year">
             {if isset($selectedYear)}
             {foreach from=$yearOption item=year}
@@ -137,13 +132,14 @@
 {literal}
 <script>
   function doCheckIn() {
+    if(confirm("Are you sure you want to Check-in?"))
+    {
     $.ajax({
       url: "/app/index/checkin",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedIn Successfully");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -151,17 +147,19 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function doCheckOut() {
+    if(confirm("Are you Sure you want to Check-out?"))
+    {
     $.ajax({
       url: "/app/index/checkout",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedOut Successfully");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -169,17 +167,19 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function startBreak() {
+    if(confirm("Are you sure?"))
+    {
     $.ajax({
       url: "/app/index/startbreak",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You Break Started");
           location.reload();
           startTimer();
         } else {
@@ -188,23 +188,26 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function endBreak() {
+    if(confirm("Are you sure?"))
+    {
     $.ajax({
       url: "/app/index/endbreak",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("Break Ended");
           location.reload();
         } else {
           consol.log(response.errors);
         }
       },
     });
+  }
   }
 </script>
 

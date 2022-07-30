@@ -25,18 +25,18 @@
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>First Name</label>
-              <input type="text" class="form-control form-control-sm" name="firstName" id="firstName" placeholder="First Name" required>
+              <input type="text" class="form-control form-control-sm" name="firstName" id="firstName" required>
             </div>
             <div class="col-sm-6">
               <label>Last Name</label>
-              <input type="text" class="form-control form-control-sm" name="lastName" id="lastName" placeholder="Last Name" required>
+              <input type="text" class="form-control form-control-sm" name="lastName" id="lastName" required>
             </div>
           </div>
           <div class="form-group row">
             <div class="col-sm-6">
               <label>Gender</label>
               <select class="form-control form-control-sm" name="gender" id="gender" required>
-                <option selected disabled>Gender</option>
+                <option selected disabled>Select</option>
                 <option value="male">Male</option>
                 <option value="female">Female</option>
                 <option value="female">Other</option>
@@ -45,7 +45,7 @@
           <div class="col-sm-6">
             <label>Maritial Status</label>
             <select class="form-control form-control-sm" name="maritialStatus" id="maritialStatus">
-              <option selected disabled>Maritial Status</option>
+              <option selected disabled>Select</option>
               <option value="single">Single</option>
               <option value="married">Married</option>
               <option value="divorced">Divorced</option>
@@ -60,7 +60,7 @@
         <div class="col-sm-6">
           <label>Blood Group</label>
           <select class="form-control form-control-sm" name="bloodGroup" id="bloodGroup">
-            <!-- <option selected disabled>Blood Group</option> -->
+            <option selected disabled>Select</option>
             <option value="A+">A+</option>
             <option value="A-">A-</option>
             <option value="B+">B+</option>
@@ -82,32 +82,32 @@
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>Aadhar Id</label>
-                <input class="form-control form-control-sm" type="text" name="aadharId" id="aadharId" placeholder="Aadhar ID">
+                <input class="form-control form-control-sm" type="text" name="aadharId" id="aadharId">
               </div>
               <div class="col-sm-6">
                 <label>Voter Id</label>
-                <input class="form-control form-control-sm" type="text" name="voterId" id="voterId" placeholder="Voter Id">
+                <input class="form-control form-control-sm" type="text" name="voterId" id="voterId">
               </div>
             </div>  
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>PAN</label>
-                <input class="form-control form-control-sm" type="text" name="panId" id="panId" placeholder="PAN">
+                <input class="form-control form-control-sm" type="text" name="panId" id="panId">
               </div>
               <div class="col-sm-6">
                 <label>License Number</label>
-                <input class="form-control form-control-sm" type="text" name="licenseNumber" id="licenseNumber" placeholder="License Number">
+                <input class="form-control form-control-sm" type="text" name="licenseNumber" id="licenseNumber">
               </div>
             </div> 
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>Designation</label>
-                <input class="form-control form-control-sm" type="text" name="designation" id="designation" placeholder="Designation">
+                <input class="form-control form-control-sm" type="text" name="designation" id="designation">
               </div>
               <div class="col-sm-6">
                 <label>Role</label>
                 <select class="form-control form-control-sm" name="role" id="role">
-                  <option selected disabled>Role</option>
+                  <option selected disabled>Select</option>
                   <option value="user">User</option>
                   <option value="admin">Admin</option>
                 </select>
@@ -116,11 +116,11 @@
             <div class="form-group row">
               <div class="col-sm-6">
                 <label>Password</label>
-                <input type="password" class="form-control form-control-sm" name="password" id="password" placeholder="Password">
+                <input type="password" class="form-control form-control-sm" name="password" id="password">
               </div>
               <div class="col-sm-6">
                 <label>Confirm Password</label>
-                <input type="password" class="form-control form-control-sm" name="confirmPassword" id="confirmPassword" placeholder="Confirm Password">
+                <input type="password" class="form-control form-control-sm" name="confirmPassword" id="confirmPassword">
               </div>
             </div>
             <div class="form-group row">
@@ -148,60 +148,72 @@
           <div class="card-body">
             <div class="form-group row">
               <div class="col-sm-6">
-                <input type="email" class="form-control form-control-sm" name="email" id="email" placeholder="E-mail">
+                <label>E-mail</label>
+                <input type="email" class="form-control form-control-sm" name="email" id="email">
               </div>
               <div class="col-sm-6">
-                <input type="email" class="form-control form-control-sm" name="personalEmail" id="personalEmail" placeholder="Personal E-mail">
+                <label>Personal E-mail</label>
+                <input type="email" class="form-control form-control-sm" name="personalEmail" id="personalEmail">
               </div>
             </div>
             <div class="form-group row">
               <div class="col-sm-12">
-                <input type="tel" class="form-control form-control-sm" name="mobile" id="mobile" placeholder="Mobile">
+                <label>Mobile Number</label>
+                <input type="tel" class="form-control form-control-sm" name="mobile" id="mobile">
               </div>
             </div>
             <div class="form-group row">
               <div class="col-sm-6">
-                <input type="tel" class="form-control form-control-sm" name="emgContactNo" id="emgContactNo" placeholder="Emergencey Contact">
+                <label>Emergencey Cont. No.</label>
+                <input type="tel" class="form-control form-control-sm" name="emgContactNo" id="emgContactNo">
               </div>
               <div class="col-sm-6">
-                <input type="text" class="form-control form-control-sm" name="emgContactName" id="emgContactName" placeholder="Emergencey Contact Name">
+                <label>Emergencey Cont. Name</label>
+                <input type="text" class="form-control form-control-sm" name="emgContactName" id="emgContactName">
               </div>
             </div>
           <div class="form-group row">
             <div class="col-sm-6">
-              <input type="text" class="form-control form-control-sm" name="state" id="state" placeholder="State">
+              <label>State</label>
+              <input type="text" class="form-control form-control-sm" name="state" id="state">
             </div>
             <div class="col-sm-6">
-              <input type="text" class="form-control form-control-sm" name="city" id="city" placeholder="City">
+              <label>City</label>
+              <input type="text" class="form-control form-control-sm" name="city" id="city">
             </div>
           </div>
           <div class="form-group row">
             <div class="col-sm-12">
-              <textarea class="form-control form-control-sm" id="address" name="address" rows="3" placeholder="Address..."></textarea>
+              <label>Address</label>
+              <textarea class="form-control form-control-sm" id="address" name="address" rows="3"></textarea>
             </div>
           </div>
           </div>
       </div>
 
-      <div class="card" style="height: 265px;">
+      <div class="card" style="height: 295px;">
         <div class="card-header">
           <div class="card-title"><h4>Bank information</h4></div>
         </div>
           <div class="card-body">
             <div class="form-group row">
               <div class="col-sm-6">
-                <input class="form-control form-control-sm" type="text" name="bank" id="bank" placeholder="Bank Name">
+                <label>Bank Name</label>
+                <input class="form-control form-control-sm" type="text" name="bank" id="bank">
               </div>
               <div class="col-sm-6">
-                <input class="form-control form-control-sm" type="text" name="namePerBank" id="namePerBank" placeholder="Name As Per Bank Account">
+                <label>Name as per Bank</label>
+                <input class="form-control form-control-sm" type="text" name="namePerBank" id="namePerBank">
               </div>
             </div>  
             <div class="form-group row">
               <div class="col-sm-6">
-                <input class="form-control form-control-sm" type="text" name="bankAcNumber" id="bankAcNumber" placeholder="Bank Account Number">
+                <label>Bank A/C No.</label>
+                <input class="form-control form-control-sm" type="text" name="bankAcNumber" id="bankAcNumber">
               </div>
               <div class="col-sm-6">
-                <input class="form-control form-control-sm" type="text" name="bankIFSC" id="bankIFSC" placeholder="Bank IFSC Code">
+                <label>Bank IFSC</label>
+                <input class="form-control form-control-sm" type="text" name="bankIFSC" id="bankIFSC">
               </div>
             </div> 
           </div>

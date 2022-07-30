@@ -3,6 +3,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
+
 	$checkInButton = false;
 	$checkOutButton = false;
 	$startBreakButton = false;
@@ -107,7 +108,6 @@ class Admin_IndexController extends TinyPHP_Controller {
 		
 		if(!empty($activeAttendance))
 		{
-			
 			array_push($errors,'you are already checkedin in system');
 		}
 		else

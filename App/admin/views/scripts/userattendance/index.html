@@ -14,10 +14,8 @@
           <div class="card">
             <div class="card-body" id="filters">
               <div class="row">
-              <div class="col-sm-1">
-                 <label>User</label>
-                 </div>
-                 <div class="col-sm-2">
+                <div class="col-sm-2">
+                   <label>User</label>
                  <select name="user" class="form-control" id="user">
                    {foreach from=$users item=user}
                    <option value="{$user->id}" {if $selectedUser eq $user->id}selected{/if}>{$user->firstName}&nbsp;{$user->lastName}</option>
@@ -25,9 +23,7 @@
                  </select>
                </div>
                <div class="col-sm-1">
-                 <label>Month</label>
-                 </div>
-                 <div class="col-sm-1">
+                   <label>Month</label>
                  <select name="month" class="form-control" id="month">
                   {if isset($selectedMonth)}
                   {foreach from=$monthOption item=month}
@@ -38,8 +34,6 @@
                 </div>
                 <div class="col-sm-1">
                   <label>Year</label>
-                </div>
-                <div class="col-sm-1">
                   <select name="month" class="form-control" id="year">
                     {if isset($selectedYear)}
                     {foreach from=$yearOption item=year}
@@ -153,7 +147,9 @@
                }
                else
                {
-                 console.log(result.errors);
+                $.each(result.errors,function(index,value){
+                      toastr.error(value);
+                    });
                }
              }
          });

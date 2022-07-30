@@ -115,13 +115,9 @@ class Models_Leave extends TinyPHP_ActiveRecord
     {
         $result = $this->attendanceToUpdate();
         $date = date('Y-m-d');
-        // echo "<pre>";
-        // echo $this->id;
-        // print_r($result);
-        // die;
         foreach($result as $data)
         {
-            $attendance = new Models_Attendance($data['userAttendanceId']);
+            $attendance = new Models_Attendance();
             $balanceSheet = new Models_LeaveBalancesheet();
             $leaveBalance = $balanceSheet->getLeaveBalance($this->userId);
             if($leaveBalance > 0)
@@ -136,6 +132,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                           {
                               if($data['leaveItemDate'] < $date)  
                               {
+                                $attendance->fetchByProperty(['userId','date'],[$data['userId'],$data['leaveItemDate']]);
                                 $attendance->status = 'HPL';
                                 $attendance->update(['status','updatedOn']);
                               }
@@ -149,6 +146,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                           {
                             if($data['leaveItemDate'] < $date)  
                               {
+                                $attendance->fetchByProperty(['userId','date'],[$data['userId'],$data['leaveItemDate']]);
                                 $attendance->status = 'PL';
                                 $attendance->update(['status','updatedOn']);
                               }
@@ -168,6 +166,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                               {
                               if($data['leaveItemDate'] < $date)  
                               {
+                                $attendance->fetchByProperty(['userId','date'],[$data['userId'],$data['leaveItemDate']]);
                                 $attendance->status = 'HUL';
                                 $attendance->update(['status','updatedOn']);
                               }
@@ -181,6 +180,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
                               {
                               if($data['leaveItemDate'] < $date)  
                               {
+                                $attendance->fetchByProperty(['userId','date'],[$data['userId'],$data['leaveItemDate']]);
                                 $attendance->status = 'UL';
                                 $attendance->update(['status','updatedOn']);
                               }
@@ -230,44 +230,6 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
         return !$this->hasErrors();
     }
-
-
-
-    public function showData()
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
-
-    public function leaveApplications($where='')
-    {
-        global $db;
-
-        $sql = "SELECT * FROM `users`,`leaves` WHERE users.id=leaves.userId $where;";
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
-
-    public function fetchRow($id)
-    {
-        global $db; 
-
-        $sql = "SELECT * FROM `leaves` WHERE id = $id;";
-        $result = $db->fetchRow($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
     
     public function getLeaves()
     {
@@ -282,7 +244,7 @@ class Models_Leave extends TinyPHP_ActiveRecord
     public function attendanceToUpdate()
     {
        global $db;
-       $sql = "SELECT b.isLeaveBalanceDeducted AS isDeducted, a.isHalf AS isHalf, c.userId AS userId,a.id AS leaveId, b.id AS leaveItemId, b.date AS leaveItemDate, c.id AS userAttendanceId, c.date AS attendanceDate, d.id AS holidayId, DAYNAME(c.date) AS DayOfDate FROM leaves AS a INNER JOIN leave_items AS b ON b.leaveId=a.id INNER JOIN user_attendance AS c ON c.date=b.date AND c.userId=a.userId LEFT JOIN holidays AS d ON d.date=c.date WHERE a.id=$this->id";
+       $sql = "SELECT a.userId as userId,b.isLeaveBalanceDeducted AS isDeducted, a.isHalf AS isHalf,a.id AS leaveId, b.id AS leaveItemId, b.date AS leaveItemDate,d.id AS holidayId FROM leaves AS a INNER JOIN leave_items AS b ON b.leaveId=a.id LEFT JOIN holidays AS d ON d.date=b.date WHERE a.id=$this->id;";
        $result = $db->fetchAll($sql);
        return $result;
 }

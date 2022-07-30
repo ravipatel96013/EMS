@@ -1,10 +1,5 @@
 <?php
-<<<<<<< HEAD:App/admin/controllers/UserAttendanceController.php
-class Admin_UserAttendanceController extends TinyPHP_Controller {
-    
-=======
 class Admin_UserattendanceController extends TinyPHP_Controller {
->>>>>>> master:App/admin/controllers/UserattendanceController.php
     public function indexAction()
     {
         $currentYear = date('Y');
@@ -87,9 +82,12 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 		$this->setNoRenderer(true);
 		$id = $this->getRequest()->getPostVar('id');
 		$attendance = new Models_Attendance($id);
+        if(!$attendance->isEmpty)
+        {
 		$data = $attendance->getInfo();
 		echo json_encode($data);
 		die;
+        }
 	}
 
     public function updateAction()
@@ -103,8 +101,21 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
             $id = $this->getRequest()->getPostVar('id');
 			$checkInDateTime = $this->getRequest()->getPostVar('checkIn');
 			$checkOutDateTime = $this->getRequest()->getPostVar('checkOut');
-			$status = $this->getRequest()->getPostVar('status');
+			$attendanceStatus = $this->getRequest()->getPostVar('status');
 
+            function checkFormat($datetime)
+            {
+                if(preg_match("/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/", $datetime))
+                {
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+
+            if(checkFormat($checkInDateTime) && checkFormat($checkOutDateTime))
+            {
             $attendance = new Models_Attendance($id);
 
             if($attendance->isEmpty)
@@ -115,7 +126,7 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
             {
                 $attendance->checkInDateTime = $checkInDateTime;
 				$attendance->checkOutDateTime = $checkOutDateTime;
-				$attendance->status = $status;
+				$attendance->status = $attendanceStatus;
                 $isUpdated = $attendance->update(array('checkInDateTime','checkOutDateTime','status'));
 
                 if( $isUpdated == true )
@@ -126,6 +137,11 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
                 {
                     $errors = $attendance->getErrors();
                 }
+            }
+
+            }
+            else{
+                array_push($errors,"Check-in or Check-out time is not valid");
             }
             
             $response = ["status" => $status, "errors" => $errors];
