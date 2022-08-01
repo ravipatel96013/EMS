@@ -6,9 +6,9 @@ class Plugins_AppSessionValidator {
 	public function preDispatch(TinyPHP_Request $request)
 	{
 		$this->exemptedProperties['login'] = array('index', 'dologin');
-		//$this->exemptedProperties['resetpassword'] = array('index', 'sendresetlink', 'changepassword', 'updatepassword');
+		$this->exemptedProperties['resetpassword'] = array('index', 'sendlink', 'createpassword');
 		$this->exemptedProperties['logout'] = array('index', 'success');
-        //$this->exemptedProperties['unsubscribe'] = array('index');
+        $this->exemptedProperties['pagenotfound'] = array('index');
 
 		
 

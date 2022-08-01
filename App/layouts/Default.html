@@ -13,63 +13,49 @@
     <!-- Place favicon.ico in the root directory -->
 
     <!-- Latest compiled and minified CSS -->
+    <script type="text/javascript" src="/assets/js/js.jquery.min.js"></script>
+    <link href="/assets/css/bootstrap.min.css" rel="stylesheet" crossorigin="anonymous">
     <link
       rel="stylesheet"
-      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
-      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
-      crossorigin="anonymous"
+      href="/assets/css/fontawesome-free-6.1.1-web/css/all.min.css"
+    />
+    <link rel="stylesheet" href="/assets/css/adminlte.min.css" />
+    <link rel="stylesheet" href="/assets/css/icheck-bootstrap.min.css" />
+    <link rel="stylesheet" href="/assets/css/dashboard.css" />
+    <link rel="stylesheet" href="/assets/css/toastr.css" />
+    <link rel="stylesheet" href="/assets/css/toastr.min.css" />
+
+    <link
+      rel="stylesheet"
+      href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback"
     />
 
     {$styleSheets} {$headerScripts}
   </head>
-  <body class="{$bodyClasses}">
+
+  <body class="{$bodyClasses} layout-top-nav">
     {if $showHeader} {include file="../views/partials/header.html"} {/if}
 
-    <div class="page-wrap">{$viewContent}</div>
+    <div class="content-wrapper">{$viewContent}</div>
 
     {if $showFooter} {include file="../views/partials/footer.html"} {/if}
 
-    <script
-      src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
-      integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js"
-      integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN"
-      crossorigin="anonymous"
-    ></script>
-    <script
-      src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"
-      integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV"
-      crossorigin="anonymous"
-    ></script>
+   
     <link
       rel="stylesheet"
-      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
-      integrity="sha512-KfkfwYDsLkIlwQp6LFnl8zNdLGxu9YAA1QvwINks4PhcElQSvqcyVLLD9aMhXd13uQjoXtEKNosOWaZqXgel0g=="
-      crossorigin="anonymous"
-      referrerpolicy="no-referrer"
+      type="text/css"
+      href="/assets/DataTables/DataTables-1.12.1/css/jquery.dataTables.css"
     />
+    <script src="/assets/js/bootstrap.min.js" crossorigin="anonymous"></script>
+    <script src="/assets/js/toastr.min.js"></script>
+    <script src="/assets/css/toastr.js.map"></script>
 
-    {$footerScripts} {literal}
-    <!-- Google Analytics: change UA-XXXXX-X to be your site's ID. -->
-    <script>
-      (function (b, o, i, l, e, r) {
-        b.GoogleAnalyticsObject = l;
-        b[l] ||
-          (b[l] = function () {
-            (b[l].q = b[l].q || []).push(arguments);
-          });
-        b[l].l = +new Date();
-        e = o.createElement(i);
-        r = o.getElementsByTagName(i)[0];
-        e.src = "//www.google-analytics.com/analytics.js";
-        r.parentNode.insertBefore(e, r);
-      })(window, document, "script", "ga");
-      ga("create", "UA-XXXXX-X", "auto");
-      ga("send", "pageview");
-    </script>
-    {/literal}
+    <script
+      type="text/javascript"
+      charset="utf8"
+      src="/assets/DataTables/DataTables-1.12.1/js/jquery.dataTables.js"
+    ></script>
+
+    {$footerScripts}
   </body>
 </html>

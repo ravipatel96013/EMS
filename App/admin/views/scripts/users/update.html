@@ -106,8 +106,8 @@
               <div class="col-sm-6">
                 <label>Role</label>
                 <select class="form-control form-control-sm" name="role" id="role">
-                  <option value="user" {if $userRow->designation eq 'user'}selected{/if}>User</option>
-                  <option value="admin" {if $userRow->designation eq 'admin'}selected{/if}>Admin</option>
+                  <option value="user" {if $userRow->role eq 'user'}selected{/if}>User</option>
+                  <option value="admin" {if $userRow->role eq 'admin'}selected{/if}>Admin</option>
                 </select>
               </div>
             </div>
@@ -219,8 +219,8 @@
 
       </div>
     </div>
-    <div class="card-footer d-flex justify-content-end">
-      <button type="button" class="btn btn-primary submit">Edit</button>
+    <div class="card-footer d-flex justify-content-center">
+      <button type="button" class="btn btn-primary submit">Save</button>
     </div>
   </form>
     </div>

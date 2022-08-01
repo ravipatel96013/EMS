@@ -266,6 +266,16 @@ class Models_User extends TinyPHP_ActiveRecord
             }
         }
 
+        if($this->mobile == $this->emgContactNo)
+        {
+            $this->addError("Mobile Number and Eergency Contact Number Can Not Be Same");
+        }
+
+        if($this->email == $this->personalEmail)
+        {
+            $this->addError("E-mail and Personal E-mail Can Not Be Same");          
+        }
+
         return !$this->hasErrors();
     }
 }
