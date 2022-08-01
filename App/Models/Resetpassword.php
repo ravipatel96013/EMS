@@ -37,7 +37,7 @@ class Models_Resetpassword extends TinyPHP_ActiveRecord
         $from = 'sample@gmail.com';
         $to = $user->email;
         $subject = 'Reset Password';
-        $body = "You Can Reset Your Password Using This Link : http://local.ems.com/app/resetpassword/createpassword?hashKey=".$this->hashKey;
+        $body = "You Can Reset Your Password Using This Link :".SITE_URL."/app/resetpassword/createpassword?hashKey=".$this->hashKey;
         $isSent = $mailer->sendMail($from,$to,$subject,$body);
         if($isSent)
         {
