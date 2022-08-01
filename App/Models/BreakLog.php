@@ -12,12 +12,6 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
-
-        }
-
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
     }

@@ -40,12 +40,6 @@ class Models_User extends TinyPHP_ActiveRecord
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
-            $this->confirmPassword = $this->password;
-        }
-
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
         $this->addListener('afterCreate', array($this,'doAfterCreate'));
@@ -132,9 +126,6 @@ class Models_User extends TinyPHP_ActiveRecord
     public function validate()
     {
         $this->validateUserInfo();
-        //$this->validatePassword();
-
-        //$this->validateLoginInfo();
 
         return !$this->hasErrors();
     }
@@ -275,38 +266,17 @@ class Models_User extends TinyPHP_ActiveRecord
             }
         }
 
-        return !$this->hasErrors();
-    }
-
-
-    public function checkCred($email,$password)
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE email = '$email' AND password = '$password'";
-        $result = $db->fetchRow($sql);
-        if(!$result == '')
+        if($this->mobile == $this->emgContactNo)
         {
-            return $result;
+            $this->addError("Mobile Number and Eergency Contact Number Can Not Be Same");
         }
-    }
-    
-    public function fetchUsers()
-    {
-        global $db;
 
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        return $result;
-    }
+        if($this->email == $this->personalEmail)
+        {
+            $this->addError("E-mail and Personal E-mail Can Not Be Same");          
+        }
 
-    public function fetchUser($id)
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE id = '$id'";
-        $result = $db->fetchRow($sql);
-        return $result;
+        return !$this->hasErrors();
     }
 }
 ?>

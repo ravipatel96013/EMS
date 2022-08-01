@@ -3,13 +3,7 @@ class Admin_HolidaysController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
-        if($this->isPost())
-        {
-        $this->setNoRenderer(true);
-		$holidays = new Models_Holiday();
-		$data = $holidays->showData();
-        echo json_encode(array('data' => $data));
-        }
+        
 	}
 
 	public function deleteAction()
@@ -135,10 +129,14 @@ class Admin_HolidaysController extends TinyPHP_Controller {
             // GET Request
 
             $id = $this->getRequest()->getVar('id');
-
-            $holiday = new Models_Holiday();        
-            $holidayData = $holiday->fetchHoliday($id);
-            $this->setViewVar('dataRow',$holidayData);
+            $holiday = new Models_Holiday($id);
+            if(!$holiday->isEmpty)
+            {        
+            $this->setViewVar('dataRow',$holiday);
+            }
+            else{
+                header('Location: /admin/holidays');
+            }
         }
            
     }

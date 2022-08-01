@@ -15,12 +15,6 @@ class Models_Holiday extends TinyPHP_ActiveRecord
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
-
-        }
-
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('afterCreate', array($this,'doAfterCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
@@ -113,18 +107,6 @@ class Models_Holiday extends TinyPHP_ActiveRecord
 
 
         return !$this->hasErrors();
-    }
-
-    public function showData()
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
     }
 
     public function fetchHoliday($id)

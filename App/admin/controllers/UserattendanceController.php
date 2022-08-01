@@ -6,6 +6,29 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
         $selectedYear = $this->getRequest()->getVar('year','numeric', date("Y"));
         $selectedMonth = $this->getRequest()->getVar('month','numeric', date("m"));
         $selectedUser = $this->getRequest()->getVar('user');
+		$monthOption = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$yearOption = [];
+
+        for($i=2022;$i<=$currentYear+1;$i++)
+		{
+			array_push($yearOption,$i);
+		}
+
+		foreach($yearOption as $year)
+		{
+			if($year = $selectedYear)
+			{
+				$this->setViewVar('selectedYear',$selectedYear);
+			}
+		}
+
+		foreach($monthOption as $month)
+		{
+			if($month = $selectedMonth)
+			{
+				$this->setViewVar('selectedMonth',$selectedMonth);
+			}
+		}
 
         $user = new Models_User();
         $users = $user->getAll(array('id','firstName','lastName'));
@@ -14,6 +37,8 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
         $this->setViewVar('selectedMonth',$selectedMonth);
         $this->setViewVar('selectedUser',$selectedUser);
         $this->setViewVar('currentYear',$currentYear);
+        $this->setViewVar('monthOption',$monthOption);
+        $this->setViewVar('yearOption',$yearOption);
         $this->setViewVar('users',$users);
     }
 
@@ -57,9 +82,12 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 		$this->setNoRenderer(true);
 		$id = $this->getRequest()->getPostVar('id');
 		$attendance = new Models_Attendance($id);
+        if(!$attendance->isEmpty)
+        {
 		$data = $attendance->getInfo();
 		echo json_encode($data);
 		die;
+        }
 	}
 
     public function updateAction()
@@ -73,8 +101,21 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
             $id = $this->getRequest()->getPostVar('id');
 			$checkInDateTime = $this->getRequest()->getPostVar('checkIn');
 			$checkOutDateTime = $this->getRequest()->getPostVar('checkOut');
-			$status = $this->getRequest()->getPostVar('status');
+			$attendanceStatus = $this->getRequest()->getPostVar('status');
 
+            function checkFormat($datetime)
+            {
+                if(preg_match("/^(\d{4})-(\d{2})-(\d{2}) (\d{2}):(\d{2}):(\d{2})$/", $datetime))
+                {
+                    return true;
+                }
+                else{
+                    return false;
+                }
+            }
+
+            if(checkFormat($checkInDateTime) && checkFormat($checkOutDateTime))
+            {
             $attendance = new Models_Attendance($id);
 
             if($attendance->isEmpty)
@@ -85,7 +126,7 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
             {
                 $attendance->checkInDateTime = $checkInDateTime;
 				$attendance->checkOutDateTime = $checkOutDateTime;
-				$attendance->status = $status;
+				$attendance->status = $attendanceStatus;
                 $isUpdated = $attendance->update(array('checkInDateTime','checkOutDateTime','status'));
 
                 if( $isUpdated == true )
@@ -96,6 +137,11 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
                 {
                     $errors = $attendance->getErrors();
                 }
+            }
+
+            }
+            else{
+                array_push($errors,"Check-in or Check-out time is not valid");
             }
             
             $response = ["status" => $status, "errors" => $errors];

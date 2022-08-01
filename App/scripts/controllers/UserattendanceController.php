@@ -9,39 +9,36 @@ class Scripts_UserattendanceController extends TinyPHP_Controller
         $lastDay = date('t');
        
        if($today == $lastDay)
-       { 
-           
+       {      
             $daysInNextMonth = date("t",strtotime("next month"));
             $nextMonth = date("m",strtotime("next month"));
             $yearOfNextMonth = date("Y",strtotime("next month"));
-
-            $attd = new Models_Attendance();
-            $attendace = $attd->getAll(['id'], "MONTH(date)={$nextMonth} AND YEAR(date)={$yearOfNextMonth}");
-            if(count($attendace) == 0)
+            $entriesCreated = false;
+            
+            $user = new Models_User();
+            $users = $user->getAll(['id'],'isActive=1');
+            foreach($users as $user)
             {
-                $entriesCreated = false;
-                $user = new Models_User();
-                $users = $user->getAll(['id'],'isActive=1');
-                foreach($users as $user)
+                $attendance = new Models_Attendance();
+                $data = $attendance->getAll(['id'],"userId=".$user->id." AND MONTH(date)=".$nextMonth." AND YEAR(date)=".$yearOfNextMonth);
+                if(count($data) == 0)
                 {
-                    $service = new Service_Attendance();
-                    $isCreated = $service->addAttendance($yearOfNextMonth,$nextMonth,$user->id);
-                    if($isCreated)
-                    {
-                        $entriesCreated = true;
-                    }
-                }
-                if($entriesCreated)
+                $service = new Service_Attendance();
+                $isCreated = $service->addAttendance($yearOfNextMonth,$nextMonth,$user->id);
+                if($isCreated)
                 {
-                    array_push($logs,"Entries Created");
+                    $entriesCreated = true;
                 }
-                else{
-                    array_push($logs,"Something went Wrong");
                 }
             }
-            else {
-                array_push($logs,"Already Exist");
+            if($entriesCreated)
+            {
+                array_push($logs,"Entries Created");
             }
+            else{
+                array_push($logs,"Something went Wrong");
+            }
+            
         }
         else{
             array_push($logs,"Its Not a Last day of month");
@@ -136,7 +133,7 @@ public function userattendancestatusAction()
     if($today == $lastDay)
     {
         $user = new Models_User();
-        $userIds = $user->getAll(['id']);
+        $userIds = $user->getAll(['id'],'isActive=1');
     
         foreach($userIds as $user)
         {

@@ -6,43 +6,6 @@ class Admin_LeavesController extends TinyPHP_Controller {
 	
 	}
 
-	public function addAction()
-    {
-        if($this->isPost())
-        {
-            $status = 0;
-            $errors = [];
-
-			$this->setNoRenderer(true);
-
-        $leaves = new Models_Leave();
-	
-        $startDate = $this->getRequest()->getPostVar('startDate');
-        $endDate = $this->getRequest()->getPostVar('endDate');
-        $stdt = new DateTime($startDate);
-        $endt = new DateTime($endDate);
-        $leaves->startDate =  $stdt->getTimestamp();
-        $leaves->endDate = $endt->getTimestamp();
-        $leaves->isHalf = $this->getRequest()->getPostVar('isHalf');
-        $leaves->comment = $this->getRequest()->getPostVar('comment');
-        $isCreated = $leaves->create();
-
-        if( $isCreated == true )
-        {
-            $status = 1;
-        }
-        else
-        {
-            $errors = $leaves->getErrors();
-        }
-            
-            $response = ["status" => $status, "errors" => $errors];
-            echo json_encode($response);
-            die; 
-
-    	}
-    }
-
     public function updateAction()
     {
         if($this->isPost())
@@ -70,7 +33,6 @@ class Admin_LeavesController extends TinyPHP_Controller {
                 {
                     $errors = $leave->getErrors();
                 }
-            
             $response = ["status" => $status, "errors" => $errors];
             echo json_encode($response);
             die;
@@ -79,10 +41,14 @@ class Admin_LeavesController extends TinyPHP_Controller {
         {
             // GET Request
             $id = $this->getRequest()->getVar('id');
-
-            $leave = new Models_Leave();      
-            $leaveData = $leave->fetchRow($id);
-            $this->setViewVar('dataRow',$leaveData);
+            $leave = new Models_Leave($id);
+            if(!$leave->isEmpty)
+            {
+            $this->setViewVar('dataRow',$leave);
+            }
+            else{
+                header("Location: /admin/leaves");
+            }
         }
            
     }
@@ -100,9 +66,7 @@ class Admin_LeavesController extends TinyPHP_Controller {
         $dt->setJoins("INNER JOIN users AS b ON b.id = l.userId");
 
         $defaultFilters = array(
-            "l.status" => APPROVED,
-            "l.status" => DECLINED,
-            "l.status" => PENDING);
+            "combination_filter" => "(l.status=".APPROVED." OR l.status=".DECLINED." OR l.status=".PENDING.")");
         
         $dt->setDefaultFilters($defaultFilters);
 

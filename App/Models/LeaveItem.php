@@ -11,28 +11,9 @@ class Models_LeaveItem extends TinyPHP_ActiveRecord
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
 
-        }
-
-        $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
-        $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
     }
 
-
-    protected function doBeforeCreate()
-    {
-            return true;
-        
-    }
-
-
-    protected function doBeforeUpdate()
-    {
-             return true;
-    }
 
     public function todayLeave($attendanceId)
     {

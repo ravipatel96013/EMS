@@ -13,12 +13,14 @@ dist/
 
 # Compiled Java class files
 *.class
+error-log.txt
 
 # Compiled Python bytecode
 *.py[cod]
 
 # Log files
 *.log
+error-log.log
 
 # Package files
 *.jar

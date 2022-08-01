@@ -89,30 +89,6 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
         return !$this->hasErrors();
     }
 
-    public function showData()
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
-
-    public function leaveTransaction($where='')
-    {
-        global $db;
-
-        $sql = "SELECT * FROM `users`,`user_leave_balancesheet` WHERE users.id=user_leave_balancesheet.userId $where;";
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
-
     public function getLeaveBalance($userId)
     {
         global $db;

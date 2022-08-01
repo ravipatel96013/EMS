@@ -130,7 +130,9 @@
         if (result.status == 1) {
           location.reload();
         } else {
-          toastr.error(result.errors);;
+          $.each(result.errors,function(index,value){
+                      toastr.error(value);
+                    });
         }
       },
     });
@@ -198,7 +200,9 @@
                   if (result.status == 1) {
                       location.reload();
                   } else {
-                      console.log(result.errors);
+                    $.each(result.errors,function(index,value){
+                      toastr.error(value);
+                    });
                   }
               }
           });
