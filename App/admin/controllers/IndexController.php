@@ -308,41 +308,5 @@ class Admin_IndexController extends TinyPHP_Controller {
 		echo json_encode($response);
 		die; 
     }
-
-	// public function getattendanceAction()
-	// {
-	// 	$this->setNoRenderer(true);
-	// 	$date = $this->getRequest()->getVar("date");
-	// 	global $db;
-
-    //     $dt = new TinyPHP_DataTable();
-	//     $dt->setDBAdapter($db);
-    //     $dt->setTable('user_attendance AS a');
-    //     $dt->setIdColumn('a.id');
-		
-	// 	$dt->setJoins('LEFT JOIN break_logs AS b ON a.id=b.attendanceId AND b.startTime IS NOT NULL AND b.endTime IS NULL
-	// 				   LEFT JOIN users AS c ON c.id=a.userId');
-
-    //     $dt->addColumns(array(
-	// 		'name' => 'c.firstName',
-    //         'date' => 'a.date',
-    //         'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
-    //         'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
-    //         'totalMinutes' => 'SUM(b.totalMinutes)',
-    //         'status' => 'a.status',
-	// 		'breakStart' => 'DATE_FORMAT(b.startTime, "%r")',
-	// 		'breakEnd' => 'DATE_FORMAT(b.endTime, "%r")'
-    //     ));
-
-	// 	$defaultFilters = array(
-	// 		'a.date' => "'$date'",
-	// 		'c.isActive' => 1,
-	// 		'c.role' => "'user'"
-	// 		);
-
-	// 	$dt->setGroupBy('GROUP BY a.id');
-	// 	$dt->setDefaultFilters($defaultFilters);
-	// 	$dt->getData();
-	// }
 }
 ?>
