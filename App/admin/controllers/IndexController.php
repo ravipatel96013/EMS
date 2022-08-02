@@ -86,7 +86,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	// Dashboard Datatable Data
 
 	global $db;
-	$sql = "SELECT a.id as attendanceId,c.firstName as Name,a.date as Date,DATE_FORMAT(a.checkInDateTime, '%r') as checkIn,DATE_FORMAT(a.checkOutDateTime, '%r') as checkOut,a.status as status,DATE_FORMAT(b.startTime, '%r') as breakStartTime,DATE_FORMAT(b.endTime, '%r') as breakEndTime,SUM(b.totalMinutes) as breakTime
+	$sql = "SELECT a.id as attendanceId,c.firstName as firstName,c.lastName as lastName,a.date as Date,DATE_FORMAT(a.checkInDateTime, '%r') as checkIn,DATE_FORMAT(a.checkOutDateTime, '%r') as checkOut,a.status as status,DATE_FORMAT(b.startTime, '%r') as breakStartTime,DATE_FORMAT(b.endTime, '%r') as breakEndTime,SUM(b.totalMinutes) as breakTime
 	FROM `user_attendance` as a
 	LEFT JOIN break_logs as b ON a.id=b.attendanceId AND b.startTime IS NOT NULL AND b.endTime IS NULL
 	LEFT JOIN users as c ON c.id=a.userId

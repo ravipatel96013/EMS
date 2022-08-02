@@ -106,7 +106,7 @@
                                   {if isset($attendanceData)}
                                   {foreach from=$attendanceData item=data}
                                   <tr class="{if $data.breakStartTime neq null && $data.breakEndTime eq null}bg-warning{/if}">
-                                    <td>{$data.Name}</td>
+                                    <td>{$data.firstName} {$data.lastName}</td>
                                     <td>{$data.Date}</td>
                                     <td>{if $data.checkIn eq null}NA{else}{$data.checkIn}{/if}</td>
                                     <td>{if $data.checkOut eq null}NA{else}{$data.checkOut}{/if}</td>
