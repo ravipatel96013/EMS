@@ -70,6 +70,60 @@
                 </div>
             </div>
             </div>
+            
+            <div class="card">
+              <div class="card-body" id="filters">
+                <div class="row">
+                  <div class="col-sm-3">
+                    <label>Date</label>
+                    <input type="date" name="date" value="{$selectedDate}" id="date" class="form-control form-control-sm">
+                     </div>
+                </div>
+                </div>
+            </div>
+
+            <div class="row" id="attendanceTable">
+              <div class="col-sm-12">
+                  <div class="card">
+                      <div class="card-header">
+                          <h3>Attendance Table</h3>
+                      </div>
+                      <div class="card-body">
+                          <div class="row">
+                              <table class="table table-hover" id="attendance">
+                                <thead>
+                                  <tr>
+                                    <th scope="col">Name</th>
+                                    <th scope="col">Date</th>
+                                    <th scope="col">Check-in</th>
+                                    <th scope="col">Check-out</th>
+                                    <th scope="col">Status</th>
+                                    <th scope="col">Break Time(Min)</th>
+                                    <th scope="col">Last Break Started</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  {if isset($attendanceData)}
+                                  {foreach from=$attendanceData item=data}
+                                  <tr class="{if $data.breakStartTime neq null && $data.breakEndTime eq null}bg-warning{/if}">
+                                    <td>{$data.Name}</td>
+                                    <td>{$data.Date}</td>
+                                    <td>{if $data.checkIn eq null}NA{else}{$data.checkIn}{/if}</td>
+                                    <td>{if $data.checkOut eq null}NA{else}{$data.checkOut}{/if}</td>
+                                    <td>{$data.status}</td>
+                                    <td>{if $data.breakTime eq null}NA{else}{$data.breakTime}{/if}</td>
+                                    <td>{if $data.breakStartTime eq null}NA{else}{$data.breakStartTime}{/if}</td>
+                                  </tr>
+                                  {/foreach}
+                                  {/if}
+                                </tbody>
+                              </table>
+                            </div>
+
+                      </div>
+                  </div>
+              </div>
+          </div>
 
     </div>
 </div>
@@ -223,7 +277,17 @@ jQuery(document).ready(function(){
   startTimer();
   }
 });
- 
 </script>
 
+<script>
+  $('#date').on("change",function(){
+    window.location.href = '/admin'+'?date='+$(this).val();
+  })
+</script>
+<script>
+  jQuery(document).ready(function (){
+    $('#attendance').DataTable();
+  });
+  </script>
+  
 {/literal}
