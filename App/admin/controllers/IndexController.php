@@ -93,7 +93,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	WHERE a.date='$selectedDate' AND c.isActive = 1
 	GROUP BY a.id";
 
-	$sql2 = "SELECT a.id as attendanceId,SUM(b.totalMinutes) as breakTime
+	$sql2 = "SELECT a.id as attendanceId,CONCAT(FLOOR(SUM(b.totalMinutes)/60),':',MOD(SUM(b.totalMinutes),60)) as breakTime
 	FROM `user_attendance` as a
 	LEFT JOIN break_logs as b ON a.id=b.attendanceId
 	WHERE date='$selectedDate' 

@@ -62,7 +62,7 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
             'date' => 'a.date',
             'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
             'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
-            'totalMinutes' => 'SUM(b.totalMinutes)',
+            'totalMinutes' => 'CONCAT(FLOOR(SUM(b.totalMinutes)/60),":",MOD(SUM(b.totalMinutes),60))',
             'status' => 'a.status'
         ));
 

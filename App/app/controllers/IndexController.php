@@ -81,7 +81,6 @@ class App_IndexController extends TinyPHP_Controller {
 			$attendanceNotFound = true;
 		}
 		$attendance = new Models_Attendance();
-		$presentDay = $attendance->getPresentMonthAttendance($loggedInUserId);
 		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
 		
 		$break = new Models_BreakLog();
@@ -112,7 +111,23 @@ class App_IndexController extends TinyPHP_Controller {
 				$completed = true;
 			}
 		}
-		
+
+		global $db;
+		$sql="SELECT COUNT(id) as workingDays
+		FROM user_attendance
+		WHERE userId=$loggedInUserId AND status != 'HO' AND status != 'WO' AND MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear";
+
+		$workingDays = $db->fetchRow($sql);
+		$workingDays = $workingDays['workingDays'];
+		$this->setViewVar('workingDays',$workingDays);
+
+		$sql2 = "SELECT COUNT(status) as presentDays
+		FROM `user_attendance`
+		WHERE MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear AND status='P' AND userId=$loggedInUserId";
+
+		$presentDays = $db->fetchRow($sql2);
+		$presentDays = $presentDays['presentDays'];
+		$this->setViewVar('presentDays',$presentDays);
 
 		$this->setViewVar('checkInButton',$checkInButton);
 		$this->setViewVar('checkOutButton',$checkOutButton);
@@ -123,11 +138,11 @@ class App_IndexController extends TinyPHP_Controller {
 		$this->setViewVar('yearOption',$yearOption);
 		$this->setViewVar('currentYear',$currentYear);
 		$this->setViewVar('currentYear',$currentMonth);
-		$this->setViewVar('presentDays',$presentDay['COUNT(status)']);
 		$this->setViewVar('upComingHolidays',$upComingHolidays);
 		$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 		$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
 		$this->setViewVar('attendanceNotFound',$attendanceNotFound);
+		
 	}
 
 	public function getattendanceAction()
@@ -152,7 +167,7 @@ class App_IndexController extends TinyPHP_Controller {
             'date' => 'a.date',
             'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
             'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
-            'totalMinutes' => 'SUM(b.totalMinutes)',
+            'totalMinutes' => 'CONCAT(FLOOR(SUM(b.totalMinutes)/60),":",MOD(SUM(b.totalMinutes),60))',
             'status' => 'a.status'
         ));
 
