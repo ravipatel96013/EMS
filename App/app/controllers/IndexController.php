@@ -61,7 +61,7 @@ class App_IndexController extends TinyPHP_Controller {
 		{
 			if($totalBreakMinutes > 60)
 			{
-				$breakHours = round($totalBreakMinutes/60, 0);
+				$breakHours = (int)($totalBreakMinutes/60);
 				$breakMinutes = round($totalBreakMinutes - 60*$breakHours, 0);
 			}
 			else{

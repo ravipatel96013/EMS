@@ -11,6 +11,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$completed = false;
 	$attendanceNotFound = false;
 	$pauseBreakWarning = false;
+	$selectedDate = $this->getRequest()->getVar('date','string', date("Y-m-d"));
 	
 	$presentDay = 0;
 	$loggedInAdminId = getLoggedInAdminId();
@@ -31,7 +32,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	{
 		if($totalBreakMinutes > 60)
 		{
-			$breakHours = round($totalBreakMinutes/60,0);
+			$breakHours = (int)($totalBreakMinutes/60);
 			$breakMinutes = round($totalBreakMinutes - 60*$breakHours,0);
 		}
 		else{
@@ -82,6 +83,48 @@ class Admin_IndexController extends TinyPHP_Controller {
 		}
 	}
 
+	// Dashboard Datatable Data
+
+	global $db;
+	$sql = "SELECT a.id as attendanceId,c.firstName as firstName,c.lastName as lastName,a.date as Date,DATE_FORMAT(a.checkInDateTime, '%r') as checkIn,DATE_FORMAT(a.checkOutDateTime, '%r') as checkOut,a.status as status,DATE_FORMAT(b.startTime, '%r') as breakStartTime,DATE_FORMAT(b.endTime, '%r') as breakEndTime,SUM(b.totalMinutes) as breakTime
+	FROM `user_attendance` as a
+	LEFT JOIN break_logs as b ON a.id=b.attendanceId AND b.startTime IS NOT NULL AND b.endTime IS NULL
+	LEFT JOIN users as c ON c.id=a.userId
+	WHERE a.date='$selectedDate' AND c.isActive = 1
+	GROUP BY a.id";
+
+	$sql2 = "SELECT a.id as attendanceId,SUM(b.totalMinutes) as breakTime
+	FROM `user_attendance` as a
+	LEFT JOIN break_logs as b ON a.id=b.attendanceId
+	WHERE date='$selectedDate' 
+	GROUP BY a.id";
+
+	$result = $db->fetchAll($sql);
+	
+	$breakes = $db->fetchAll($sql2);
+
+	$breakByAttendanceId = [];
+    foreach($breakes as $break)
+    {
+        $breakByAttendanceId[$break['attendanceId']] = $break;
+    }
+
+	foreach($result as $key => $data)
+	{
+		if(isset($breakByAttendanceId[$data['attendanceId']]))
+		{
+			$break = $breakByAttendanceId[$data['attendanceId']];
+			if($break['breakTime'] != NULL)
+			{
+				$result[$key]['breakTime'] = $break['breakTime'];
+			}
+		}
+	}
+
+
+	$this->setViewVar('attendanceData',$result);
+	$this->setViewVar('breakData',$breakes);
+
 	$this->setViewVar('checkInButton',$checkInButton);
 	$this->setViewVar('checkOutButton',$checkOutButton);
 	$this->setViewVar('startBreakButton',$startBreakButton);
@@ -92,6 +135,7 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 	$this->setViewVar('upComingHolidays',$upComingHolidays);
 	$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
+	$this->setViewVar('selectedDate',$selectedDate);
 	}
 
 	public function checkinAction()

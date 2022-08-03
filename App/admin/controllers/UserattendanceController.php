@@ -16,7 +16,7 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 
 		foreach($yearOption as $year)
 		{
-			if($year = $selectedYear)
+			if($year == $selectedYear)
 			{
 				$this->setViewVar('selectedYear',$selectedYear);
 			}
@@ -24,7 +24,7 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 
 		foreach($monthOption as $month)
 		{
-			if($month = $selectedMonth)
+			if($month == $selectedMonth)
 			{
 				$this->setViewVar('selectedMonth',$selectedMonth);
 			}
