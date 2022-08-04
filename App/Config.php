@@ -8,6 +8,12 @@ define('PENDING',0);
 define('DECLINED',2);
 define('CLOSED',3);
 
+define('SMTP_HOST','yrcoder.com');
+define('SMTP_USERNAME','_mainaccount@yrcoder.com');
+define('SMTP_PASSWORD','gtdKS5r%Iqo(');
+define('SMTP_PORT','465');
+define('SMTP_ENCRYPTION','ssl'); //supoort only "ssl" or "tls"
+
 define('SITE_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define('SITE_URL', $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 
@@ -21,7 +27,8 @@ define('DOCUMENT_FILE_PATH', SITE_URL . '/documents/');
 
 define('ASSETS_DIR', TINY_PHP_PATH . '/Public/assets/');
 
-define('SYSTEM_EMAIL', 'system@domain.com <Your name>');
+define('SYSTEM_EMAIL', 'system@yrcoder.com <YR Coder>');
+define('SYSTEM_RECEIVE_EMAIL','we@yrcoder.com');
 
 
 if ($_SERVER['HTTP_HOST'] ==  'local.ems.com') {

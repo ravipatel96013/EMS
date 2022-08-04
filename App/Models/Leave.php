@@ -83,24 +83,29 @@ class Models_Leave extends TinyPHP_ActiveRecord
 
         if($commit == true)
         {
+        $user = new Models_User($this->userId);
+        $mailer = new Helpers_Mailer();
+        $from = SYSTEM_EMAIL;
+        $to = SYSTEM_RECEIVE_EMAIL;
+        $mailer->addCC($user->email);
+        $subject = 'Leave request by '.$user->firstName.' '.$user->lastName.' '.date('Y-m-d');
+        $body = "Its $user->firstName $user->lastName I would like to request
+                leave that start from $this->startDate and end on $this->endDate
+                 This request is due to $this->comment Let me know if you need
+                more information about this";
+        $isSent = $mailer->sendMail($from,$to,$subject,$body);
+        if(!$isSent)
+        {
+            $this->addError($mailer->getErrors());
+        }
             $this->commit();
         }
         else{
             $this->addError("Can not create the Leave application");
             $this->rollback();
         }
-        // $name = TinyPHP_Session::get('usernName');
-        // $mailer = new Helpers_Mailer();
-        // $from = 'smitparmar.yrcoder@gmail.com';
-        // $to = 'smitparmar21902@gmail.com';
-        // $subject = 'Regarding leave application at YR CODER';
-        // $body = 'Hy its '.$name.'Need a leave from'.$this->startDate.'To '.$this->endDate;
-        // $isSent = $mailer->sendMail($from,$to,$subject,$body);
-        // if(!$isSent)
-        // {
-        //     $this->addError($mailer->getErrors());
-        // }
-        // return true;
+        
+        return true;
     }
 
     protected function doBeforeUpdate()
