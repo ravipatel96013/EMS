@@ -124,7 +124,7 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         $today = date('Y-m-d');
         $lastDay = date("Y-m-t",strtotime($today));
 
-        $sql = "SELECT name,date FROM ". $this->tableName ." WHERE date BETWEEN'".$today."' AND '".$lastDay."'";
+        $sql = "SELECT name,date FROM ". $this->tableName ." WHERE date BETWEEN'".$today."' AND '".$lastDay."' ORDER BY date ASC";
         $result = $db->fetchAll($sql);
         return $result;
     }

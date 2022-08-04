@@ -12,71 +12,92 @@
   </div>
 
   <div class="row" id="top_blocks">
-  <div class="col-sm-4">
-    <div class="card">
-    <div class="card-header">
-      <h3 id="currentTime"></h3>
-    </div>
-      <div class="card-body d-flex justify-content-center">
-        <div class="row row-cols-1">
-          <div class="col">
-            {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-lg">CheckOut</button>{/if}
-              {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-lg">CheckIn</button>{/if}
-              {if $attendanceNotFound eq false && $completed eq true}<h4>Done For the day</h4>{/if}
-              {if $attendanceNotFound eq true}<h4>Please Contact Admin</h4>{/if}
-              {if $pauseBreakWarning eq true}<h4>Pause Break to Check-Out</h4>{/if}
-            </div>
-        </div>
+    <div class="col-sm-3">
+      <div class="card">
+      <div class="card-header">
+        <h4>Checkin / Checkout</h4>
       </div>
-  </div>
-  </div>
-
-  <div class="col-sm-4">
-    <div class="card">
-    <div class="card-header">
-      <h3>Break</h3>
-    </div>
-      <div class="card-body d-flex justify-content-center">
-        <div class="row row-cols-1">
-          <div class="col">
-            {if $startBreakButton eq true}<button type="button" onclick="startBreak()" class="btn btn-block bg-gradient-success btn-lg">Start Break</button>{/if}
-            {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-lg">End Break</button>{/if}
+        <div class="card-body d-flex justify-content-center">
+          <div class="row row-cols-1">
+            <div class="col d-flex justify-content-center">
+            <h6>{$smarty.now|date_format:"l,d M Y"}</h6>
           </div>
-          <div class="col d-flex justify-content-center mt-2">
-            <h4 id="hours">{if isset($breakHours)}{$breakHours}:{else}00:{/if}</h4>
-            <h4 id="mins">{if isset($breakMinutes)}{$breakMinutes}:{else}00:{/if}</h4>
-            <h4 id="seconds">00</h4>
+            <div class="col d-flex justify-content-center">
+              <h6 id="currentTime"></h6>
+            </div>
+            <div class="col">
+              {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-md">CheckOut</button>{/if}
+                {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-md">CheckIn</button>{/if}
+                <center>{if $attendanceNotFound eq false && $completed eq true}<h6>Done For the day</h6>{/if}
+                {if $attendanceNotFound eq true}<h6>Please Contact Admin</h6>{/if}
+                {if $pauseBreakWarning eq true}<h6>Pause Break to Check-Out</h6>{/if}</center>
+              </div>
+          </div>
         </div>
-        </div>
+    </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="card">
+      <div class="card-header">
+        <h4>{if $startBreakButton eq true}Start Break{else}Pause Break{/if}</h4>
       </div>
-  </div>
-  </div>
-
-  <div class="col-sm-4">
-    <div class="card">
-      <div class="card-header"><h3>Working Days</h3></div>
-      <div class="card-body">
-        <ul class="list-group list-group-flush">
-          <li class="list-group-item"><h6><b>Present Days : </b>{$presentDays}</h6></li>
-          <li class="list-group-item"><h6><b>Leave Balance : </b>{if $leaveBalance eq NULL}0{else}{$leaveBalance}{/if}</h6></li>
+        <div class="card-body d-flex justify-content-center">
+          <div class="row row-cols-1">
+            <div class="col d-flex justify-content-center">
+              <h6>Today's Break Time</h6>
+            </div>
+            <div class="col d-flex justify-content-center">
+              <h6 id="hours">{if isset($breakHours)}{$breakHours}:{else}00:{/if}</h6>
+              <h6 id="mins">{if isset($breakMinutes)}{$breakMinutes}:{else}00:{/if}</h6>
+              <h6 id="seconds">00</h6>
+          </div>
+            <div class="col">
+              {if $startBreakButton eq true}<button type="button" onclick="startBreak()" class="btn btn-block bg-gradient-success btn-md">Start Break</button>{/if}
+              {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-md">Pause Break</button>{/if}
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-header"><h4>Summary of {$smarty.now|date_format:"M-Y"}</h4>
+        </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h6><b>Working Days : </b>{if $workingDays eq 0}NA{else}{$workingDays}{/if}</h6></li>
+            <li class="list-group-item"><h6><b>Present Days : </b>{if $presentDays eq 0}NA{else}{$presentDays}{/if}</h6></li>
+            <li class="list-group-item"><h6><b>Leave Balance : </b>{if $leaveBalance eq NULL}0{else}{$leaveBalance}{/if}</h6></li>
+          </ul>
+      </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-header">
+          <h4>Holidays in {$smarty.now|date_format:"M-Y"}</h4>
+        </div>
+          <ul class="list-group list-group-flush">
+          {foreach from=$upComingHolidays item=row}
+          <li class="list-group-item"><h6><b>{$row.name}</b>&emsp;{$row.date}</h6></li>
+          {/foreach}
         </ul>
-        <div class="card-header"><h3>Upcoming Holidays</h3></div>
-        <ul class="list-group list-group-flush">
-        {foreach from=$upComingHolidays item=row}
-        <li class="list-group-item"><h6><b>{$row.name}</b></h6><div>{$row.date}</div></li>
-        {/foreach}
-      </ul>
-        </div>
       </div>
-  </div>
-  </div>
+    </div>
+          
+    </div>
 
-    <div class="card">
-    <div class="card-body">
-      <div class="row">
-        <div class="col-sm-1">
-        <label>Month</label>
-          <select name="month" class="form-control" id="month">
+  <div class="row" id="attendanceTable">
+    <div class="col-sm-12">
+      <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-sm-3">
+        <h3>Attendance Table</h3>
+      </div>
+      <div class="col-sm-1 offset-sm-7">
+          <select name="month" class="form-control custom-select" id="month">
             {if isset($selectedMonth)}
             {foreach from=$monthOption item=month}
             <option value="{$month}" {if $selectedMonth eq $month}selected{/if}>{$month}</option>
@@ -85,24 +106,16 @@
           </select>
         </div>
         <div class="col-sm-1">
-            <label>Year</label>
-          <select name="month" class="form-control" id="year">
-            {if isset($selectedYear)}
-            {foreach from=$yearOption item=year}
-            <option value="{$year}" {if $selectedYear eq $year}selected{/if}>{$year}</option>
-            {/foreach}
-            {/if}
-          </select>
+        <select name="month" class="form-control custom-select" id="year">
+          {if isset($selectedYear)}
+          {foreach from=$yearOption item=year}
+          <option value="{$year}" {if $selectedYear eq $year}selected{/if}>{$year}</option>
+          {/foreach}
+          {/if}
+        </select>
+    </div>
+        
       </div>
-    </div>
-  </div>
-    </div>
-
-  <div class="row" id="attendanceTable">
-    <div class="col-sm-12">
-      <div class="card">
-      <div class="card-header">
-        <h3>Attendance Table</h3>
       </div>
         <div class="card-body">
         <div class="row">
@@ -112,7 +125,7 @@
                 <th scope="col">Date</th>
                 <th scope="col">Check-in</th>
                 <th scope="col">Check-out</th>
-                <th scope="col">Break Time(Minutes)</th>
+                <th scope="col">Break Time</th>
                 <th scope="col">Status</th>
               </tr>
             </thead>
@@ -222,6 +235,19 @@
 
 <script>
   jQuery(document).ready(function (){
+
+    $('#top_blocks').each(function(){  
+        var highestBox = 0;
+
+        $(this).find('.card').each(function(){
+            if($(this).height() > highestBox){  
+                highestBox = $(this).height();  
+            }
+        })
+
+        $(this).find('.card').height(highestBox);
+    });
+
     clock();
     function clock() {
       var now = new Date();

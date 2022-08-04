@@ -59,7 +59,7 @@ class Models_Attendance extends TinyPHP_ActiveRecord
     {
         global $db;
 
-        $sql = "SELECT a.id,a.date,a.checkInDateTime,a.checkOutDateTime,SUM(b.totalMinutes) AS breakTime,a.status,TIMESTAMPDIFF(minute,checkInDateTime,checkOutDateTime)-SUM(b.totalMinutes) AS productiveTime FROM `user_attendance` AS a LEFT JOIN break_logs AS b ON a.id=b.attendanceId WHERE a.id=$this->id GROUP BY a.id";
+        $sql = "SELECT a.id,a.date,a.checkInDateTime,a.checkOutDateTime,CONCAT(FLOOR(SUM(b.totalMinutes)/60),':',MOD(SUM(b.totalMinutes),60)) AS breakTime,a.status,TIMESTAMPDIFF(minute,checkInDateTime,checkOutDateTime)-SUM(b.totalMinutes) AS productiveTime FROM `user_attendance` AS a LEFT JOIN break_logs AS b ON a.id=b.attendanceId WHERE a.id=$this->id GROUP BY a.id";
         $result = $db->fetchRow($sql);
         return $result;
     }
