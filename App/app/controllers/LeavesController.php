@@ -3,6 +3,7 @@ class App_LeavesController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
+
 	}
 
 	public function addAction()
@@ -14,32 +15,55 @@ class App_LeavesController extends TinyPHP_Controller {
 
 			$this->setNoRenderer(true);
 
-        $leaves = new Models_Leave();
-	
-        $leaves->type = $this->getRequest()->getPostVar('type');
-        $startDate = $this->getRequest()->getPostVar('startDate');
-        $endDate = $this->getRequest()->getPostVar('endDate');
-        $stdt = new DateTime($startDate);
-        $endt = new DateTime($endDate);
-        $leaves->startDate =  $stdt->getTimestamp();
-        $leaves->endDate = $endt->getTimestamp();
-        $leaves->isHalf = $this->getRequest()->getPostVar('isHalf');
-        $leaves->comment = $this->getRequest()->getPostVar('comment');
-        $isCreated = $leaves->create();
+            $leaves = new Models_Leave();
 
-        if( $isCreated == true )
-        {
-            $status = 1;
-        }
-        else
-        {
-            $errors = $leaves->getErrors();
-        }
+            $leaves->userId = getLoggedInUserId();
+
+            $leaves->startDate = $this->getRequest()->getPostVar('startDate');
+
+            $leaves->endDate = $this->getRequest()->getPostVar('endDate');
+            
+            $leaves->isHalf = $this->getRequest()->getPostVar('isHalf');
+            
+            $leaves->comment = $this->getRequest()->getPostVar('comment');
+
+            $isCreated = $leaves->create();
+
+            if( $isCreated == true )
+            {
+                $status = 1;
+            }
+            else
+            {
+                $errors = $leaves->getErrors();
+            }
             
             $response = ["status" => $status, "errors" => $errors];
             echo json_encode($response);
             die;
     	}
+    }
+
+    public function closeleaveAction()
+    {
+        $status = 0;
+        $errors = [];
+
+        $leaveId = $this->getRequest()->getPostVar('id');
+        $leave = new Models_Leave($leaveId);
+        $leave->status = CLOSED;
+        $isUpdated = $leave->update(['status']);
+        if($isUpdated)
+        {
+           $status = 1;
+        }
+        else
+        {
+            $errors = $leave->getErrors();
+        }
+        $response = ["status" => $status, "errors" => $errors];
+        echo json_encode($response);
+        die;
     }
 
     public function leavelistAction()
@@ -54,9 +78,8 @@ class App_LeavesController extends TinyPHP_Controller {
 
         $dt->addColumns(array(
             'id' => 'l.id',
-            'type' => 'l.type',
-            'startDate' => 'DATE_FORMAT(FROM_UNIXTIME(l.startDate), "%m-%d-%Y")',
-            'endDate' => 'DATE_FORMAT(FROM_UNIXTIME(l.endDate), "%m-%d-%Y")',
+            'startDate' => 'l.startDate',
+            'endDate' => 'l.endDate',
             'comment' => 'l.comment',
             'status' => 'l.status'
         ));

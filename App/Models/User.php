@@ -7,35 +7,43 @@ class Models_User extends TinyPHP_ActiveRecord
     public $password = "";
     public $firstName = "";
     public $lastName = "";
-    public $phone = "";
+    public $mobile= "";
     public $designation = "";
     public $joinDate = "";
     public $address = "";
     public $city = "";
     public $state = "";
     public $profileImage = "";
-    public $isActive = 1;
+    public $isActive = 0;
     public $role = '';
+    public $gender = '';
+    public $dateOfBirth = '';
+    public $emgContactNo = '';
+    public $emgContactName = '';
+    public $voterId = '';
+    public $panId = '';
+    public $aadharId = '';
+    public $licenseNumber = '';
+    public $bloodGroup = '';
+    public $personalEmail = '';
+    public $maritialStatus = '';
+    public $bank = '';
+    public $namePerBank = '';
+    public $bankAcNumber = '';
+    public $bankIFSC = '';
     public $confirmPassword = "";
     public $createdOn = "";
     public $updatedOn = "";
-    public $updatePassword = true;
 
-    private $oldPassword =  false;
 
-    public $dbIgnoreFields = array('id','confirmPassword','oldPassword','createdOn','updatedOn','profileImage','updatePassword');
+    public $dbIgnoreFields = array('id','confirmPassword','profileImage');
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
-            $this->confirmPassword = $this->password;
-            $this->oldPassword = $this->password;
-        }
-
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
+        $this->addListener('afterCreate', array($this,'doAfterCreate'));
+        $this->addListener('afterUpdate', array($this,'doAfterUpdate'));
     }
 
 
@@ -43,16 +51,35 @@ class Models_User extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            if($this->password != "")
+            if($this->validatePassword())
             {
                 $this->password = md5($this->password);
+                $this->createdOn = time();
+                $this->updatedOn = time();
+                return true;
             }
-            return true;
         }
         else
         {
             return false;
         }
+    }
+
+    protected function doAfterCreate()
+    {
+        if($this->isActive == 1)
+        {
+        $attendance = new Models_Attendance();
+        $where = 'userId='.$this->id;
+        $data = $attendance->getAll(['id'],$where);
+        if(empty($data))
+        {
+            $year = date('Y');
+            $month = date('m');
+            $service = new Service_Attendance();
+            $service->addAttendance($year,$month,$this->id);
+        }
+    }
     }
 
 
@@ -60,11 +87,19 @@ class Models_User extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            if($this->updatePassword == true)
+            if($this->password == "")
             {
-                $this->password = md5($this->password);
+                array_push($this->dbIgnoreFields,'password');
+                return true;
             }
-            return true;
+            else{
+                if($this->validatePassword())
+                {
+                    $this->password = md5($this->password);
+                    $this->updatedOn = time();
+                    return true;
+                }
+            }
         }
         else
         {
@@ -72,47 +107,26 @@ class Models_User extends TinyPHP_ActiveRecord
         }
     }
 
+    protected function doAfterupdate()
+    {
+        if($this->isActive == 1)
+        { 
+           $currentMonth = date('m');
+           $currentYear = date('Y'); 
+           $attd = new Models_Attendance();
+           $attendace = $attd->getAll(['id'], "userId={$this->id} AND MONTH(date)={$currentMonth} AND YEAR(date)={$currentYear}");
+           if(empty($attendace))
+           {
+            $service = new Service_Attendance();
+            $service->addAttendance($currentYear,$currentMonth,$this->id);
+           }
+        }
+    }
+
     public function validate()
     {
         $this->validateUserInfo();
-        $this->validatePassword();
 
-        //$this->validateLoginInfo();
-
-        return !$this->hasErrors();
-    }
-
-    public function validateLoginInfo()
-    {
-        if($this->username == "")
-        {
-            $this->addError("Username is required");
-        }
-        else
-        {
-            if(!$this->isUniqueUsername($this->username,$this->id))
-            {
-                $this->addError("Username '". $this->username ."' is already in use");
-            }
-        }
-
-        if( $this->role == "" ) 
-        {
-            $this->addError("User role is required");
-        }
-
-        if($this->_getCurrentAction() == "create")
-        {
-            $this->validatePassword();
-        }
-        elseif($this->_getCurrentAction() == "update")
-        {
-            if($this->password!="")
-            {
-                $this->validatePassword();
-            }
-        }
-        
         return !$this->hasErrors();
     }
 
@@ -150,14 +164,26 @@ class Models_User extends TinyPHP_ActiveRecord
             $this->addError("Last name is required");
         }
 
-        if($this->phone == "")
+        if($this->mobile == "")
         {
-            $this->addError("Phone number is blank");
+            $this->addError("Mobile number is blank");
         }
         else{
-            if(!preg_match('/^[0-9]{10}+$/', $this->phone))
+            if(!preg_match('/^[0-9]{10}+$/', $this->mobile))
             {
                 $this->addError("Enter Valid Phone Number");
+            }
+
+        }
+
+        if($this->emgContactNo == "")
+        {
+            $this->addError("Emergency Contact number is blank");
+        }
+        else{
+            if(!preg_match('/^[0-9]{10}+$/', $this->emgContactNo))
+            {
+                $this->addError("Enter Valid Emergency Contact Number");
             }
 
         }
@@ -198,59 +224,59 @@ class Models_User extends TinyPHP_ActiveRecord
             $this->addError("Join Date is Empty");
         }
 
-        return !$this->hasErrors();
-    }
-
-
-    public function isUniqueUsername($_username,$id)
-    {
-        global $db;
-
-        $sql = "SELECT count(username) FROM ". $this->tableName ." WHERE username = '$_username'";
-        if($id)
+        if($this->gender == "")
         {
-            $sql .= " AND id <> ". $id;
+            $this->addError("Gender is Empty");
         }
 
-        $count = $db->fetchOne($sql);
-        if($count==0)
+        if($this->dateOfBirth == "")
         {
-            return true;
+            $this->addError("Date of Birth is Empty");
+        }
+
+        if($this->emgContactName == "")
+        {
+            $this->addError("Emergency Contact Name is Empty");
+        }
+
+        if($this->aadharId == "")
+        {
+            $this->addError("Aadhar Number is Empty ");
         }
         else{
-            return false;
+            if(!preg_match('/^[0-9]{12}+$/', $this->aadharId))
+            {
+                $this->addError("Invalid Aadhar Number");
+            }
         }
-    }
-
-    public function checkCred($email,$password)
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE email = '$email' AND password = '$password'";
-        $result = $db->fetchRow($sql);
-        if(!$result == '')
+        
+        if($this->bloodGroup == "")
         {
-            return $result;
+            $this->addError("Blood Group is Empty");
         }
+
+        if($this->personalEmail == "")
+        {
+            $this->addError("Personal Email is Blank");
+        }
+        else{
+            if(!filter_var($this->personalEmail, FILTER_VALIDATE_EMAIL))
+            {
+                $this->addError("Enter Valid Personal Email");
+            }
+        }
+
+        if($this->mobile == $this->emgContactNo)
+        {
+            $this->addError("Mobile Number and Eergency Contact Number Can Not Be Same");
+        }
+
+        if($this->email == $this->personalEmail)
+        {
+            $this->addError("E-mail and Personal E-mail Can Not Be Same");          
+        }
+
+        return !$this->hasErrors();
     }
-    
-    public function fetchUsers()
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        return $result;
-    }
-
-    public function fetchUser($id)
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE id = '$id'";
-        $result = $db->fetchRow($sql);
-        return $result;
-    }
-
 }
 ?>

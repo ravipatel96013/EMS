@@ -10,27 +10,49 @@ class App_LoginController extends TinyPHP_Controller {
     public function dologinAction()
     {
         $this->setNoRenderer(true);
-            $email = $this->getRequest()->getPostVar('email');
-            $pass = md5($this->getRequest()->getPostVar('password'));
-            $erroCode = 0;    
-            $user = new Models_User();
-            $response = $user->checkCred($email,$pass);
-            if(!$response == '')
-            {  
-                if($response["role"] == 'user')
-                {      
-                TinyPHP_Session::set('userName',$response["firstName"]);
-                TinyPHP_Session::set('userId',$response["id"]);
-                $errorCode = 1; // ready to login.
-                }
-                else
+
+        $status = 0;
+        $errors = [];
+
+        $email = $this->getRequest()->getPostVar('email');
+        $pass = $this->getRequest()->getPostVar('password'); 
+        
+        $user = new Models_User();
+        $user->fetchByProperty('email', $email);
+
+        if( !$user->isEmpty )
+        {
+            if( $user->password == md5($pass) && $user->isActive == 1 )
+            {
+                if($user->role != 'user')
                 {
-                    $errorCode = 2; // Not User error.
+                    $user->addError('You are not user');    
                 }
-            }else{
-                $errorCode = 3; // Invalid Credentials error.
+                else{
+                $status = 1;
+                TinyPHP_Session::set('userName',$user->firstName);
+                TinyPHP_Session::set('userId',$user->id);
+                }
             }
-            echo json_encode($errorCode);
+            else
+            {
+                $user->addError('Invalid username or password');
+            }
+        }
+        else
+        {
+            if($email == '' || $pass == '')
+            {
+                $user->addError('Fields are Empty');
+            }
+            else{
+            $user->addError('Email does not exist');
+            }
+        }
+
+        $response = ['status' => $status, 'errors' => $user->getErrors()];
+        echo json_encode($response);
+        die;
 }
 }
 ?>

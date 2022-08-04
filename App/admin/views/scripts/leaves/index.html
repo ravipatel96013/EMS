@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 mt-3">Leave Applications</h1>
+        <h1 class="m-0">Leave Applications</h1>
       </div><!-- /.col -->
     </div><!-- /.row -->
   </div><!-- /.container-fluid -->
@@ -18,7 +18,6 @@
                 <tr>
                   <th scope="col">Leave Id</th>
                   <th scope="col">User Id</th>
-                  <th scope="col">Type</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>
                   <th scope="col">Comment</th>
@@ -43,6 +42,7 @@
   $(document).ready(function () {
       $('#leaveTable').DataTable({
           serverSide: true,
+          processing: true,
           "ajax": {
               url: '/admin/leaves/leavelist',
               type: "GET",
@@ -51,19 +51,33 @@
           "columns": [
               { data: 'id',name: 'id'},
               { data: 'userName',name: 'userName'},
-              { data: 'type',name: 'type'},
               { data: 'startDate',name: 'startDate'},
               { data: 'endDate', name: 'endDate'},
               { data: 'comment',name: 'comment'},
-              { data: 'status',name: 'status'},
+              {
+                    data: 'status',
+                    name: 'status',
+                    render: function (data, type, row) {
+                        if (row.status == 1) {
+                            return ' <h6 class="mb-0"><span  class="badge bg-success">Approved</span></h6>';
+                        } else if (row.status == 2) {
+                            return ' <h6 class="mb-0"><span class="badge bg-danger">Declined</span></h6>';
+                        } else if (row.status == 0) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning">Pending</span></h6>';
+                        }
+                        else if (row.status == 3) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning">Closed</span></h6>';
+                        }
+                    }
+                },
               { data: 'id',name: 'id'}
           ],
           "aoColumnDefs": [
            {
-                "aTargets": [7],
+                "aTargets": [6],
                 "mData": "id",
                 "mRender": function (data, type, full) {
-                    return '<a href="http://local.ems.com/admin/leaves/update?id='+ data +'" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>';
+                    return '<a href="/admin/leaves/update?id='+ data +'" class="link-dark"><i class="fa-solid fa-pen-to-square"></i></a>';
                 }
             }
          ]
@@ -71,5 +85,3 @@
   });
 </script>
 {/literal}
-</div>
-

@@ -3,112 +3,258 @@ class App_IndexController extends TinyPHP_Controller {
 	
 	public function indexAction()  
 	{
-		$userName = TinyPHP_Session::get("userName");
-		$this->setViewVar('userName',$userName);
+		$currentYear = date('Y');
+		$currentMonth = date('m');
+		$checkInButton = false;
+		$checkOutButton = false;
+		$startBreakButton = false;
+		$endBreakButton = false;
+		$completed = false;
+		$attendanceNotFound = false;
+		$pauseBreakWarning = false;
+		
+		$selectedYear = $this->getRequest()->getVar('year', 'numeric', date("Y"));
+		$selectedMonth = $this->getRequest()->getVar('month', 'numeric', date("m"));
+		$monthOption = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$yearOption = [];
+
+		for($i=2022;$i<=$currentYear+1;$i++)
+		{
+			array_push($yearOption,$i);
+		}
+
+		foreach($yearOption as $year)
+		{
+			if($year = $selectedYear)
+			{
+				$this->setViewVar('selectedYear',$selectedYear);
+			}
+		}
+
+		foreach($monthOption as $month)
+		{
+			if($month = $selectedMonth)
+			{
+				$this->setViewVar('selectedMonth',$selectedMonth);
+			}
+		}
+
+		//$presentDay = 0;
+		$loggedInUserId = getLoggedInUserId();
+		$date = date('Y-m-d');
+		$currentYear = date('Y');
+
+		$holiday = new Models_Holiday();
+		$upComingHolidays = $holiday->getUpComingHolidays();
+
+
+		$leave = new Models_LeaveBalancesheet();
+		$leaveBalance = $leave->getLeaveBalance($loggedInUserId);
+
+	
+		$break = new Models_BreakLog();
+		$totalBreakTime = $break->getTotalBreakTime($loggedInUserId);
+		if($totalBreakTime != false)
+		{
+		$totalBreakMinutes = $totalBreakTime['SUM(b.totalMinutes)'];
+		if(!$totalBreakMinutes == NULL)
+		{
+			if($totalBreakMinutes > 60)
+			{
+				$breakHours = (int)($totalBreakMinutes/60);
+				$breakMinutes = round($totalBreakMinutes - 60*$breakHours, 0);
+			}
+			else{
+				$breakHours = 0;
+				$breakMinutes = round($totalBreakMinutes,0);
+			}
+		}
+		else
+		{
+			$breakHours = 0;
+			$breakMinutes = 0;
+		}
+		$this->setViewVar('breakHours',$breakHours);
+		$this->setViewVar('breakMinutes',$breakMinutes);
+		}
+		else{
+			$attendanceNotFound = true;
+		}
+		$attendance = new Models_Attendance();
+		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
+		
+		$break = new Models_BreakLog();
+		$activeBreak = $break->getActiveBreak($loggedInUserId);
+
+		if(!empty($activeAttendance))
+		{
+			if(empty($activeBreak))
+			{
+				$startBreakButton = true;
+				$checkOutButton = true;
+			}
+			else{
+				$endBreakButton = true;
+				$pauseBreakWarning =true;
+			}
+		}
+		 else
+		 {
+			$attendance = new Models_Attendance();
+			$attendance->fetchByProperty(array('userId','date'),array($loggedInUserId,$date));
+
+			if ( !$attendance->isEmpty && $attendance->checkInDateTime == NULL && $attendance->checkOutDateTime == NULL) 
+			{
+				$checkInButton = true;
+			}
+			else{
+				$completed = true;
+			}
+		}
+
+		global $db;
+		$sql="SELECT COUNT(id) as workingDays
+		FROM user_attendance
+		WHERE userId=$loggedInUserId AND status != 'HO' AND status != 'WO' AND MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear";
+
+		$workingDays = $db->fetchRow($sql);
+		$workingDays = $workingDays['workingDays'];
+		$this->setViewVar('workingDays',$workingDays);
+
+		$sql2 = "SELECT COUNT(status) as presentDays
+		FROM `user_attendance`
+		WHERE MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear AND status='P' AND userId=$loggedInUserId";
+
+		$presentDays = $db->fetchRow($sql2);
+		$presentDays = $presentDays['presentDays'];
+		$this->setViewVar('presentDays',$presentDays);
+
+		$this->setViewVar('checkInButton',$checkInButton);
+		$this->setViewVar('checkOutButton',$checkOutButton);
+		$this->setViewVar('startBreakButton',$startBreakButton);
+		$this->setViewVar('endBreakButton',$endBreakButton);
+		$this->setViewVar('completed',$completed);
+		$this->setViewVar('monthOption',$monthOption);
+		$this->setViewVar('yearOption',$yearOption);
+		$this->setViewVar('currentYear',$currentYear);
+		$this->setViewVar('currentYear',$currentMonth);
+		$this->setViewVar('upComingHolidays',$upComingHolidays);
+		$this->setViewVar('leaveBalance',$leaveBalance['balance']);
+		$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
+		$this->setViewVar('attendanceNotFound',$attendanceNotFound);
+		
+	}
+
+	public function getattendanceAction()
+	{
+		$this->setNoRenderer(true);
+		
+		$month = $this->getRequest()->getVar("month");
+		$year = $this->getRequest()->getVar("year");
+		
+		global $db;
+		
+		$loggedInUserId = getLoggedInUserId();
+        
+		$dt = new TinyPHP_DataTable();
+	    $dt->setDBAdapter($db);
+        $dt->setTable('user_attendance AS a');
+        $dt->setIdColumn('a.id');
+		
+		$dt->setJoins('LEFT JOIN break_logs AS b ON a.id=b.attendanceId');
+
+        $dt->addColumns(array(
+            'date' => 'a.date',
+            'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
+            'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
+            'totalMinutes' => 'CONCAT(FLOOR(SUM(b.totalMinutes)/60),":",MOD(SUM(b.totalMinutes),60))',
+            'status' => 'a.status'
+        ));
+
+		$defaultFilters = array(
+			"a.userId" => $loggedInUserId,
+			"MONTH(a.date)" => $month,
+			"YEAR(a.date)" => $year,
+			);
+
+		$dt->setGroupBy('GROUP BY a.id');
+		$dt->setDefaultFilters($defaultFilters);
+
+		$dt->getData();
 	}
 
 	public function checkinAction()
     {
+
+		$this->setNoRenderer(true);
+		
 		$status = 0;
-        $errors = [];
+		$errors = [];
+		
+		$loggedInUserId = getLoggedInUserId();
+		$date = date('Y-m-d');
 
-		$attd = new Models_Attendance();
-		$row = $attd->getRow();
-		if($row['checkInDateTime'] == NULL)
+		$attendance = new Models_Attendance();
+		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
+		
+		if(!empty($activeAttendance))
 		{
-			$attendance = new Models_Attendance($row['id']);
-			$attendance->checkInDateTime = date('Y-m-d H:i:s');
-			$attendance->status = 'P';
-			$isUpdated = $attendance->update(array('checkInDateTime','updatedOn','status'));
-
-			if($isUpdated)
-			{
-				$status = 1;
-			}
-			else
-			{
-				$attendance->getErrors();
-			}
-			$response = ["status" => $status, "errors" => $errors];
-            echo json_encode($response);
-            die; 
+			array_push($errors,'you are already checkedin in system');
 		}
-
+		else
+		{
+			$attendance = new Models_Attendance();
+			$attendance->fetchByProperty(array('userId','date'),array($loggedInUserId,$date));
+			
+			if ( !$attendance->isEmpty && is_null($attendance->checkInDateTime) && is_null($attendance->checkOutDateTime) ) 
+			{
+				$checkInDateTime = date('Y-m-d H:i:s');
+				
+				$service = new Service_Attendance();
+				$isCheckedIn = $service->checkin($attendance->id,$checkInDateTime);
+				if($isCheckedIn)
+				{
+					$status = 1;
+				}
+				else{
+					$errors = $service->getErrors;
+				}	
+			} 
+			else 
+			{
+				array_push($errors,'Can not check-in');
+			}
+		}
+		$response = ["status" => $status, "errors" => $errors];
+		echo json_encode($response);
+		die; 
     }
 
 	public function checkoutAction()
     {
+		$this->setNoRenderer(true);
 		$status = 0;
         $errors = [];
+		$loggedInUserId = getLoggedInUserId();
+		
 
-		$attd = new Models_Attendance();
-		$row = $attd->getRow();
-		if(!$row['checkInDateTime'] == NULL)
+		$attendance = new Models_Attendance();
+		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
+		if(empty($attendance))
 		{
-			$attendance = new Models_Attendance($row['id']);
-			$attendance->checkOutDateTime = date('Y-m-d H:i:s');
-			$isUpdated = $attendance->update(array('checkOutDateTime','updatedOn',));
-
-			if($isUpdated)
-			{
-				$status = 1;
-			}
-			else
-			{
-				$attendance->getErrors();
-			}
-			$response = ["status" => $status, "errors" => $errors];
-            echo json_encode($response);
-            die; 
+			array_push($errors,'CheckIn First');
 		}
-
-    }
-
-	public function checkstatusAction()
-	{
-		$status = 0;
-        $errors = [];
-
-		$attd = new Models_Attendance();
-		$break = new Models_BreakLog();
-		$row = $attd->getRow();
-		$breakRow = $break->getRow($row['id']);
-	
-		if(!$breakRow == NULL)
+		else
 		{
-			if(!$row['checkOutDateTime'] == NULL)
+			$service = new Service_Attendance();
+			$checkOutDateTime = date('Y-m-d H:i:s');
+			$isCheckedOut = $service->checkout($activeAttendance['id'],$checkOutDateTime);
+			if($isCheckedOut)
 			{
 				$status = 1;
 			}
 			else{
-				if(!$row['checkInDateTime'] == NULL)
-				{
-					if($breakRow['endTime'] == NULL)
-					{
-						$status = 3;
-					}
-					else{
-						$status = 4;
-					}
-				}
-				else{
-					$status = 2;
-				}
-			}
-		}
-		else {
-			if(!$row['checkOutDateTime'] == NULL)
-			{
-				$status = 1;
-			}
-			else{
-				if(!$row['checkInDateTime'] == NULL)
-				{
-					$status = 4;
-				}
-				else{
-					$status = 2;
-				}
+				$errors = $service->getErrors();
 			}
 		}
 		$response = ["status" => $status, "errors" => $errors];
@@ -116,69 +262,102 @@ class App_IndexController extends TinyPHP_Controller {
 		die; 
 	}
 
+
 	public function startbreakAction()
     {
+		$this->setNoRenderer(true);
 		$status = 0;
         $errors = [];
+		$loggedInUserId = getLoggedInUserId();
 
-		$attd = new Models_Attendance();
-		$row = $attd->getRow();
-		if(!$row['checkInDateTime'] == NULL)
+		$attendance = new Models_Attendance();
+		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
+
+		if(empty($activeAttendance))
 		{
-			$bl = new Models_BreakLog;
-			$bl->attendanceId = $row['id'];
-			$bl->startTime = date('Y-m-d H:i:s');
-			$isCreated = $bl->create();
-
-			if($isCreated)
+			array_push($errors,'You have not checkedIn yet');
+		}
+		else
+		{	
+			$break =new Models_BreakLog();
+			$activeBreak = $break->getActiveBreak($loggedInUserId);
+			if(empty($activeBreak))
 			{
-				$status = 1;
+				$break = new Models_BreakLog();
+				$break->attendanceId = $activeAttendance['id'];
+				$break->startTime = date('Y-m-d H:i:s');
+				$isCreated = $break->create();
+				if($isCreated)
+				{
+					$status = 1;
+				}
+				else
+				{
+					$errors = $break->getErrors();
+				}
 			}
 			else
 			{
-				$bl->getErrors();
-			}
-			$response = ["status" => $status, "errors" => $errors];
-            echo json_encode($response);
-            die; 
+				array_push($errors,"You have Active Break");
+			}	
+					
 		}
 
-    }
+		$response = ["status" => $status, "errors" => $errors];
+		echo json_encode($response);
+		die; 
+	}
+
 
 	public function endbreakAction()
     {
+		$this->setNoRenderer(true);
 		$status = 0;
         $errors = [];
+		$loggedInUserId = getLoggedInUserId();
 
-		$attd = new Models_Attendance();
-		$row = $attd->getRow();
-		$attendanceId = $row['id'];
-		$break = new Models_BreakLog();
-		$breakRow = $break->getRow($attendanceId);
-		$updateId = $breakRow['id'];
-		if($breakRow['endTime'] == NULL)
+		$attendance = new Models_Attendance();
+		$activeAttendance = $attendance->getActiveAttendance($loggedInUserId);
+
+		if(empty($activeAttendance))
 		{
-			$bl = new Models_BreakLog($updateId);
-			$bl->endTime = date('Y-m-d H:i:s');
-			$to_time = strtotime($breakRow['startTime']);
-			$from_time = strtotime(date('Y-m-d H:i:s'));
-			$totalMinutes = round(abs($to_time - $from_time) / 60,2);
-			$bl->totalMinutes = $totalMinutes;
-			$isUpdated = $bl->update(array('endTime','totalMinutes'));
-
-			if($isUpdated)
+			array_push($errors,'You have not checkedIn yet');
+		}
+		else
+		{	
+			$break =new Models_BreakLog();
+			$activeBreak = $break->getActiveBreak($loggedInUserId);
+			
+			if(!empty($activeBreak))
 			{
-				$status = 1;
+				$break = new Models_BreakLog($activeBreak['id']);
+				$break->endTime = date('Y-m-d H:i:s');
+				
+				$to_time = strtotime($break->endTime);
+				$from_time = strtotime($activeBreak['startTime']);
+				
+				$totalMinutes = round(abs($from_time - $to_time) / 60,2);
+				$break->totalMinutes = $totalMinutes;
+				
+				$isUpdated = $break->update(array('endTime','totalMinutes'));
+				
+				if($isUpdated)
+				{
+					$status = 1;
+				}
+				else
+				{
+					$errors = $break->getErrors();
+				}
 			}
 			else
 			{
-				$bl->getErrors();
-			}
-			$response = ["status" => $status, "errors" => $errors];
-            echo json_encode($response);
-            die; 
+				array_push($errors,"You do not have Active Break");
+			}						
 		}
-
+		$response = ["status" => $status, "errors" => $errors];
+		echo json_encode($response);
+		die; 
     }
 }
 ?>

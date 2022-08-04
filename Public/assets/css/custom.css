@@ -1,0 +1,19 @@
+.card .card-header{
+    padding-top: 12px;
+    padding-bottom: 5px;
+}
+#top_blocks .card .card-header h4{
+     font-size: 20px;
+}
+#top_blocks .card .card-body{
+    padding: 10px 35px 20px;
+}
+#top_blocks .card ul li{
+    padding: 6px 20px 1px;
+}
+#attendanceTable .card-body{
+    padding: 0px;
+}
+#attendanceTable .card-header{
+    border-bottom: none;
+}

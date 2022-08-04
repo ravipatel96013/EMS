@@ -32,7 +32,6 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
             $time = time();
 
             $this->createdOn = $time;
-            $this->actionTakenBy = getLoggedInAdminId();
 
             return true;
         }
@@ -47,10 +46,8 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
     {
         if($this->validate())
         {
-            // $time = time();
-            // $this->updatedOn = $time;
-            // $this->updatedBy = getLoggedInAdminId();
-            // return true;
+
+             return true;
         }
         else
         {
@@ -92,24 +89,12 @@ class Models_LeaveBalancesheet extends TinyPHP_ActiveRecord
         return !$this->hasErrors();
     }
 
-    public function showData()
+    public function getLeaveBalance($userId)
     {
         global $db;
 
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
-    }
-
-    public function leaveTransaction($where='')
-    {
-        global $db;
-
-        $sql = "SELECT * FROM `users`,`user_leave_balancesheet` WHERE users.id=user_leave_balancesheet.userId $where;";
-        $result = $db->fetchAll($sql);
+        $sql = "SELECT SUM(CASE WHEN type ='credit' THEN amount else 0 end) - SUM(CASE WHEN type ='debit' THEN amount else 0 end) AS balance FROM user_leave_balancesheet WHERE userId=$userId;";
+        $result = $db->fetchRow($sql);
         if(!$result == '')
         {
             return $result;

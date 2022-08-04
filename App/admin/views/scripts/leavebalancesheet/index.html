@@ -58,8 +58,8 @@
               <div class="row">
               <label class="col-md-3 offset-md-1"><b>User Id</b></label>
               <select name="userId" class="form-control form-control-sm col-md-6">
-                {foreach from=$userData item=user}
-                <option value="{$user.id}">{$user.firstName} {$user.lastName} - ID {$user.id}</option>
+                {foreach from=$data item=user}
+                <option value="{$user->id}">{$user->firstName} {$user->lastName} - ID {$user->id}</option>
                 {/foreach}
               </select>
             </div>
@@ -72,6 +72,7 @@
             <div class="row mt-4">
               <label class="col-md-3 offset-md-1"><b>Type</b></label>
               <select name="type" class="form-control form-control-sm col-md-6">
+                <option selected disabled>Select</option>
                 <option value="debit">Debit</option>
                 <option value="credit">Credit</option>
               </select>
@@ -96,7 +97,7 @@
       {
         var data = $("form#leaveSheet").serializeArray();
           $.ajax({
-              url: "/admin/leaveBalancesheet/add",
+              url: "/admin/leavebalancesheet/add",
               type: "POST",
               dataType: "json",
               data: data,
@@ -119,7 +120,7 @@
       $('#balancesheetTable').DataTable({
           serverSide: true,
           "ajax": {
-              url: '/admin/leaveBalancesheet/balancesheetlist',
+              url: '/admin/leavebalancesheet/balancesheetlist',
               type: "GET",
               dataType: "json"
           },

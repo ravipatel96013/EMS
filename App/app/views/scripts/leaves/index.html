@@ -2,7 +2,7 @@
   <div class="container">
     <div class="row mb-2">
       <div class="col-sm-6">
-        <h1 class="m-0 mt-3">Leave Applications</h1>
+        <h1 class="m-0">Leave Applications</h1>
       </div>
       <!-- /.col -->
       <div class="col-sm-6 mt-3">
@@ -32,11 +32,11 @@
               <thead>
                 <tr>
                   <th scope="col">Leave Id</th>
-                  <th scope="col">Type</th>
                   <th scope="col">From</th>
                   <th scope="col">To</th>
                   <th scope="col">Comment</th>
                   <th scope="col">Status</th>
+                  <th scope="col">Action</th>
                 </tr>
               </thead>
               <tbody>
@@ -68,16 +68,7 @@
           <h5 class="modal-title" id="exampleModalLabel">Leave Application</h5>
         </div>
         <div class="modal-body text-left">
-          <div class="row">
-            <label class="col-md-3 offset-md-1"><b>Type</b></label>
-            <select name="type" class="form-control form-control-sm col-md-6">
-              <option value="0">Sick</option>
-              <option value="1">Paid</option>
-              <option value="2">Unpaid</option>
-            </select>
-          </div>
-
-          <div class="row mt-4">
+          <div class="row mt-1">
             <label class="col-md-3 offset-md-1"><b>From</b></label>
             <input
               type="date"
@@ -97,7 +88,7 @@
 
           <div class="row mt-4">
             <label class="col-md-3 offset-md-1"><b>Half Leave </b></label>
-            <div class="col-md-1">
+            <div class="col-md-1">&nbsp;&nbsp;&nbsp;&nbsp;
               <input
                 class="form-check-input"
                 type="checkbox"
@@ -139,7 +130,9 @@
         if (result.status == 1) {
           location.reload();
         } else {
-          console.log(result);
+          $.each(result.errors,function(index,value){
+                      toastr.error(value);
+                    });
         }
       },
     });
@@ -157,13 +150,64 @@
           },
           "columns": [
               { data: 'id',name: 'id'},
-              { data: 'type',name: 'type'},
               { data: 'startDate',name: 'startDate'},
               { data: 'endDate', name: 'endDate'},
               { data: 'comment',name: 'comment'},
-              { data: 'status',name: 'status'}
+              {
+                    data: 'status',
+                    name: 'status',
+                    render: function (data, type, row) {
+                        if (row.status == 1) {
+                            return ' <h6 class="mb-0"><span  class="badge bg-success"  >Approved</span></h6>';
+                        } else if (row.status == 2) {
+                            return ' <h6 class="mb-0"><span class="badge bg-danger"  >Declined</span></h6>';
+                        } else if (row.status == 0) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning"  >Pending</span></h6>';
+                        }else if (row.status == 3) {
+                            return ' <h6 class="mb-0"><span class="badge bg-warning"  >Closed</span></h6>';
+                        }
+                    }
+                },
+                {
+                  data:null,
+                name: 'id',
+                name: 'status',
+                render: function (data, type, row) {
+                  if(row.status == 0 || row.status==1){
+                    return '<i class="fa-solid fa-rectangle-xmark cancle" id='+row.id+'></i>';
+                  }else{
+                    return '';
+                  }
+                }
+              }
           ]
       });
   });
+</script>
+<script>
+  $('body').on('click', 'i.cancle', function () {
+    if(confirm('Sure You want to Close Leave Application'))
+    {
+          var id = $(this).attr('id');
+          $.ajax({
+              url: "/app/leaves/closeleave/",
+              type: 'POST',
+              dataType: 'JSON',
+              data: {
+                  id: id
+              },
+              success: function (result) {
+                  if (result.status == 1) {
+                      location.reload();
+                  } else {
+                    $.each(result.errors,function(index,value){
+                      toastr.error(value);
+                    });
+                  }
+              }
+          });
+        }
+  });
+
 </script>
 {/literal}

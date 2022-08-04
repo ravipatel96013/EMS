@@ -1,7 +1,7 @@
 <?php
 class Models_BreakLog extends TinyPHP_ActiveRecord
 {
-    public $tableName = "break_log";
+    public $tableName = "break_logs";
     public $id = "";
     public $attendanceId = "";
     public $startTime = "";
@@ -12,12 +12,6 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
-
-        }
-
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
     }
@@ -41,8 +35,7 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
     protected function doBeforeUpdate()
     {
         if($this->validate())
-        {   
-         
+        {
             return true;
         }
         else
@@ -68,32 +61,26 @@ class Models_BreakLog extends TinyPHP_ActiveRecord
         return !$this->hasErrors();
     }
 
-    public function showData()
+
+    public function getActiveBreak($id)
     {
         global $db;
 
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
+        $sql = "SELECT b.* FROM `break_logs` AS b LEFT JOIN user_attendance AS a ON b.attendanceId = a.id WHERE a.userId=$id AND b.startTime IS NOT NULL AND b.endTime IS NULL";
+        $result = $db->fetchRow($sql);
+
+        return $result;
     }
 
-    public function getRow($attendanceId)
+    public function getTotalBreakTime($id)
     {
         global $db;
+        $date = date('Y-m-d');
 
-        $sql = "SELECT * FROM ". $this->tableName ." WHERE attendanceId = $attendanceId ORDER BY id DESC";
+        $sql = "SELECT SUM(b.totalMinutes) FROM user_attendance AS a LEFT JOIN break_logs AS b ON a.id=b.attendanceId WHERE a.date='" .$date."' AND a.userId=$id GROUP BY a.id;";
         $result = $db->fetchRow($sql);
-        if($result)
-        {
-            return $result;
-        }
-        else
-        {
-            $this->addError("Does not exist");
-        }
+
+        return $result;
     }
 
 }

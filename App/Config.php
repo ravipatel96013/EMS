@@ -3,6 +3,17 @@
 define('PHP_TIMEZONE_STRING', 'Asia/Kolkata');    //set the timezone string as per your app timezone requirements. Make sure it matches with DB time zone below.
 define('DB_TIMEZONE_STRING', '+05:30');
 
+define('APPROVED',1);
+define('PENDING',0);
+define('DECLINED',2);
+define('CLOSED',3);
+
+define('SMTP_HOST','yrcoder.com');
+define('SMTP_USERNAME','_mainaccount@yrcoder.com');
+define('SMTP_PASSWORD','gtdKS5r%Iqo(');
+define('SMTP_PORT','465');
+define('SMTP_ENCRYPTION','ssl'); //supoort only "ssl" or "tls"
+
 define('SITE_ROOT', $_SERVER['DOCUMENT_ROOT']);
 define('SITE_URL', $_SERVER['REQUEST_SCHEME'] . "://" . $_SERVER['HTTP_HOST']);
 
@@ -16,7 +27,8 @@ define('DOCUMENT_FILE_PATH', SITE_URL . '/documents/');
 
 define('ASSETS_DIR', TINY_PHP_PATH . '/Public/assets/');
 
-define('SYSTEM_EMAIL', 'system@domain.com <Your name>');
+define('SYSTEM_EMAIL', 'system@yrcoder.com <YR Coder>');
+define('SYSTEM_RECEIVE_EMAIL','we@yrcoder.com');
 
 
 if ($_SERVER['HTTP_HOST'] ==  'local.ems.com') {
@@ -44,13 +56,15 @@ if ($_SERVER['HTTP_HOST'] ==  'local.ems.com') {
      */
 
     define('DB_HOST', 'localhost');
-    define('DB_UNAME', '');
-    define('DB_PWD', '');
-    define('DB_NAME', '');
+    define('DB_UNAME', 'ems_yrcoder');
+    define('DB_PWD', 'ems_yrcoder');
+    define('DB_NAME', 'EMS');
 
-    define('DEBUG_EMAIL', 'debug@domain.com');
+
+    define('DEBUG_EMAIL', 'ravipatel96013@gmail.com');
 
     define('ENV', "production");
-    ini_set('display_errors', "Off");
-    error_reporting(0);
+    //ini_set('display_errors', "Off");
+    error_reporting(1);
+    ini_set('display_errors', "On");
 }

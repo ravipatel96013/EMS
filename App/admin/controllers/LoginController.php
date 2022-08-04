@@ -9,31 +9,50 @@ class Admin_LoginController extends TinyPHP_Controller {
    
     public function dologinAction()
     {
-        
         $this->setNoRenderer(true);
-         
-            $email = $this->getRequest()->getPostVar('email');
-            $pass = md5($this->getRequest()->getPostVar('password'));
-            $errorCode = 0;
-            $user = new Models_User();
-            $response = $user->checkCred($email,$pass);
-            if(!$response == '')
-            {  
-                if($response["role"] == 'admin')
-                {      
-                TinyPHP_Session::set('adminName',$response["firstName"]);
-                TinyPHP_Session::set('adminId',$response["id"]);
-                $errorCode = 1; // ready to login.
-                }
-                else
+
+        $status = 0;
+        $errors = [];
+
+        $email = $this->getRequest()->getPostVar('email');
+        $pass = $this->getRequest()->getPostVar('password'); 
+        
+        $user = new Models_User();
+        $user->fetchByProperty('email', $email);
+
+        if( !$user->isEmpty )
+        {
+            if( $user->password == md5($pass) && $user->isActive == 1 )
+            {
+                if($user->role != 'admin')
                 {
-                    $errorCode = 2; // Not admin error.
+                    $user->addError('You are not Admin');    
                 }
-            }else{
-                $errorCode = 3; // Invalid Credentials error.
+                else{
+                $status = 1;
+                TinyPHP_Session::set('adminName',$user->firstName);
+                TinyPHP_Session::set('adminId',$user->id);
+                }
             }
-            echo json_encode($errorCode);
-    
+            else
+            {
+                $user->addError('Invalid username or password');
+            }
+        }
+        else
+        {
+            if($email == '' || $pass == '')
+            {
+                $user->addError('Fields are Empty');
+            }
+            else{
+            $user->addError('Email does not exist');
+            }
+        }
+
+        $response = ['status' => $status, 'errors' => $user->getErrors()];
+        echo json_encode($response);
+        die;
 }
 }
 ?>

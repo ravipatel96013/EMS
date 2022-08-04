@@ -326,9 +326,6 @@ abstract class TinyPHP_ActiveRecord {
 			}
 		}
 
-
-
-
 		$sql = "SELECT $field_list FROM " . $this->tableName . " WHERE $where_clause LIMIT 0,1";
 		//echo $sql;
 		$res = $this->findAll($sql, array(), self::DB_FETCHMODE_ASSOC,$use_cache);
@@ -437,6 +434,7 @@ abstract class TinyPHP_ActiveRecord {
 	}
 
 	public function update($fields = array()) {
+		
 		$this->__currentAction = "update";
 
 		$result = $this->_notify('beforeUpdate');

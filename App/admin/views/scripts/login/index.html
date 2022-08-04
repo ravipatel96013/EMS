@@ -31,16 +31,7 @@
                                           </div>
                                       </div>
                                   </div>
-                                  <div class="row">
-                                      <div class="col-8">
-                                          <div class="icheck-primary">
-                                              <input type="checkbox" id="remember">
-                                              <label for="remember">
-                                                  Remember Me
-                                              </label>
-                                          </div>
-                                      </div>
-                                      <!-- /.col -->
+                                  <div class="row d-flex justify-content-end">
                                       <div class="col-4">
                                           <button type="button" class="btn btn-primary btn-block submit">Sign
                                               In</button>
@@ -49,8 +40,8 @@
                                   </div>
                               </form>
                               <p class="mb-0">
-                              <a href="http://local.ems.com/app/login/">User Login</a><br>
-                              <a href="#">I forgot my password</a>
+                              <!-- <a href="/app/login/">User Login</a><br> -->
+                              <!-- <a href="#">I forgot my password</a> -->
                             </p>
                           </div>
                           <!-- /.card-body -->
@@ -75,21 +66,18 @@
             $.ajax({
                 url: "/admin/login/dologin/",
                 type: "POST",
+                dataType: "JSON",
                 data: { email: email, password: pass },
                 success: function (result) {
-                    console.log(result);
-                    if(result == 1) // ready to login.
+                    if(result.status == 1)
                     {
-                        window.location.href = "/admin";
+                        window.location.href = '/admin';
                     }
-                    else if(result == 2) // not admin. 
+                    else
                     {
-                        alert("You are not Admin");
+                        toastr.error(result.errors);
                     }
-                    else if(result == 3) // Invalid Credentials.
-                    {
-                        alert("Invalid Credentials");
-                    }
+                   
                 }
             });
         });

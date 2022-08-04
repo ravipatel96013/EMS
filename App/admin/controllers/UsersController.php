@@ -3,10 +3,9 @@ class Admin_UsersController extends TinyPHP_Controller {
 	
 	public function indexAction()
     {
-
+        
     }
-
-
+    
     public function deleteAction()
     {
         if($this->isPost())
@@ -25,9 +24,10 @@ class Admin_UsersController extends TinyPHP_Controller {
             }
             else
             {
-                $isDeleted = $user->delete();
+                $user->delete();
+                $deletedRows = $user->getDeletedRows();
 
-                if( $isDeleted == true )
+                if( $deletedRows > 0 )
                 {
                     $status = 1;
                 }
@@ -55,6 +55,7 @@ class Admin_UsersController extends TinyPHP_Controller {
 
                 $user = new Models_User();
                 $user->getPostData();
+                
                 $user->confirmPassword = $this->getRequest()->getPostVar('confirmPassword');
                 $isCreated = $user->create();
 
@@ -87,7 +88,7 @@ class Admin_UsersController extends TinyPHP_Controller {
             $status = 0;
             $errors = [];
             
-
+            
             $userId = $this->getRequest()->getPostVar('id');
             $user = new Models_User($userId);
 
@@ -121,9 +122,14 @@ class Admin_UsersController extends TinyPHP_Controller {
 
             $id = $this->getRequest()->getVar('id');
 
-            $user = new Models_User();        
-            $userData = $user->fetchUser($id);
-            $this->setViewVar('userRow',$userData);
+            $user = new Models_User($id);
+            if(!$user->isEmpty)  
+            {          
+            $this->setViewVar('userRow',$user);
+            }
+            else{
+                header("Location: /admin/users");
+            }
         }
            
     }
@@ -141,9 +147,8 @@ class Admin_UsersController extends TinyPHP_Controller {
         $dt->addColumns(array(
             'id' => 'u.id',
             'firstName' => 'u.firstName',
-            'joinDate' => 'u.joinDate',
             'email' => 'u.email',
-            'phone' => 'u.phone',
+            'mobile' => 'u.mobile',
             'role' => 'u.role',
             'designation' => 'u.designation',
             'address' => 'u.address',

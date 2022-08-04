@@ -1,8 +1,8 @@
 <div class="content-header">
   <div class="container">
-    <div class="row mb-2">
+    <div class="row">
       <div class="col-sm-6">
-        <h1 class="m-0 mt-3">Holiday List</h1>
+        <h1>Holiday List</h1>
       </div><!-- /.col -->
       <div class="col-sm-6">
         <div class="float-sm-right">
@@ -100,7 +100,7 @@
                 "aTargets": [4],
                 "mData": "id",
                 "mRender": function (data, type, full) {
-                    return '<a href="http://local.ems.com/admin/holidays/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
+                    return '<a href="/admin/holidays/update?id='+ data +'"><button class="btn btn-outline-info btn-sm" >Edit</button></a> <button class="btn btn-outline-danger btn-sm delete" id="'+ data +'">Delete</button>';
                 }
             }
          ]
@@ -109,24 +109,26 @@
 </script>
 <script>
 
-  $('div').on('click', 'button.delete', function () {
+  $('body').on('click', 'button.delete', function () {
+    if(confirm('Sure You want to delete'))
+    {
           var id = $(this).attr('id');
           $.ajax({
               url: "/admin/holidays/delete/",
               type: 'POST',
-              dataType: 'json',
+              dataType: 'JSON',
               data: {
                   id: id
               },
-              success: function (data) {
-                  if (data.status == 1) {
-
+              success: function (result) {
+                  if (result.status == 1) {
                       window.location.href = "/admin/holidays/";
                   } else {
-                      console.log(data.errors);
+                      toastr.error(result.errors);
                   }
               }
           });
+      }
   });
 
 </script>
@@ -147,7 +149,7 @@
             }
             else
             {
-              console.log(result);
+              toastr.error(result.errors);
             }
           }
       });

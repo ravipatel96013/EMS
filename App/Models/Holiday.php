@@ -15,13 +15,8 @@ class Models_Holiday extends TinyPHP_ActiveRecord
 
     public function init()
     {
-    
-        if($this->id>0)
-        {
-
-        }
-
         $this->addListener('beforeCreate', array($this,'doBeforeCreate'));
+        $this->addListener('afterCreate', array($this,'doAfterCreate'));
         $this->addListener('beforeUpdate', array($this,'doBeforeUpdate'));
     }
 
@@ -31,7 +26,6 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         if($this->validate())
         {
             $time = time();
-
             $this->createdOn = $time;
             $this->updatedOn = $time;
             $this->createdBy = getLoggedInAdminId();
@@ -42,6 +36,23 @@ class Models_Holiday extends TinyPHP_ActiveRecord
         else
         {
             return false;
+        }
+    }
+
+    protected function doAfterCreate()
+    {
+        $date = date('Y-m-d');
+        if($this->date > $date)
+        {
+            $year = date('Y', strtotime($this->date));
+            $month = date('m', strtotime($this->date));
+            
+            if($year == date('Y') && $month == date('m'))
+            {
+                global $db;   
+                $where = "date='$this->date'";
+                $db->update('user_attendance',['status'=>'HO'],$where);
+            }
         }
     }
 
@@ -82,25 +93,20 @@ class Models_Holiday extends TinyPHP_ActiveRecord
           $this->addError("Description is Empty");
        }
 
-       if($this->date == "")
+       if($this->date != "")
        {
+        $date = date('Y-m-d');
+        if($this->date < $date)
+        {
+            $this->addError("Invalid Date");
+        }
+       }
+       else{
         $this->addError("Date is Empty");
        }
 
 
         return !$this->hasErrors();
-    }
-
-    public function showData()
-    {
-        global $db;
-
-        $sql = "SELECT * FROM ". $this->tableName;
-        $result = $db->fetchAll($sql);
-        if(!$result == '')
-        {
-            return $result;
-        }
     }
 
     public function fetchHoliday($id)
@@ -109,6 +115,17 @@ class Models_Holiday extends TinyPHP_ActiveRecord
 
         $sql = "SELECT * FROM ". $this->tableName ." WHERE id = '$id'";
         $result = $db->fetchRow($sql);
+        return $result;
+    }
+
+    public function getUpComingHolidays()
+    {
+        global $db;
+        $today = date('Y-m-d');
+        $lastDay = date("Y-m-t",strtotime($today));
+
+        $sql = "SELECT name,date FROM ". $this->tableName ." WHERE date BETWEEN'".$today."' AND '".$lastDay."' ORDER BY date ASC";
+        $result = $db->fetchAll($sql);
         return $result;
     }
 

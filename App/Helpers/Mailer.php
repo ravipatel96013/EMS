@@ -99,12 +99,12 @@ class Helpers_Mailer
             //Server settings
             //$mail->SMTPDebug = SMTP::DEBUG_SERVER;                      // Enable verbose debug output
             $mail->isSMTP();                                            // Send using SMTP
-            $mail->Host = SMTPHost;                    // Set the SMTP server to send through
+            $mail->Host = SMTP_HOST;                    // Set the SMTP server to send through
             $mail->SMTPAuth = true;                                   // Enable SMTP authentication
-            $mail->Username = SMTPUsername;                     // SMTP username
-            $mail->Password = SMTPPassword;                               // SMTP password
-            $mail->SMTPSecure = SMTPEncryption;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
-            $mail->Port = SMTPPort;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
+            $mail->Username = SMTP_USERNAME;                     // SMTP username
+            $mail->Password = SMTP_PASSWORD;                               // SMTP password
+            $mail->SMTPSecure = SMTP_ENCRYPTION;         // Enable TLS encryption; `PHPMailer::ENCRYPTION_SMTPS` encouraged
+            $mail->Port = SMTP_PORT;                                    // TCP port to connect to, use 465 for `PHPMailer::ENCRYPTION_SMTPS` above
             
             //Recipients
             $mail->setFrom($fromEmail, $fromName);

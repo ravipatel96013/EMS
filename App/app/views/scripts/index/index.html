@@ -1,53 +1,158 @@
 <div class="container">
-  <div class="d-flex justify-content-center">
-    <h1 class="display-5" id="currentTime"></h1>
+
+<div id="dashboard">
+  <div class="content-header">
+    <div class="container">
+      <div class="row mb-2">
+        <div class="col-sm-6">
+          <h1 class="m-0">Dashboard</small></h1>
+        </div>
+      </div>
+    </div>
   </div>
-  <div class="row">
-    <div id="button" class="d-flex justify-content-center"></div>
+
+  <div class="row" id="top_blocks">
+    <div class="col-sm-3">
+      <div class="card">
+      <div class="card-header">
+        <h4>Checkin / Checkout</h4>
+      </div>
+        <div class="card-body d-flex justify-content-center">
+          <div class="row row-cols-1">
+            <div class="col d-flex justify-content-center">
+            <h6>{$smarty.now|date_format:"l,d M Y"}</h6>
+          </div>
+            <div class="col d-flex justify-content-center">
+              <h6 id="currentTime"></h6>
+            </div>
+            <div class="col">
+              {if $checkOutButton eq true}<button type="button" onclick="doCheckOut()" class="btn btn-block bg-gradient-danger btn-md">CheckOut</button>{/if}
+                {if $checkInButton eq true}<button type="button" onclick="doCheckIn()" class="btn btn-block bg-gradient-success btn-md">CheckIn</button>{/if}
+                <center>{if $attendanceNotFound eq false && $completed eq true}<h6>Done For the day</h6>{/if}
+                {if $attendanceNotFound eq true}<h6>Please Contact Admin</h6>{/if}
+                {if $pauseBreakWarning eq true}<h6>Pause Break to Check-Out</h6>{/if}</center>
+              </div>
+          </div>
+        </div>
+    </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="card">
+      <div class="card-header">
+        <h4>{if $startBreakButton eq true}Start Break{else}Pause Break{/if}</h4>
+      </div>
+        <div class="card-body d-flex justify-content-center">
+          <div class="row row-cols-1">
+            <div class="col d-flex justify-content-center">
+              <h6>Today's Break Time</h6>
+            </div>
+            <div class="col d-flex justify-content-center">
+              <h6 id="hours">{if isset($breakHours)}{$breakHours}:{else}00:{/if}</h6>
+              <h6 id="mins">{if isset($breakMinutes)}{$breakMinutes}:{else}00:{/if}</h6>
+              <h6 id="seconds">00</h6>
+          </div>
+            <div class="col">
+              {if $startBreakButton eq true}<button type="button" onclick="startBreak()" class="btn btn-block bg-gradient-success btn-md">Start Break</button>{/if}
+              {if $endBreakButton eq true}<button type="button" onclick="endBreak()" class="btn btn-block bg-gradient-danger btn-md">Pause Break</button>{/if}
+            </div>
+          </div>
+        </div>
+    </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-header"><h4>Summary of {$smarty.now|date_format:"M-Y"}</h4>
+        </div>
+          <ul class="list-group list-group-flush">
+            <li class="list-group-item"><h6><b>Working Days : </b>{if $workingDays eq 0}NA{else}{$workingDays}{/if}</h6></li>
+            <li class="list-group-item"><h6><b>Present Days : </b>{if $presentDays eq 0}NA{else}{$presentDays}{/if}</h6></li>
+            <li class="list-group-item"><h6><b>Leave Balance : </b>{if $leaveBalance eq NULL}0{else}{$leaveBalance}{/if}</h6></li>
+          </ul>
+      </div>
+    </div>
+  
+    <div class="col-sm-3">
+      <div class="card">
+        <div class="card-header">
+          <h4>Holidays in {$smarty.now|date_format:"M-Y"}</h4>
+        </div>
+          <ul class="list-group list-group-flush">
+          {foreach from=$upComingHolidays item=row}
+          <li class="list-group-item"><h6><b>{$row.name}</b>&emsp;{$row.date}</h6></li>
+          {/foreach}
+        </ul>
+      </div>
+    </div>
+          
+    </div>
+
+  <div class="row" id="attendanceTable">
+    <div class="col-sm-12">
+      <div class="card">
+      <div class="card-header">
+        <div class="row">
+          <div class="col-sm-3">
+        <h3>Attendance Table</h3>
+      </div>
+      <div class="col-sm-1 offset-sm-7">
+          <select name="month" class="form-control custom-select" id="month">
+            {if isset($selectedMonth)}
+            {foreach from=$monthOption item=month}
+            <option value="{$month}" {if $selectedMonth eq $month}selected{/if}>{$month}</option>
+            {/foreach}
+            {/if}
+          </select>
+        </div>
+        <div class="col-sm-1">
+        <select name="month" class="form-control custom-select" id="year">
+          {if isset($selectedYear)}
+          {foreach from=$yearOption item=year}
+          <option value="{$year}" {if $selectedYear eq $year}selected{/if}>{$year}</option>
+          {/foreach}
+          {/if}
+        </select>
+    </div>
+        
+      </div>
+      </div>
+        <div class="card-body">
+        <div class="row">
+          <table class="table table-hover" id="attendance">
+            <thead>
+              <tr>
+                <th scope="col">Date</th>
+                <th scope="col">Check-in</th>
+                <th scope="col">Check-out</th>
+                <th scope="col">Break Time</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+            <tbody>
+
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
   </div>
-  <div id="breakButton" class="d-flex justify-content-center mt-2">
-  </div>
+
 </div>
+</div>
+</div>
+
 {literal}
 <script>
-  $(document).ready(function () {
-    $.ajax({
-      url: "/app/index/checkstatus",
-      type: "GET",
-      dataType: "json",
-      success: function (response) {
-        if (response.status == 1) {
-          document.getElementById("button").innerHTML =
-            "<h1 class='display-5'>Done for the day</h1>";
-        } else if (response.status == 2) {
-          $("#checkout").prop("disabled", true);
-          document.getElementById("button").innerHTML =
-            "<button type='button' class='col-sm-3 btn btn-block bg-gradient-success btn-lg' onclick='doCheckIn()' id='checkin'>Check-in</button>";
-        } else if (response.status == 3) {
-          document.getElementById("breakButton").innerHTML = 
-          "<button type='button' onclick='endBreak()' class='col-sm-2 btn btn-block btn-danger'>End Break</button>";
-        }
-        else if(response.status == 4)
-        {
-          document.getElementById("button").innerHTML =
-            "<button type='button' class='col-sm-3 btn btn-block bg-gradient-danger btn-lg' onclick='doCheckOut()' id='checkout'>Check-out</button>";
-          document.getElementById("breakButton").innerHTML = 
-          "<button type='button' onclick='startBreak()' class='col-sm-2 btn btn-block btn-success'>Start Break</button>";
-        }
-      },
-    });
-  });
-</script>
-
-<script>
   function doCheckIn() {
+    if(confirm("Are you sure you want to Check-in?"))
+    {
     $.ajax({
       url: "/app/index/checkin",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedIn Successfully");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -55,17 +160,19 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function doCheckOut() {
+    if(confirm("Are you Sure you want to Check-out?"))
+    {
     $.ajax({
       url: "/app/index/checkout",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You CheckedOut Successfully");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -73,35 +180,40 @@
       },
     });
   }
+  }
 </script>
 
 <script>
   function startBreak() {
+    if(confirm("Are you sure?"))
+    {
     $.ajax({
       url: "/app/index/startbreak",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("You Break Started");
           location.reload();
+          startTimer();
         } else {
           consol.log(response.errors);
         }
       },
     });
   }
+  }
 </script>
 
 <script>
   function endBreak() {
+    if(confirm("Are you sure?"))
+    {
     $.ajax({
       url: "/app/index/endbreak",
       type: "POST",
       dataType: "json",
       success: function (response) {
         if (response.status == 1) {
-          alert("Break Ended");
           location.reload();
         } else {
           consol.log(response.errors);
@@ -109,10 +221,33 @@
       },
     });
   }
+  }
 </script>
 
+  <script>
+  $('select#month').change(function() {
+    window.location.href = '/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+    });
+  $('select#year').change(function() {
+    window.location.href = '/app'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+  });
+  </script>
+
 <script>
-  window.onload = function () {
+  jQuery(document).ready(function (){
+
+    $('#top_blocks').each(function(){  
+        var highestBox = 0;
+
+        $(this).find('.card').each(function(){
+            if($(this).height() > highestBox){  
+                highestBox = $(this).height();  
+            }
+        })
+
+        $(this).find('.card').height(highestBox);
+    });
+
     clock();
     function clock() {
       var now = new Date();
@@ -137,7 +272,81 @@
         hour + ":" + min + ":" + sec + " " + mid;
       setTimeout(clock, 1000);
     }
-  };
-</script>
 
+    attendanceTable = $('#attendance').DataTable({
+          serverSide: true,
+          pageLength: 50,
+          bPaginate: false,
+          bLengthChange: false,
+          bFilter: true,
+          bInfo: false,
+          searching: false,
+          "ajax": {
+              url: '/app/index/getattendance',
+              type: "GET",
+              dataType: "json",
+              data : function(data){
+                data.month = $("#month").val();
+                data.year = $("#year").val();
+              }
+          },
+          "columns": [
+              { data: 'date',name: 'date'},
+              { data: 'checkInDateTime',
+                name: 'checkInDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+              { data: 'checkOutDateTime',
+                name: 'checkOutDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+                { data: 'totalMinutes',
+                name: 'totalMinutes',
+                defaultContent: "<i>00</i>"
+              },
+              { data: 'status', name: 'status'}
+          ]
+      });
+  });
+</script>
+<script>
+
+  hours = {/literal}{$breakHours}{literal};
+  mins = {/literal}{$breakMinutes}{literal};
+  seconds = 0;
+
+
+$("#hours").text(hours+':');
+$("#mins").text(mins+':');
+$("#seconds").text(seconds);
+
+
+function startTimer(){
+  timex = setInterval(function(){
+      seconds++;
+    if(seconds >59){seconds=0;mins++;
+       if(mins>59) {
+       mins=0;hours++;
+         if(hours <10) {$("#hours").text('0'+hours+':')} else $("#hours").text(hours+':');
+        }          
+    if(mins<10){                     
+      $("#mins").text('0'+mins+':');}       
+       else $("#mins").text(mins+':');
+                   }    
+    if(seconds <10) {
+      $("#seconds").text('0'+seconds);} else {
+      $("#seconds").text(seconds);
+      }
+  },1000);
+}
+
+jQuery(document).ready(function(){
+  var flag = {/literal}{$endBreakButton}{literal};
+  if(flag == true)
+  {
+  startTimer();
+  }
+});
+ 
+</script>
 {/literal}
