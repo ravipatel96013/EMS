@@ -3,12 +3,41 @@
 
         <div class="content-header">
             <div class="container">
-              <div class="row mb-2">
-                <div class="col-sm-6">
-                  <h1 class="m-0">User Attendance</small></h1>
-                </div>
+              <div class="row mb-0">
+                  <h1>User Attendance</h1>
               </div>
             </div>
+          </div>
+
+          <div class="row" id="ua_top_blocks">
+
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-header">
+                <h4>Summary of {$userName}</h4>
+              </div>
+              <div class="card-body">
+                <h5><b>Working Days : </b>{$workingDays}</h5>
+                <h5><b>Present Days : </b>{$presentDays}</h5>
+                <h5><b>Leave Balance : </b>{if $leaveBalance eq null}0{else}{$leaveBalance}{/if}</h5>
+              </div>
+            </div>
+          </div>
+
+          <div class="col-sm-6">
+            <div class="card">
+              <div class="card-header">
+                <h4>Attendance Status</h4>
+              </div>
+              <div class="card-body">
+                <h5><b>Present Days : </b>{$presentDays}</h5>
+                <h5><b>Paid Leaves : </b>{$paidLeaves}</h5>
+                <h5><b>Unpaid Leaves : </b>{$unpaidLeaves}</h5>
+              </div>
+            </div>
+          </div>
+
+
           </div>
 
           <div class="row" id="attendanceTable">
@@ -16,10 +45,7 @@
                   <div class="card">
                       <div class="card-header">
                         <div class="row">
-                          <div class="col-sm-3">
-                          <h3>Attendance Table</h3>
-                        </div>
-                        <div class="col-sm-2 offset-sm-5">
+                        <div class="col-sm-2  ">
                           <select name="user" class="form-control custom-select" id="user">
                             {foreach from=$users item=user}
                             <option value="{$user->id}" {if $selectedUser eq $user->id}selected{/if}>{$user->firstName}&nbsp;{$user->lastName}</option>
@@ -191,7 +217,7 @@
                   if(row.status != 'NA')
                   {
                   if(type === 'display'){
-                    data = '<a class="editLink" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
+                    data = '<a class="editLink" href="javascript:void(0);" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
                   }
                   return data;
                 }

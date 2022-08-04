@@ -67,7 +67,7 @@
         </div>
           <ul class="list-group list-group-flush">
             <li class="list-group-item"><h6><b>Working Days : </b>{if $workingDays eq 0}NA{else}{$workingDays}{/if}</h6></li>
-            <li class="list-group-item"><h6><b>Present Days : </b>{if $presentDays eq 0}NA{else}{$presentDays}{/if}</h6></li>
+            <li class="list-group-item"><h6><b>Present Days : </b>{if $presentDays eq 0}0{else}{$presentDays}{/if}</h6></li>
             <li class="list-group-item"><h6><b>Leave Balance : </b>{if $leaveBalance eq NULL}0{else}{$leaveBalance}{/if}</h6></li>
           </ul>
       </div>
@@ -80,7 +80,7 @@
         </div>
           <ul class="list-group list-group-flush">
           {foreach from=$upComingHolidays item=row}
-          <li class="list-group-item"><h6><b>{$row.name}</b>&emsp;{$row.date}</h6></li>
+          <li class="list-group-item"><h6><b>{$row.date}</b>&emsp;{$row.name}</h6></li>
           {/foreach}
         </ul>
       </div>
@@ -139,6 +139,7 @@
   </div>
 
 </div>
+
 </div>
 </div>
 

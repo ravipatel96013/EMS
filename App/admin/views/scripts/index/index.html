@@ -1,15 +1,13 @@
 <div class="container">
     <div id="dashboard">
 
-        <div class="content-header">
-            <div class="container">
-              <div class="row mb-2">
-                <div class="col-sm-6">
-                  <h1 class="m-0">Dashboard</small></h1>
-                </div>
-              </div>
-            </div>
+      <div class="content-header">
+        <div class="container">
+          <div class="row mb-0">
+              <h1>Dashboard</h1>
           </div>
+        </div>
+      </div>
 
           <div class="row" id="top_blocks">
             <div class="col-sm-3">
@@ -66,7 +64,8 @@
                 <div class="card-header"><h4>Summary of {$smarty.now|date_format:"M-Y"}</h4>
                 </div>
                   <ul class="list-group list-group-flush">
-                    <li class="list-group-item"><h6><b>Present Days : </b>{$presentDays}</h6></li>
+                    <li class="list-group-item"><h6><b>Working Days : </b>{if $workingDays eq 0}NA{else}{$workingDays}{/if}</h6></li>
+                    <li class="list-group-item"><h6><b>Present Days : </b>{if $presentDays eq 0}0{else}{$presentDays}{/if}</h6></li>
                     <li class="list-group-item"><h6><b>Leave Balance : </b>{if $leaveBalance eq NULL}0{else}{$leaveBalance}{/if}</h6></li>
                   </ul>
               </div>
@@ -79,65 +78,66 @@
                 </div>
                   <ul class="list-group list-group-flush">
                   {foreach from=$upComingHolidays item=row}
-                  <li class="list-group-item"><h6><b>{$row.name}</b>&emsp;{$row.date}</h6></li>
+                  <li class="list-group-item"><h6><b>{$row.date}</b>&emsp;{$row.name}</h6></li>
                   {/foreach}
                 </ul>
               </div>
             </div>
-                  
-            </div>
-
             </div>
 
             <div class="row" id="attendanceTable">
               <div class="col-sm-12">
-                  <div class="card">
-                      <div class="card-header">
-                        <div class="row">
-                          <div class="col-sm-3">
-                          <h3>Attendance Table</h3>
-                        </div>
-                        <div class="col-sm-3 offset-sm-6 date">
-                          <input type="date" name="date" value="{$selectedDate}" id="date" class="form-control form-control-sm">
-                           </div>
-                        </div>
-                      </div>
-                      <div class="card-body">
-                          <div class="row">
-                              <table class="table table-hover" id="attendance">
-                                <thead>
-                                  <tr>
-                                    <th scope="col">Name</th>
-                                    <th scope="col">Date</th>
-                                    <th scope="col">Check-in</th>
-                                    <th scope="col">Check-out</th>
-                                    <th scope="col">Status</th>
-                                    <th scope="col">Break Time</th>
-                                    <th scope="col">Last Break Started</th>
-                                  </tr>
-                                </thead>
-                                <tbody>
-                                  {if isset($attendanceData)}
-                                  {foreach from=$attendanceData item=data}
-                                  <tr class="{if $data.breakStartTime neq null && $data.breakEndTime eq null}bg-warning{/if}">
-                                    <td>{$data.firstName} {$data.lastName}</td>
-                                    <td>{$data.Date}</td>
-                                    <td>{if $data.checkIn eq null}NA{else}{$data.checkIn}{/if}</td>
-                                    <td>{if $data.checkOut eq null}NA{else}{$data.checkOut}{/if}</td>
-                                    <td>{$data.status}</td>
-                                    <td>{if $data.breakTime eq null}NA{else}{$data.breakTime}{/if}</td>
-                                    <td>{if $data.breakStartTime eq null}NA{else}{$data.breakStartTime}{/if}</td>
-                                  </tr>
-                                  {/foreach}
-                                  {/if}
-                                </tbody>
-                              </table>
-                            </div>
-
-                      </div>
+                <div class="card">
+                <div class="card-header">
+                  <div class="row">
+                    <div class="col-sm-3">
+                  <h3>Attendance Table</h3>
+                </div>
+                <div class="col-sm-1 offset-sm-7">
+                    <select name="month" class="form-control custom-select" id="month">
+                      {if isset($selectedMonth)}
+                      {foreach from=$monthOption item=month}
+                      <option value="{$month}" {if $selectedMonth eq $month}selected{/if}>{$month}</option>
+                      {/foreach}
+                      {/if}
+                    </select>
                   </div>
+                  <div class="col-sm-1">
+                  <select name="month" class="form-control custom-select" id="year">
+                    {if isset($selectedYear)}
+                    {foreach from=$yearOption item=year}
+                    <option value="{$year}" {if $selectedYear eq $year}selected{/if}>{$year}</option>
+                    {/foreach}
+                    {/if}
+                  </select>
               </div>
+                  
+                </div>
+                </div>
+                  <div class="card-body">
+                  <div class="row">
+                    <table class="table table-hover" id="attendance">
+                      <thead>
+                        <tr>
+                          <th scope="col">Date</th>
+                          <th scope="col">Check-in</th>
+                          <th scope="col">Check-out</th>
+                          <th scope="col">Break Time</th>
+                          <th scope="col">Status</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+          
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            </div>
+          
           </div>
+
+            </div>
 
     </div>
 </div>
@@ -263,7 +263,43 @@
         hour + ":" + min + ":" + sec + " " + mid;
       setTimeout(clock, 1000);
     }
-  });
+  
+
+  attendanceTable = $('#attendance').DataTable({
+          serverSide: true,
+          pageLength: 50,
+          bPaginate: false,
+          bLengthChange: false,
+          bFilter: true,
+          bInfo: false,
+          searching: false,
+          "ajax": {
+              url: '/admin/index/getattendance',
+              type: "GET",
+              dataType: "json",
+              data : function(data){
+                data.month = $("#month").val();
+                data.year = $("#year").val();
+              }
+          },
+          "columns": [
+              { data: 'date',name: 'date'},
+              { data: 'checkInDateTime',
+                name: 'checkInDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+              { data: 'checkOutDateTime',
+                name: 'checkOutDateTime',
+                defaultContent: "<i>NA</i>"
+              },
+                { data: 'totalMinutes',
+                name: 'totalMinutes',
+                defaultContent: "<i>00</i>"
+              },
+              { data: 'status', name: 'status'}
+          ]
+      });
+    });
 </script>
 
 <script>
@@ -307,22 +343,11 @@ jQuery(document).ready(function(){
 </script>
 
 <script>
-  $('#date').on("change",function(){
-    window.location.href = '/admin'+'?date='+$(this).val();
-  })
-</script>
-<script>
-  jQuery(document).ready(function (){
-    $('#attendance').DataTable(
-      {
-        pageLength: 50,
-          bPaginate: false,
-          bLengthChange: false,
-          bFilter: true,
-          bInfo: false,
-          searching: false
-      }
-    );
+  $('select#month').change(function() {
+    window.location.href = '/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
+    });
+  $('select#year').change(function() {
+    window.location.href = '/admin'+'?year='+$('select#year').val()+'&month='+$('select#month').val();
   });
   </script>
   
