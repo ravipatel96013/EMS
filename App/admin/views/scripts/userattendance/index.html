@@ -20,6 +20,7 @@
                 <h5><b>Working Days : </b>{$workingDays}</h5>
                 <h5><b>Present Days : </b>{$presentDays}</h5>
                 <h5><b>Leave Balance : </b>{if $leaveBalance eq null}0{else}{$leaveBalance}{/if}</h5>
+                <h5><b>Paid Leaves : </b>{$PL}</h5>
               </div>
             </div>
           </div>
@@ -30,9 +31,12 @@
                 <h4>Attendance Status</h4>
               </div>
               <div class="card-body">
-                <h5><b>Present Days : </b>{$presentDays}</h5>
-                <h5><b>Paid Leaves : </b>{$paidLeaves}</h5>
-                <h5><b>Unpaid Leaves : </b>{$unpaidLeaves}</h5>
+                {if $PL neq 0}<h5><b>PL : </b>{$PL}</h5>{/if}
+                {if $UL neq 0}<h5><b>UL : </b>{$UL}</h5>{/if}
+                {if $HUL neq 0}<h5><b>HUL : </b>{$HUL}</h5>{/if}
+                {if $HPL neq 0}<h5><b>HPL : </b>{$HPL}</h5>{/if}
+                {if $WO neq 0}<h5><b>WO : </b>{$WO}</h5>{/if}
+                {if $HO neq 0}<h5><b>HO : </b>{$HO}</h5>{/if}
               </div>
             </div>
           </div>
@@ -177,6 +181,19 @@
 
 <script>
     jQuery(document).ready(function (){
+
+      $('#ua_top_blocks').each(function(){  
+        var highestBox = 0;
+
+        $(this).find('.card').each(function(){
+            if($(this).height() > highestBox){  
+                highestBox = $(this).height();  
+            }
+        })
+
+        $(this).find('.card').height(highestBox);
+    });
+
     attendanceTable = $('#attendance').DataTable({
       serverSide: true,
       pageLength: 50,

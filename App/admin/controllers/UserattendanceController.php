@@ -59,21 +59,45 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 
         $sql3 = "SELECT status FROM `user_attendance` WHERE userId=$selectedUser";
         $attendanceStatus = $db->fetchAll($sql3);
-        $paidLeaves = 0;
-        $unpaidLeaves = 0;
+        $PL = 0;
+        $UL = 0;
+        $WO = 0;
+        $HUL = 0;
+        $HPL = 0;
+        $HO = 0;
         foreach($attendanceStatus as $data)
         {
             if($data['status'] == 'PL')
             {
-                $paidLeaves++;
+                $PL++;
             } 
             elseif($data['status'] == 'UL')
             {
-                $unpaidLeave++;
+                $UL++;
+            }
+            elseif($data['status'] == 'WO')
+            {
+                $WO++;
+            }
+            elseif($data['status'] == 'HUL')
+            {
+                $HUL++;
+            }
+            elseif($data['status'] == 'HPL')
+            {
+                $HPL++;
+            }
+            elseif($data['status'] == 'HO')
+            {
+                $HO++;
             }
         }
-        $this->setViewVar('paidLeaves',$paidLeaves);
-        $this->setViewVar('unpaidLeaves',$unpaidLeaves);
+        $this->setViewVar('PL',$PL);
+        $this->setViewVar('UL',$UL);
+        $this->setViewVar('WO',$WO);
+        $this->setViewVar('HUL',$HUL);
+        $this->setViewVar('HPL',$HPL);
+        $this->setViewVar('HO',$HO);
 
         $this->setViewVar('selectedYear',$selectedYear);
         $this->setViewVar('selectedMonth',$selectedMonth);
