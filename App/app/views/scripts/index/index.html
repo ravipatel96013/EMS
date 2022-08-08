@@ -38,7 +38,7 @@
     <div class="col-sm-3">
       <div class="card">
       <div class="card-header">
-        <h4>{if $startBreakButton eq true}Start Break{else}Pause Break{/if}</h4>
+        <h4>{if $startBreakButton eq true}Start Break{elseif $endBreakButton eq true}Pause Break{else}Break Summary{/if}</h4>
       </div>
         <div class="card-body d-flex justify-content-center">
           <div class="row row-cols-1">

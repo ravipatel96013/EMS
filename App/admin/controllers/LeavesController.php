@@ -42,6 +42,11 @@ class Admin_LeavesController extends TinyPHP_Controller {
             // GET Request
             $id = $this->getRequest()->getVar('id');
             $leave = new Models_Leave($id);
+            $datetime1 = strtotime($leave->endDate);
+            $datetime2 = strtotime($leave->startDate);
+            $secs = $datetime1 - $datetime2;
+            $totalDays = ($secs / 86400)+1;
+            $this->setViewVar('totalDays',$totalDays);
             if(!$leave->isEmpty)
             {
             $this->setViewVar('dataRow',$leave);
