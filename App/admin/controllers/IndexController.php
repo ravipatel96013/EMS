@@ -11,7 +11,33 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$completed = false;
 	$attendanceNotFound = false;
 	$pauseBreakWarning = false;
-	$selectedDate = $this->getRequest()->getVar('date','string', date("Y-m-d"));
+	$currentYear = date('Y');
+
+		$selectedYear = $this->getRequest()->getVar('year', 'numeric', date("Y"));
+		$selectedMonth = $this->getRequest()->getVar('month', 'numeric', date("m"));
+		$monthOption = [1,2,3,4,5,6,7,8,9,10,11,12];
+		$yearOption = [];
+
+		for($i=2022;$i<=$currentYear+1;$i++)
+		{
+			array_push($yearOption,$i);
+		}
+
+		foreach($yearOption as $year)
+		{
+			if($year = $selectedYear)
+			{
+				$this->setViewVar('selectedYear',$selectedYear);
+			}
+		}
+
+		foreach($monthOption as $month)
+		{
+			if($month = $selectedMonth)
+			{
+				$this->setViewVar('selectedMonth',$selectedMonth);
+			}
+		}
 	
 	$presentDay = 0;
 	$loggedInAdminId = getLoggedInAdminId();
@@ -83,47 +109,22 @@ class Admin_IndexController extends TinyPHP_Controller {
 		}
 	}
 
-	// Dashboard Datatable Data
-
 	global $db;
-	$sql = "SELECT a.id as attendanceId,c.firstName as firstName,c.lastName as lastName,a.date as Date,DATE_FORMAT(a.checkInDateTime, '%r') as checkIn,DATE_FORMAT(a.checkOutDateTime, '%r') as checkOut,a.status as status,DATE_FORMAT(b.startTime, '%r') as breakStartTime,DATE_FORMAT(b.endTime, '%r') as breakEndTime,SUM(b.totalMinutes) as breakTime
-	FROM `user_attendance` as a
-	LEFT JOIN break_logs as b ON a.id=b.attendanceId AND b.startTime IS NOT NULL AND b.endTime IS NULL
-	LEFT JOIN users as c ON c.id=a.userId
-	WHERE a.date='$selectedDate' AND c.isActive = 1
-	GROUP BY a.id";
+		$sql="SELECT COUNT(id) as workingDays
+		FROM user_attendance
+		WHERE userId=$loggedInAdminId AND status != 'HO' AND status != 'WO' AND MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear";
 
-	$sql2 = "SELECT a.id as attendanceId,CONCAT(FLOOR(SUM(b.totalMinutes)/60),':',MOD(SUM(b.totalMinutes),60)) as breakTime
-	FROM `user_attendance` as a
-	LEFT JOIN break_logs as b ON a.id=b.attendanceId
-	WHERE date='$selectedDate' 
-	GROUP BY a.id";
+		$workingDays = $db->fetchRow($sql);
+		$workingDays = $workingDays['workingDays'];
+		$this->setViewVar('workingDays',$workingDays);
 
-	$result = $db->fetchAll($sql);
-	
-	$breakes = $db->fetchAll($sql2);
+		$sql2 = "SELECT COUNT(status) as presentDays
+		FROM `user_attendance`
+		WHERE MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear AND status='P' AND userId=$loggedInAdminId";
 
-	$breakByAttendanceId = [];
-    foreach($breakes as $break)
-    {
-        $breakByAttendanceId[$break['attendanceId']] = $break;
-    }
-
-	foreach($result as $key => $data)
-	{
-		if(isset($breakByAttendanceId[$data['attendanceId']]))
-		{
-			$break = $breakByAttendanceId[$data['attendanceId']];
-			if($break['breakTime'] != NULL)
-			{
-				$result[$key]['breakTime'] = $break['breakTime'];
-			}
-		}
-	}
-
-
-	$this->setViewVar('attendanceData',$result);
-	$this->setViewVar('breakData',$breakes);
+		$presentDays = $db->fetchRow($sql2);
+		$presentDays = $presentDays['presentDays'];
+		$this->setViewVar('presentDays',$presentDays);
 
 	$this->setViewVar('checkInButton',$checkInButton);
 	$this->setViewVar('checkOutButton',$checkOutButton);
@@ -135,7 +136,8 @@ class Admin_IndexController extends TinyPHP_Controller {
 	$this->setViewVar('leaveBalance',$leaveBalance['balance']);
 	$this->setViewVar('upComingHolidays',$upComingHolidays);
 	$this->setViewVar('pauseBreakWarning',$pauseBreakWarning);
-	$this->setViewVar('selectedDate',$selectedDate);
+	$this->setViewVar('monthOption',$monthOption);
+	$this->setViewVar('yearOption',$yearOption);
 	}
 
 	public function checkinAction()
@@ -308,5 +310,43 @@ class Admin_IndexController extends TinyPHP_Controller {
 		echo json_encode($response);
 		die; 
     }
+
+	public function getattendanceAction()
+	{
+		$this->setNoRenderer(true);
+		
+		$month = $this->getRequest()->getVar("month");
+		$year = $this->getRequest()->getVar("year");
+		
+		global $db;
+		
+		$loggedInUserId = getLoggedInAdminId();
+        
+		$dt = new TinyPHP_DataTable();
+	    $dt->setDBAdapter($db);
+        $dt->setTable('user_attendance AS a');
+        $dt->setIdColumn('a.id');
+		
+		$dt->setJoins('LEFT JOIN break_logs AS b ON a.id=b.attendanceId');
+
+        $dt->addColumns(array(
+            'date' => 'a.date',
+            'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
+            'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
+            'totalMinutes' => 'CONCAT(FLOOR(SUM(b.totalMinutes)/60),":",MOD(SUM(b.totalMinutes),60))',
+            'status' => 'a.status'
+        ));
+
+		$defaultFilters = array(
+			"a.userId" => $loggedInUserId,
+			"MONTH(a.date)" => $month,
+			"YEAR(a.date)" => $year,
+			);
+
+		$dt->setGroupBy('GROUP BY a.id');
+		$dt->setDefaultFilters($defaultFilters);
+
+		$dt->getData();
+	}
 }
 ?>

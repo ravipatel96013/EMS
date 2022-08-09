@@ -5,7 +5,10 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
         $currentYear = date('Y');
         $selectedYear = $this->getRequest()->getVar('year','numeric', date("Y"));
         $selectedMonth = $this->getRequest()->getVar('month','numeric', date("m"));
-        $selectedUser = $this->getRequest()->getVar('user');
+        $selectedUser = $this->getRequest()->getVar('user','string',getLoggedInAdminId());
+        $user = new Models_User($selectedUser);
+        $userName = $user->firstName.' '.$user->lastName;
+        $this->setViewVar('userName',$userName);
 		$monthOption = [1,2,3,4,5,6,7,8,9,10,11,12];
 		$yearOption = [];
 
@@ -30,8 +33,71 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 			}
 		}
 
+        $leave = new Models_LeaveBalancesheet();
+		$leaveBalance = $leave->getLeaveBalance($selectedUser);
+        $leaveBalance = $leaveBalance['balance'];
+        $this->setViewVar('leaveBalance',$leaveBalance);
+
         $user = new Models_User();
         $users = $user->getAll(array('id','firstName','lastName'));
+
+        global $db;
+		$sql="SELECT COUNT(id) as workingDays
+		FROM user_attendance
+		WHERE userId=$selectedUser AND status != 'HO' AND status != 'WO' AND MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear";
+
+		$workingDays = $db->fetchRow($sql);
+		$workingDays = $workingDays['workingDays'];
+		$this->setViewVar('workingDays',$workingDays);
+
+		$sql2 = "SELECT COUNT(status) as presentDays
+		FROM `user_attendance`
+		WHERE MONTH(date)=$selectedMonth AND YEAR(date)=$selectedYear AND status='P' AND userId=$selectedUser";
+        $presentDays = $db->fetchRow($sql2);
+        $presentDays = $presentDays['presentDays'];
+        $this->setViewVar('presentDays',$presentDays);
+
+        $sql3 = "SELECT status FROM `user_attendance` WHERE userId=$selectedUser";
+        $attendanceStatus = $db->fetchAll($sql3);
+        $PL = 0;
+        $UL = 0;
+        $WO = 0;
+        $HUL = 0;
+        $HPL = 0;
+        $HO = 0;
+        foreach($attendanceStatus as $data)
+        {
+            if($data['status'] == 'PL')
+            {
+                $PL++;
+            } 
+            elseif($data['status'] == 'UL')
+            {
+                $UL++;
+            }
+            elseif($data['status'] == 'WO')
+            {
+                $WO++;
+            }
+            elseif($data['status'] == 'HUL')
+            {
+                $HUL++;
+            }
+            elseif($data['status'] == 'HPL')
+            {
+                $HPL++;
+            }
+            elseif($data['status'] == 'HO')
+            {
+                $HO++;
+            }
+        }
+        $this->setViewVar('PL',$PL);
+        $this->setViewVar('UL',$UL);
+        $this->setViewVar('WO',$WO);
+        $this->setViewVar('HUL',$HUL);
+        $this->setViewVar('HPL',$HPL);
+        $this->setViewVar('HO',$HO);
 
         $this->setViewVar('selectedYear',$selectedYear);
         $this->setViewVar('selectedMonth',$selectedMonth);

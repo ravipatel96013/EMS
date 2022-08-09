@@ -27,13 +27,18 @@
         </div>
 
         <div class="row mt-4">
+          <label class="col-md-4"><b>Total Days</b></label>:
+          <span class="col-md-4">{if $totalDays eq 1 and $dataRow->isHalf eq 1}0.5{else}{$totalDays}{/if}</span>
+        </div>
+
+        <div class="row mt-4">
           <label class="col-md-4"><b>Comment</b></label>:
           <span class="col-md-4">{$dataRow->comment}</span>
         </div>
 
         <div class="row mt-4">
           <label class="col-md-4"><b>Status</b></label>:
-          <select name="status" class="form-control form-control-sm col-md-4 mb-3 ml-2">
+          <select name="status" class="form-control form-control-sm custom-select col-md-4 mb-3 ml-2">
             <option selected disabled>Pending</option>
             <option value="1" {if $dataRow->status eq 1}selected{/if}>Approved</option>
             <option value="2" {if $dataRow->status eq 2}selected{/if}>Declined</option>
