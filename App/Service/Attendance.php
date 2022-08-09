@@ -67,8 +67,6 @@ public function checkout($id,$checkOutDateTime)
                 }
                 elseif($leave['isHalf'] == 0 && $leave['isLeaveBalanceDeducted'] == 1)
                 {
-                    echo 'called';
-                    die;
                     $attendance->status = 'UL';
                     $attendance->checkOutDateTime = $checkOutDateTime;
                     $attendance->update(array('checkOutDateTime','status','updatedOn'));
