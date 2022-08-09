@@ -125,7 +125,7 @@ class Admin_UserattendanceController extends TinyPHP_Controller {
 
         $dt->addColumns(array(
 			'id' => 'a.id',
-            'date' => 'a.date',
+            'date' => 'DATE_FORMAT(a.date,"%d-%m-%Y")',
             'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
             'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
             'totalMinutes' => 'CONCAT(FLOOR(SUM(b.totalMinutes)/60),":",MOD(SUM(b.totalMinutes),60))',

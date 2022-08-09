@@ -77,9 +77,10 @@ class Admin_LeavesController extends TinyPHP_Controller {
 
         $dt->addColumns(array(
             'id' => 'l.id',
-            'userName' => 'b.firstName',
-            'startDate' => 'l.startDate',
-            'endDate' => 'l.endDate',
+            'firstName' => 'b.firstName',
+            'lastName' => 'b.lastName',
+            'startDate' => 'DATE_FORMAT(l.startDate,"%d-%m-%Y")',
+            'endDate' => 'DATE_FORMAT(l.endDate,"%d-%m-%Y")',
             'comment' => 'l.comment',
             'status' => 'l.status'
         ));

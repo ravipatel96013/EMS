@@ -164,7 +164,7 @@ class App_IndexController extends TinyPHP_Controller {
 		$dt->setJoins('LEFT JOIN break_logs AS b ON a.id=b.attendanceId');
 
         $dt->addColumns(array(
-            'date' => 'a.date',
+            'date' => 'DATE_FORMAT(a.date, "%d-%m-%Y")',
             'checkInDateTime' => 'DATE_FORMAT(a.checkInDateTime, "%r")',
             'checkOutDateTime' => 'DATE_FORMAT(a.checkOutDateTime, "%r")',
             'totalMinutes' => 'CONCAT(FLOOR(SUM(b.totalMinutes)/60),":",MOD(SUM(b.totalMinutes),60))',

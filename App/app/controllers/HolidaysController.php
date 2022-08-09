@@ -19,7 +19,7 @@ class App_HolidaysController extends TinyPHP_Controller {
         $dt->addColumns(array(
             'name' => 'h.name',
             'description' => 'h.description',
-            'date' => 'h.date'
+            'date' => 'DATE_FORMAT(h.date, "%d-%m-%Y")'
         ));
         $dt->getData();
     }
