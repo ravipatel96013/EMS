@@ -134,7 +134,7 @@ public function addAttendance($year,$month,$userId)
     $insertData = [];
     $createdOn = time();
     $updatedOn = time();
-    $daysInMonth = date('t',strtotime($month));
+    $daysInMonth = date('t',strtotime($year.'-'.$month.'-01'));
     $holiday = new Models_Holiday();
     $holidayList = $holiday->getAll(['date']);
     for($i=1;$i<=$daysInMonth;$i++)

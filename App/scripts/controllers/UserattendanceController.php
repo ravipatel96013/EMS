@@ -8,7 +8,7 @@ class Scripts_UserattendanceController extends TinyPHP_Controller
         $today = date('d');
         $lastDay = date('t');
        
-       if($today == $lastDay)
+       if($today)
        {      
             $daysInNextMonth = date("t",strtotime("next month"));
             $nextMonth = date("m",strtotime("next month"));
@@ -20,11 +20,11 @@ class Scripts_UserattendanceController extends TinyPHP_Controller
             foreach($users as $user)
             {
                 $attendance = new Models_Attendance();
-                $data = $attendance->getAll(['id'],"userId=".$user->id." AND MONTH(date)=".$nextMonth." AND YEAR(date)=".$yearOfNextMonth);
+                $data = $attendance->getAll(['id'],"userId=".$user->id." AND MONTH(date)=9 AND YEAR(date)=2022");
                 if(count($data) == 0)
                 {
                 $service = new Service_Attendance();
-                $isCreated = $service->addAttendance($yearOfNextMonth,$nextMonth,$user->id);
+                $isCreated = $service->addAttendance(2022,9,$user->id);
                 if($isCreated)
                 {
                     $entriesCreated = true;
