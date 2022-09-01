@@ -140,7 +140,16 @@
 
             <div class="row mt-3">
               <label class="col-md-3 offset-md-1"><b>Status</b></label>
-              <input name="status" id="status" class="form-control form-control-sm col-md-6">
+              <select class="form-control form-control-sm col-md-6 custom-select" id="status" name="status">
+                <option value="NA">NA</option>
+                <option value="P">P</option>
+                <option value="PL">PL</option>
+                <option value="UL">UL</option>
+                <option value="HUL">HUL</option>
+                <option value="HPL">HPL</option>
+                <option value="WO">WO</option>
+                <option value="HO">HO</option>
+              </select>
             </div>
 
             </div>
@@ -154,6 +163,22 @@
     </form>
       <!-- Model End -->
 {literal}
+
+<script>
+  $('#checkIn').datetimepicker({
+    format: 'Y-m-d H:i:i',
+    formatTime: 'H:i:i',
+    formatDate: 'Y-m-d',
+    step: 30
+});
+$('#checkOut').datetimepicker({
+    format: 'Y-m-d H:i:i',
+    formatTime: 'H:i:i',
+    formatDate: 'Y-m-d',
+    step: 30
+});
+</script>
+
 <script>
     $(".edit").click(function()
      {
@@ -231,13 +256,10 @@
                 data: 'status',
                 name: 'status',
                 "render": function(data, type, row, meta){
-                  if(row.status != 'NA')
-                  {
                   if(type === 'display'){
-                    data = '<a class="editLink" href="javascript:void(0);" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
+                    data = '<a class="editLink link-dark" href="javascript:void(0);" data-toggle="modal" data-target="#editAttendance" data-id="'+row.id+'">' + data + '</a>';
+                    return data;
                   }
-                  return data;
-                }
                 else{
                   return data;
                 }
@@ -262,13 +284,17 @@
           // var checkOutTime = data.checkOutDateTime;
           var productiveTime = data.productiveTime;
           var productiveHours = (productiveTime/60).toFixed(2);
+
+          var minutes = data.breakTime % 60;
+          var hours = (data.breakTime-minutes)/60;
+          var output = hours + ':' + minutes;
           
           //alert(productiveHours);
           $('#id').val(data.id);
           $('#date').val(data.date);
           $('#checkIn').val(data.checkInDateTime);
           $('#checkOut').val(data.checkOutDateTime);
-          $('#breakTime').val(data.breakTime);
+          $('#breakTime').val(output);
           $('#productiveHours').val(productiveHours);
           $('#status').val(data.status);
     

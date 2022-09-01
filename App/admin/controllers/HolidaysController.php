@@ -155,7 +155,7 @@ class Admin_HolidaysController extends TinyPHP_Controller {
             'id' => 'h.id',
             'name' => 'h.name',
             'description' => 'h.description',
-            'date' => 'h.date'
+            'date' => 'DATE_FORMAT(h.date,"%d-%m-%Y")'
         ));
         $dt->getData();
     }

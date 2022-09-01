@@ -67,8 +67,6 @@ public function checkout($id,$checkOutDateTime)
                 }
                 elseif($leave['isHalf'] == 0 && $leave['isLeaveBalanceDeducted'] == 1)
                 {
-                    echo 'called';
-                    die;
                     $attendance->status = 'UL';
                     $attendance->checkOutDateTime = $checkOutDateTime;
                     $attendance->update(array('checkOutDateTime','status','updatedOn'));
@@ -136,25 +134,28 @@ public function addAttendance($year,$month,$userId)
     $insertData = [];
     $createdOn = time();
     $updatedOn = time();
-    $daysInMonth = date('t',strtotime($month));
+    $holidays = [];
+    $daysInMonth = date('t',strtotime($year.'-'.$month.'-01'));
     $holiday = new Models_Holiday();
     $holidayList = $holiday->getAll(['date']);
+    foreach($holidayList as $item)
+    {
+        array_push($holidays,$item->date);
+    }
     for($i=1;$i<=$daysInMonth;$i++)
     {
         $status = 'NA';
         $date = $year."-".$month."-".$i;
-        $day = date('D',strtotime($date));
+        $convertedDate = date('Y-m-d',strtotime($date));
+        $day = date('D',strtotime($convertedDate));
         if($day == 'Sun')
         {
             $status = 'WO';
         }
-           foreach($holidayList as $holiday)
-           {
-                if($holiday->date == $date)
+                if(in_array($convertedDate,$holidays))
                 {
                     $status = 'HO';
                 }
-            }
             array_push($insertData,[$userId,$date,NULL,NULL,$status,$createdOn,$updatedOn]);
     }
     $attendance = new Models_Attendance();

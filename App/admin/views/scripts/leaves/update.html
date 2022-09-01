@@ -13,12 +13,12 @@
           <input type="hidden" name="oldStatus" value="{$dataRow->status}">
         <div class="row">
           <label class="col-md-4"><b>From</b></label>:
-          <span class="col-md-4">{$dataRow->startDate|date_format:'Y-m-d'}</span>
+          <span class="col-md-4">{$dataRow->startDate|date_format:'d-m-Y'}</span>
         </div>
 
         <div class="row mt-4">
           <label class="col-md-4"><b>To</b></label>:
-          <span class="col-md-4">{$dataRow->endDate|date_format:'Y-m-d'}</span>
+          <span class="col-md-4">{$dataRow->endDate|date_format:'d-m-Y'}</span>
         </div>
 
         <div class="row mt-4">
